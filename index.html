@@ -665,6 +665,18 @@
             localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
         }
 
+        function updateLocationUrlParams(lat, lon, name) {
+            try {
+                const url = new URL(window.location);
+                url.searchParams.set('lat', lat);
+                url.searchParams.set('lon', lon);
+                url.searchParams.set('locName', encodeURIComponent(name));
+                window.history.pushState({}, '', url);
+            } catch (e) {
+                console.warn("Could not update URL parameter.");
+            }
+        }
+
         // DOM Elements
         const dashboardSkeleton = document.getElementById('dashboard-skeleton');
         const forecastSkeleton = document.getElementById('forecast-skeleton');
@@ -830,8 +842,9 @@
         function initApp() {
             initTheme();
 
-            // Check for Language parameter in URL, fallback to localStorage or 'en'
             const urlParams = new URLSearchParams(window.location.search);
+
+            // Check for Language parameter in URL, fallback to localStorage or 'en'
             const langParam = urlParams.get('lang');
             if (langParam && translations[langParam]) {
                 currentLang = langParam;
@@ -842,7 +855,33 @@
 
             showSkeleton();
 
-            // Always request GPS right away as requested
+            // Check for Location parameters in URL
+            const urlLat = urlParams.get('lat');
+            const urlLon = urlParams.get('lon');
+            const urlName = urlParams.get('locName');
+
+            if (urlLat && urlLon && urlName) {
+                saveAndFetchLocation(parseFloat(urlLat), parseFloat(urlLon), decodeURIComponent(urlName));
+                return;
+            }
+
+            // Check localStorage
+            const savedData = localStorage.getItem('savedLocation');
+            if (savedData) {
+                try {
+                    const { lat, lon, name } = JSON.parse(savedData);
+                    updateLocationUrlParams(lat, lon, name);
+                    currentLat = lat;
+                    currentLon = lon;
+                    locationName.innerText = name;
+                    fetchWeatherData(lat, lon);
+                    return;
+                } catch (e) {
+                    localStorage.removeItem('savedLocation');
+                }
+            }
+
+            // Always request GPS right away as requested (if no saved data exists)
             getLocationViaGPS();
         }
 
@@ -867,10 +906,7 @@
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        currentLat = position.coords.latitude;
-                        currentLon = position.coords.longitude;
-                        locationName.innerText = t('currentLocation');
-                        fetchWeatherData(currentLat, currentLon);
+                        saveAndFetchLocation(position.coords.latitude, position.coords.longitude, t('currentLocation'));
                     },
                     (error) => {
                         showLocationModalWithError();
@@ -883,6 +919,8 @@
 
         function saveAndFetchLocation(lat, lon, name) {
             localStorage.setItem('savedLocation', JSON.stringify({ lat, lon, name }));
+            updateLocationUrlParams(lat, lon, name);
+
             currentLat = lat;
             currentLon = lon;
             locationName.innerText = name;

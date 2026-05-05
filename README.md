@@ -18,9 +18,6 @@ Location Flexible: Uses browser GPS for auto-location or allows manual city sear
 
 Premium UI/UX: Features a beautiful, responsive, two-column dashboard layout inspired by modern SaaS applications, complete with skeleton loading states.
 
-🚀 Live Demo
-
-(You can add your GitHub Pages link here once published, for example: https://yourusername.github.io/car-wash-planner/)
 
 🛠️ Technologies Used
 
@@ -34,21 +31,6 @@ Google Fonts: Utilizing Inter, Noto Sans, and Vazirmatn for robust international
 
 Open-Meteo API: For both weather forecasting and city geocoding.
 
-💻 Getting Started
-
-Because this application relies entirely on client-side technologies and free APIs, there is absolutely zero build process required.
-
-Clone the repository:
-
-git clone [https://github.com/yourusername/car-wash-planner.git](https://github.com/yourusername/car-wash-planner.git)
-
-
-Navigate to the project directory.
-
-Open the index.html file directly in your web browser.
-
-To host on GitHub Pages:
-Simply push the code to your repository, go to Settings > Pages, and select your main branch as the source. Your app will be live globally in minutes!
 
 🧠 How the Algorithm Works
 

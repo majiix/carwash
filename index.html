@@ -9,7 +9,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
 
     <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwindcss.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -40,7 +40,7 @@
     </script>
 
     <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="js/lucide.min.js"></script>
 
     <!-- Google Fonts: Inter & Multilingual Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -82,10 +82,10 @@
         html[dir="rtl"] select { background-position: left 0.75rem center; }
     </style>
 </head>
-<body class="p-0 md:p-6 lg:p-10 min-h-screen bg-appBg dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 selection:bg-brand-500 selection:text-white flex items-center justify-center">
+<body class="p-0 md:p-6 lg:p-10 min-h-screen bg-appBg dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 selection:bg-brand-500 selection:text-white flex flex-col items-center justify-center">
 
     <!-- Main App Container -->
-    <main class="w-full max-w-[1200px] bg-white dark:bg-slate-900 md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[100dvh] md:min-h-[85vh] relative">
+    <main class="w-full max-w-[1200px] bg-white dark:bg-slate-900 md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[100dvh] md:min-h-[85vh] relative z-10">
 
         <!-- ================= LEFT COLUMN: DASHBOARD ================= -->
         <div class="w-full lg:w-7/12 xl:w-2/3 p-6 md:p-10 lg:p-12 flex flex-col">
@@ -104,7 +104,7 @@
                 <!-- Fake "Search" Bar functioning as Location Button -->
                 <button id="change-location-btn" class="w-full sm:w-auto flex items-center gap-3 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-5 py-3 rounded-full transition-colors text-sm text-slate-500 dark:text-slate-400">
                     <i data-lucide="search" class="w-4 h-4"></i>
-                    <span id="location-name" class="font-medium truncate max-w-[180px] text-slate-700 dark:text-slate-200" data-i18n="locating">Locating...</span>
+                    <span id="location-name" class="font-medium truncate max-w-[180px] text-slate-700 dark:text-slate-200">Locating...</span>
                 </button>
             </header>
 
@@ -217,7 +217,7 @@
             </div>
 
             <!-- Skeleton Loading State (Right Column) -->
-            <div id="forecast-skeleton" class="flex flex-col gap-3 flex-1 overflow-y-auto no-scrollbar pb-10">
+            <div id="forecast-skeleton" class="flex flex-col gap-3 flex-1 overflow-y-auto no-scrollbar pb-10 pt-4">
                 <div class="h-[72px] rounded-2xl bg-slate-200/50 dark:bg-slate-800/50 animate-pulse"></div>
                 <div class="h-[72px] rounded-2xl bg-slate-200/50 dark:bg-slate-800/50 animate-pulse"></div>
                 <div class="h-[72px] rounded-2xl bg-slate-200/50 dark:bg-slate-800/50 animate-pulse"></div>
@@ -228,12 +228,17 @@
             </div>
 
             <!-- Forecast List -->
-            <div class="hidden flex-col gap-3 flex-1 overflow-y-auto no-scrollbar pb-10" id="forecast-container">
+            <div class="hidden flex-col gap-3 flex-1 overflow-y-auto no-scrollbar pb-10 pt-4" id="forecast-container">
                 <!-- Forecast items injected via JS -->
             </div>
 
         </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 flex flex-col items-center gap-3 text-center fade-in pb-8 relative z-0" style="animation-delay: 0.6s;">
+        <div class="text-[10px] font-bold opacity-50 tracking-[0.2em] uppercase text-slate-600 dark:text-slate-400" data-i18n="dataProvided">DATA BY OPEN-METEO</div>
+    </footer>
 
     <!-- Location Search Modal -->
     <div id="location-modal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
@@ -281,6 +286,7 @@
                 useCurrentLoc: "Use my location",
                 locationNotFound: "Couldn't find it. Try again.",
                 errorConnecting: "Oops, connection error.",
+                typeInEnglishOnly: "Location access denied. Please type city name in English.",
                 defaultLocation: "New York, USA",
                 checkBackLater: "Check back later",
                 washToday: "Go for it today!",
@@ -323,6 +329,7 @@
                 useCurrentLoc: "Usar mi ubicación",
                 locationNotFound: "No encontrada. Intenta de nuevo.",
                 errorConnecting: "Error de conexión.",
+                typeInEnglishOnly: "Acceso a ubicación denegado. Escribe la ciudad en inglés.",
                 defaultLocation: "Nueva York, EE.UU.",
                 checkBackLater: "Vuelve luego",
                 washToday: "¡Hazlo hoy!",
@@ -365,6 +372,7 @@
                 useCurrentLoc: "Ma position",
                 locationNotFound: "Introuvable. Essaie encore.",
                 errorConnecting: "Erreur de connexion.",
+                typeInEnglishOnly: "Position refusée. Veuillez taper la ville en anglais.",
                 defaultLocation: "New York, USA",
                 checkBackLater: "Reviens plus tard",
                 washToday: "Vas-y aujourd'hui !",
@@ -407,6 +415,7 @@
                 useCurrentLoc: "用我的位置",
                 locationNotFound: "没找着啊，换个试试。",
                 errorConnecting: "连不上网了。",
+                typeInEnglishOnly: "定位权限被拒绝。请仅用英文搜索城市。",
                 defaultLocation: "纽约，美国",
                 checkBackLater: "晚点来看看",
                 washToday: "今天就洗吧！",
@@ -449,6 +458,7 @@
                 useCurrentLoc: "मेरी लोकेशन",
                 locationNotFound: "मिल नहीं रहा।",
                 errorConnecting: "कनेक्शन एरर।",
+                typeInEnglishOnly: "लोकेशन नहीं मिली। कृपया केवल अंग्रेजी में शहर खोजें।",
                 defaultLocation: "न्यूयॉर्क, यूएसए",
                 checkBackLater: "बाद में आना",
                 washToday: "आज ही धो डालो!",
@@ -491,6 +501,7 @@
                 useCurrentLoc: "مكاني",
                 locationNotFound: "ملقينهاش.",
                 errorConnecting: "مشكلة اتصال.",
+                typeInEnglishOnly: "الموقع غير متاح. يرجى كتابة اسم المدينة باللغة الإنجليزية فقط.",
                 defaultLocation: "نيويورك، أمريكا",
                 checkBackLater: "شوفنا بعدين",
                 washToday: "اغسلها اليوم!",
@@ -533,6 +544,7 @@
                 useCurrentLoc: "مکان من",
                 locationNotFound: "پیدا نشد.",
                 errorConnecting: "اینترنت قطع شد.",
+                typeInEnglishOnly: "دسترسی مکان داده نشد. لطفاً نام شهر را فقط به انگلیسی وارد کنید.",
                 defaultLocation: "نیویورک",
                 checkBackLater: "بعداً بیا",
                 washToday: "همین امروز بشور!",
@@ -563,7 +575,7 @@
         };
 
         // App State
-        let currentLang = localStorage.getItem('appLang') || 'en';
+        let currentLang = 'en';
         let currentWeatherData = null;
         let currentLat = null;
         let currentLon = null;
@@ -604,6 +616,15 @@
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('appLang', lang);
+
+            // Update URL query param to reflect language (try-catch for blob/iframe environments)
+            try {
+                const url = new URL(window.location);
+                url.searchParams.set('lang', lang);
+                window.history.pushState({}, '', url);
+            } catch (e) {
+                console.warn("Could not update URL parameter (expected in blob/preview environments).");
+            }
 
             const isRtl = ['ar', 'fa'].includes(lang);
             document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
@@ -744,7 +765,6 @@
 
         recheckBtn.addEventListener('click', () => {
             if (currentLat && currentLon) {
-                // Find active SVG because Lucide replaces the raw tag
                 const icon = recheckBtn.querySelector('svg') || recheckBtn.querySelector('i');
                 if (icon) icon.classList.add('animate-spin');
 
@@ -752,7 +772,6 @@
                 forecastContainer.innerHTML = '';
 
                 fetchWeatherData(currentLat, currentLon).finally(() => {
-                    // Query for the SVG again in case the DOM updated
                     setTimeout(() => {
                         const currentIcon = recheckBtn.querySelector('svg');
                         if (currentIcon) currentIcon.classList.remove('animate-spin');
@@ -767,6 +786,7 @@
             if (!query) return;
 
             locationSearchStatus.classList.remove('hidden');
+            locationSearchStatus.classList.remove('text-brand-600', 'dark:text-brand-400');
             locationSearchStatus.classList.remove('text-red-500');
             locationSearchStatus.classList.add('text-slate-500');
             locationSearchStatus.innerText = t('searching');
@@ -787,10 +807,12 @@
                     locationInput.value = '';
                     locationSearchStatus.classList.add('hidden');
                 } else {
+                    locationSearchStatus.classList.remove('text-slate-500');
                     locationSearchStatus.classList.add('text-red-500');
                     locationSearchStatus.innerText = t('locationNotFound');
                 }
             } catch (error) {
+                locationSearchStatus.classList.remove('text-slate-500');
                 locationSearchStatus.classList.add('text-red-500');
                 locationSearchStatus.innerText = t('errorConnecting');
             }
@@ -807,24 +829,32 @@
         // App Initialization
         function initApp() {
             initTheme();
+
+            // Check for Language parameter in URL, fallback to localStorage or 'en'
+            const urlParams = new URLSearchParams(window.location.search);
+            const langParam = urlParams.get('lang');
+            if (langParam && translations[langParam]) {
+                currentLang = langParam;
+            } else {
+                currentLang = localStorage.getItem('appLang') || 'en';
+            }
             setLanguage(currentLang);
+
             showSkeleton();
 
-            const savedData = localStorage.getItem('savedLocation');
-            if (savedData) {
-                try {
-                    const { lat, lon, name } = JSON.parse(savedData);
-                    currentLat = lat;
-                    currentLon = lon;
-                    locationName.innerText = name;
-                    fetchWeatherData(lat, lon);
-                    return;
-                } catch (e) {
-                    localStorage.removeItem('savedLocation');
-                }
-            }
+            // Always request GPS right away as requested
+            getLocationViaGPS();
+        }
 
-            // Fallback immediately to New York if no location is provided/saved
+        function showLocationModalWithError() {
+            locationModal.classList.remove('hidden');
+            locationSearchStatus.classList.remove('hidden');
+            locationSearchStatus.classList.remove('text-red-500', 'text-slate-500');
+            locationSearchStatus.classList.add('text-brand-600', 'dark:text-brand-400');
+            locationSearchStatus.innerText = t('typeInEnglishOnly');
+            locationInput.focus();
+
+            // Default to New York in the background so it's not totally empty behind modal
             locationName.innerText = t('defaultLocation');
             currentLat = 40.7128;
             currentLon = -74.0060;
@@ -843,15 +873,11 @@
                         fetchWeatherData(currentLat, currentLon);
                     },
                     (error) => {
-                        locationName.innerText = t('defaultLocation');
-                        currentLat = 40.7128; currentLon = -74.0060;
-                        fetchWeatherData(currentLat, currentLon);
+                        showLocationModalWithError();
                     }
                 );
             } else {
-                locationName.innerText = t('defaultLocation');
-                currentLat = 40.7128; currentLon = -74.0060;
-                fetchWeatherData(currentLat, currentLon);
+                showLocationModalWithError();
             }
         }
 
@@ -880,7 +906,6 @@
 
             } catch (error) {
                 console.error("Error fetching weather data", error);
-                // Keep skeletons running or show an error state
             }
         }
 

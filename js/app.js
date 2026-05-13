@@ -663,6 +663,7 @@ const closeModalBtn = document.getElementById('close-modal-btn');
 const locationForm = document.getElementById('location-form');
 const locationInput = document.getElementById('location-input');
 const locationSearchStatus = document.getElementById('location-search-status');
+const searchResultsContainer = document.getElementById('search-results-container');
 const useGpsBtn = document.getElementById('use-gps-btn');
 
 // Criteria Modal logic
@@ -670,17 +671,28 @@ const criteriaInfoModal = document.getElementById('criteria-info-modal');
 const criteriaInfoBtn = document.getElementById('criteria-info-btn');
 const closeCriteriaModalBtn = document.getElementById('close-criteria-modal-btn');
 
+// Close modals safely on hardware/browser back button
+window.addEventListener('popstate', () => {
+    locationModal.classList.add('hidden');
+    locationSearchStatus.classList.add('hidden');
+    if (searchResultsContainer) searchResultsContainer.classList.add('hidden');
+    criteriaInfoModal.classList.add('hidden');
+});
+
 criteriaInfoBtn.addEventListener('click', () => {
     criteriaInfoModal.classList.remove('hidden');
+    history.pushState({ modalOpen: true }, '', '');
 });
 
 closeCriteriaModalBtn.addEventListener('click', () => {
     criteriaInfoModal.classList.add('hidden');
+    if (history.state && history.state.modalOpen) history.back();
 });
 
 criteriaInfoModal.addEventListener('click', (e) => {
     if (e.target === criteriaInfoModal) {
         criteriaInfoModal.classList.add('hidden');
+        if (history.state && history.state.modalOpen) history.back();
     }
 });
 
@@ -723,17 +735,25 @@ document.querySelectorAll('.theme-toggle').forEach(btn => {
 changeLocationBtn.addEventListener('click', () => {
     locationModal.classList.remove('hidden');
     locationInput.focus();
+    searchResultsContainer.classList.add('hidden');
+    searchResultsContainer.innerHTML = '';
+    locationInput.value = '';
+    history.pushState({ modalOpen: true }, '', '');
 });
 
 closeModalBtn.addEventListener('click', () => {
     locationModal.classList.add('hidden');
     locationSearchStatus.classList.add('hidden');
+    searchResultsContainer.classList.add('hidden');
+    if (history.state && history.state.modalOpen) history.back();
 });
 
 locationModal.addEventListener('click', (e) => {
     if (e.target === locationModal) {
         locationModal.classList.add('hidden');
         locationSearchStatus.classList.add('hidden');
+        searchResultsContainer.classList.add('hidden');
+        if (history.state && history.state.modalOpen) history.back();
     }
 });
 
@@ -794,22 +814,42 @@ locationForm.addEventListener('submit', async (e) => {
     locationSearchStatus.classList.remove('text-red-500');
     locationSearchStatus.classList.add('text-slate-500');
     locationSearchStatus.innerText = t('searching');
+    searchResultsContainer.classList.add('hidden');
+    searchResultsContainer.innerHTML = '';
 
     try {
-        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=1&language=en&format=json`;
+        const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(query)}&count=10&language=en&format=json`;
         const response = await fetch(url);
         const data = await response.json();
 
         if (data.results && data.results.length > 0) {
-            const result = data.results[0];
-            const areaName = result.admin1 ? `, ${result.admin1}` : '';
-            const displayName = `${result.name}${areaName}`;
-
-            saveAndFetchLocation(result.latitude, result.longitude, displayName);
-
-            locationModal.classList.add('hidden');
-            locationInput.value = '';
             locationSearchStatus.classList.add('hidden');
+            searchResultsContainer.classList.remove('hidden');
+
+            data.results.forEach(result => {
+                const areaName = result.admin1 ? `${result.admin1}` : '';
+                const countryName = result.country ? `${result.country}` : '';
+                const subtext = [areaName, countryName].filter(Boolean).join(', ');
+                const displayName = `${result.name}${areaName ? ', ' + areaName : ''}`;
+
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'w-full text-left px-4 py-3 hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors flex flex-col gap-0.5 outline-none focus:bg-slate-100 dark:focus:bg-slate-800/80';
+                btn.innerHTML = `
+                    <span class="font-bold text-slate-800 dark:text-slate-200 text-sm">${result.name}</span>
+                    ${subtext ? `<span class="text-xs text-slate-500 dark:text-slate-400">${subtext}</span>` : ''}
+                `;
+
+                btn.addEventListener('click', () => {
+                    saveAndFetchLocation(result.latitude, result.longitude, displayName);
+                    locationModal.classList.add('hidden');
+                    locationInput.value = '';
+                    searchResultsContainer.classList.add('hidden');
+                    if (history.state && history.state.modalOpen) history.back();
+                });
+
+                searchResultsContainer.appendChild(btn);
+            });
         } else {
             locationSearchStatus.classList.remove('text-slate-500');
             locationSearchStatus.classList.add('text-red-500');
@@ -827,6 +867,7 @@ useGpsBtn.addEventListener('click', () => {
     locationModal.classList.add('hidden');
     showSkeleton();
     currentWeatherData = null;
+    if (history.state && history.state.modalOpen) history.back();
     getLocationViaGPS();
 });
 

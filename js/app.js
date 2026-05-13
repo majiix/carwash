@@ -1085,7 +1085,13 @@ function renderDashboard(days, bestDayIndex, streakLength) {
             : "p-3 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between gap-3 transition-colors text-slate-500 dark:text-slate-400";
 
         const titleColor = isRecommended ? "text-slate-900 dark:text-white font-bold" : "font-medium text-slate-700 dark:text-slate-300";
-        const iconContainer = isRecommended ? "bg-brand-50 dark:bg-brand-900/30 text-brand-600 dark:text-brand-400" : "bg-slate-100 dark:bg-slate-800 text-slate-400";
+
+        let iconContainer = "";
+        if (day.isDirty) {
+            iconContainer = "bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400";
+        } else {
+            iconContainer = "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400";
+        }
 
         const badgeHtml = isRecommended
             ? `<div class="absolute -top-2.5 right-4 bg-brand-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">${t('bestDayBadge')}</div>`

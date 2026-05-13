@@ -7,6 +7,7 @@ const translations = {
         recommendationTitle: "The Verdict",
         waitItOut: "Nah, hold off.",
         waitReason: "Looks like rain or snow is rolling in soon. Save your cash and wait for better weather.",
+        dynamicWaitReason: "Hold off. The forecast shows {reasons} coming up. Save your cash for better weather.",
         targetDateLabel: "Target Date",
         pending: "Pending",
         forecastAnalysis: "7-Day Agenda",
@@ -33,12 +34,31 @@ const translations = {
         cleanDuration: "Clean For",
         days: "Days",
         activeCriteria: "Active Criteria",
+        criteriaInfoTitle: "Criteria Details",
         critBadWeather: "Avoid Rain & Snow",
         critBadWeatherDesc: "Skips days with active bad weather.",
+        critBadWeatherInfo: "This ignores days where the weather forecast indicates active precipitation like rain, sleet, or snow.",
         critHighPrecip: "Precipitation > 30%",
         critHighPrecipDesc: "Skips days with high chance of rain.",
+        critHighPrecipInfo: "This ignores days where the chance of rain is higher than 30%, even if it is not actively raining.",
         critHighWind: "Avoid High Wind",
         critHighWindDesc: "Skips days with high wind speeds (>30km/h).",
+        critHighWindInfo: "This ignores days with wind speeds over 30km/h, which can blow dust and dirt onto your wet car before it dries.",
+        critFreezing: "Avoid Freezing",
+        critFreezingDesc: "Skips days below 0°C (32°F).",
+        critFreezingInfo: "This ignores days where the temperature drops below 0°C (32°F) to prevent water from freezing on your car doors and locks.",
+        critExtremeHeat: "Avoid Extreme Heat",
+        critExtremeHeatDesc: "Skips days above 32°C (90°F).",
+        critExtremeHeatInfo: "This ignores days where temperatures exceed 32°C (90°F), which causes soap and water to dry too quickly and leave stubborn spots.",
+        critHighUV: "Avoid High UV",
+        critHighUVDesc: "Skips days with UV Index > 7.",
+        critHighUVInfo: "This ignores days with a UV index higher than 7, which can bake washing chemicals directly into your paint.",
+        reason_badWeather: "rain or snow",
+        reason_highPrecip: "high chances of rain",
+        reason_highWind: "strong winds",
+        reason_freezing: "freezing temperatures",
+        reason_extremeHeat: "extreme heat",
+        reason_highUV: "high UV levels",
         weather: {
             0: "Clear skies", 1: "Mostly clear", 2: "Partly cloudy", 3: "Cloudy",
             45: "Foggy", 48: "Freezing fog", 51: "Light drizzle", 53: "Drizzling",
@@ -55,6 +75,7 @@ const translations = {
         recommendationTitle: "El Veredicto",
         waitItOut: "Espera un poco.",
         waitReason: "Parece que lloverá pronto. Guarda tu dinero y espera a que mejore.",
+        dynamicWaitReason: "Espera un poco. El pronóstico indica {reasons} en los próximos días. Guarda tu dinero para un mejor clima.",
         targetDateLabel: "Fecha Ideal",
         pending: "Pendiente",
         forecastAnalysis: "Agenda 7 Días",
@@ -81,12 +102,31 @@ const translations = {
         cleanDuration: "Limpio Por",
         days: "Días",
         activeCriteria: "Criterios Activos",
+        criteriaInfoTitle: "Detalles de Criterios",
         critBadWeather: "Evitar Lluvia/Nieve",
         critBadWeatherDesc: "Omite días con mal tiempo.",
+        critBadWeatherInfo: "Ignora los días en los que el pronóstico indica precipitaciones activas como lluvia, aguanieve o nieve.",
         critHighPrecip: "Probabilidad > 30%",
         critHighPrecipDesc: "Omite días con alta probabilidad de lluvia.",
+        critHighPrecipInfo: "Ignora los días en los que la probabilidad de lluvia es superior al 30%, incluso si no llueve activamente.",
         critHighWind: "Evitar Viento Fuerte",
         critHighWindDesc: "Omite días con vientos fuertes (>30km/h).",
+        critHighWindInfo: "Ignora los días con vientos superiores a 30 km/h, que pueden soplar polvo y suciedad sobre tu auto mojado.",
+        critFreezing: "Evitar Heladas",
+        critFreezingDesc: "Omite días bajo 0°C.",
+        critFreezingInfo: "Ignora los días en que la temperatura desciende por debajo de 0°C para evitar que el agua se congele en las puertas de tu auto.",
+        critExtremeHeat: "Evitar Calor Extremo",
+        critExtremeHeatDesc: "Omite días sobre 32°C.",
+        critExtremeHeatInfo: "Ignora los días en los que la temperatura supera los 32°C, lo que hace que el jabón y el agua se sequen demasiado rápido.",
+        critHighUV: "Evitar UV Alto",
+        critHighUVDesc: "Omite días con Índice UV > 7.",
+        critHighUVInfo: "Ignora los días con un índice UV superior a 7, que puede hornear los productos químicos de lavado en tu pintura.",
+        reason_badWeather: "lluvia o nieve",
+        reason_highPrecip: "alta probabilidad de lluvia",
+        reason_highWind: "fuertes vientos",
+        reason_freezing: "temperaturas bajo cero",
+        reason_extremeHeat: "calor extremo",
+        reason_highUV: "altos niveles de UV",
         weather: {
             0: "Despejado", 1: "Casi despejado", 2: "Nublado parcial", 3: "Nublado",
             45: "Niebla", 48: "Niebla helada", 51: "Llovizna", 53: "Llovizna",
@@ -103,6 +143,7 @@ const translations = {
         recommendationTitle: "Le Verdict",
         waitItOut: "Laisse tomber.",
         waitReason: "Il va pleuvoir ou neiger. Garde ton argent.",
+        dynamicWaitReason: "Laisse tomber pour l'instant. On prévoit {reasons} dans les prochains jours.",
         targetDateLabel: "Date Cible",
         pending: "En attente",
         forecastAnalysis: "Agenda 7 Jours",
@@ -129,12 +170,31 @@ const translations = {
         cleanDuration: "Propre Pour",
         days: "Jours",
         activeCriteria: "Critères Actifs",
+        criteriaInfoTitle: "Détails des Critères",
         critBadWeather: "Éviter Pluie/Neige",
         critBadWeatherDesc: "Ignore les jours de mauvais temps.",
+        critBadWeatherInfo: "Ignore les jours où les prévisions météorologiques indiquent des précipitations actives comme la pluie ou la neige.",
         critHighPrecip: "Précipitations > 30%",
         critHighPrecipDesc: "Ignore les jours avec risque de pluie.",
+        critHighPrecipInfo: "Ignore les jours où les risques de pluie dépassent 30 %, même s'il ne pleut pas activement.",
         critHighWind: "Éviter Vent Fort",
         critHighWindDesc: "Ignore les jours avec vent fort (>30km/h).",
+        critHighWindInfo: "Ignore les jours avec des vents de plus de 30 km/h, qui peuvent souffler de la poussière sur votre voiture.",
+        critFreezing: "Éviter le Gel",
+        critFreezingDesc: "Ignore les jours sous 0°C.",
+        critFreezingInfo: "Ignore les jours où la température descend en dessous de 0°C pour éviter que l'eau ne gèle sur vos portières.",
+        critExtremeHeat: "Éviter la Chaleur",
+        critExtremeHeatDesc: "Ignore les jours au-dessus de 32°C.",
+        critExtremeHeatInfo: "Ignore les jours où la température dépasse 32°C, ce qui fait sécher le savon trop rapidement.",
+        critHighUV: "Éviter UV Élevé",
+        critHighUVDesc: "Ignore les jours avec un Indice UV > 7.",
+        critHighUVInfo: "Ignore les jours avec un indice UV supérieur à 7, qui peut cuire les produits chimiques sur votre peinture.",
+        reason_badWeather: "pluie ou neige",
+        reason_highPrecip: "forts risques de pluie",
+        reason_highWind: "vents violents",
+        reason_freezing: "températures glaciales",
+        reason_extremeHeat: "chaleur extrême",
+        reason_highUV: "niveaux UV élevés",
         weather: {
             0: "Dégagé", 1: "Presque dégagé", 2: "Nuageux", 3: "Couvert",
             45: "Brouillard", 48: "Brouillard givrant", 51: "Petite bruine", 53: "Bruine",
@@ -151,6 +211,7 @@ const translations = {
         recommendationTitle: "最终建议",
         waitItOut: "还是再等等吧。",
         waitReason: "眼看着就要下雨下雪了，别白花钱。",
+        dynamicWaitReason: "先等等。预报显示接下来会有{reasons}。等天气好点再洗吧。",
         targetDateLabel: "目标日期",
         pending: "待定",
         forecastAnalysis: "7天日程",
@@ -177,12 +238,31 @@ const translations = {
         cleanDuration: "保持干净",
         days: "天",
         activeCriteria: "启用条件",
+        criteriaInfoTitle: "洗车条件详情",
         critBadWeather: "避开雨雪",
         critBadWeatherDesc: "避开天气恶劣的日子。",
+        critBadWeatherInfo: "忽略天气预报显示有雨、雨夹雪或雪的日子。",
         critHighPrecip: "降水概率 > 30%",
         critHighPrecipDesc: "避开降水概率高的日子。",
+        critHighPrecipInfo: "忽略降水概率高于 30% 的日子，即使当前没有下雨。",
         critHighWind: "避开大风",
         critHighWindDesc: "避开风速高的日子 (>30km/h)。",
+        critHighWindInfo: "忽略风速超过 30 公里/小时的日子，大风会把灰尘吹到湿漉漉的车上。",
+        critFreezing: "避开结冰",
+        critFreezingDesc: "避开低于0°C的日子。",
+        critFreezingInfo: "忽略气温低于 0°C (32°F) 的日子，防止水在车门上结冰。",
+        critExtremeHeat: "避开极热",
+        critExtremeHeatDesc: "避开高于32°C的日子。",
+        critExtremeHeatInfo: "忽略气温超过 32°C (90°F) 的日子，高温会让洗车液干得太快并留下水渍。",
+        critHighUV: "避开高紫外线",
+        critHighUVDesc: "避开紫外线指数>7的日子。",
+        critHighUVInfo: "忽略紫外线指数高于 7 的日子，强紫外线会把化学物质烤入车漆。",
+        reason_badWeather: "雨雪天气",
+        reason_highPrecip: "高降水概率",
+        reason_highWind: "强风",
+        reason_freezing: "冰冻气温",
+        reason_extremeHeat: "极端高温",
+        reason_highUV: "高紫外线",
         weather: {
             0: "大晴天", 1: "多半晴天", 2: "有点云", 3: "阴天",
             45: "大雾", 48: "雾凇", 51: "毛毛雨", 53: "小雨",
@@ -199,6 +279,7 @@ const translations = {
         recommendationTitle: "हमारी सलाह",
         waitItOut: "अभी रहने दो यार।",
         waitReason: "बारिश होने वाली है। पैसे बचाओ।",
+        dynamicWaitReason: "अभी रुक जाएं। आने वाले दिनों में {reasons} की उम्मीद है।",
         targetDateLabel: "सही तारीख",
         pending: "बाकी है",
         forecastAnalysis: "7-दिन का एजेंडा",
@@ -225,12 +306,31 @@ const translations = {
         cleanDuration: "साफ़ रहेगी",
         days: "दिन",
         activeCriteria: "सक्रिय मानदंड",
+        criteriaInfoTitle: "मानदंड विवरण",
         critBadWeather: "बारिश/बर्फ से बचें",
         critBadWeatherDesc: "खराब मौसम वाले दिनों को छोड़ें।",
+        critBadWeatherInfo: "यह उन दिनों को अनदेखा करता है जहां मौसम पूर्वानुमान सक्रिय वर्षा को दर्शाता है।",
         critHighPrecip: "बारिश की संभावना > 30%",
         critHighPrecipDesc: "बारिश की उच्च संभावना वाले दिनों को छोड़ें।",
+        critHighPrecipInfo: "यह उन दिनों को अनदेखा करता है जहां बारिश की संभावना 30% से अधिक है।",
         critHighWind: "तेज़ हवा से बचें",
         critHighWindDesc: "तेज़ हवा वाले दिनों को छोड़ें (>30km/h)।",
+        critHighWindInfo: "यह 30 किमी/घंटा से अधिक हवा की गति वाले दिनों को अनदेखा करता है।",
+        critFreezing: "जमने से बचें",
+        critFreezingDesc: "0°C से कम तापमान वाले दिनों को छोड़ें।",
+        critFreezingInfo: "यह उन दिनों को अनदेखा करता है जहां तापमान 0°C (32°F) से नीचे चला जाता है।",
+        critExtremeHeat: "तेज़ गर्मी से बचें",
+        critExtremeHeatDesc: "32°C से अधिक तापमान वाले दिनों को छोड़ें।",
+        critExtremeHeatInfo: "यह उन दिनों को अनदेखा करता है जहां तापमान 32°C (90°F) से अधिक हो जाता है।",
+        critHighUV: "उच्च UV से बचें",
+        critHighUVDesc: "UV इंडेक्स > 7 वाले दिनों को छोड़ें।",
+        critHighUVInfo: "यह 7 से अधिक यूवी इंडेक्स वाले दिनों को अनदेखा करता है।",
+        reason_badWeather: "बारिश या बर्फ",
+        reason_highPrecip: "बारिश की उच्च संभावना",
+        reason_highWind: "तेज हवाएं",
+        reason_freezing: "जमा देने वाला तापमान",
+        reason_extremeHeat: "भीषण गर्मी",
+        reason_highUV: "उच्च यूवी (UV) स्तर",
         weather: {
             0: "साफ़", 1: "ज़्यादातर साफ़", 2: "थोड़े बादल", 3: "बादल",
             45: "कोहरा", 48: "जमता कोहरा", 51: "बूंदाबांदी", 53: "बूंदाबांदी",
@@ -247,6 +347,7 @@ const translations = {
         recommendationTitle: "الخلاصة",
         waitItOut: "استنّى شوية.",
         waitReason: "هتمطر قريب. وفر فلوسك.",
+        dynamicWaitReason: "استنّى شوية. التوقعات بتشير لـ {reasons} الأيام الجاية.",
         targetDateLabel: "اليوم المناسب",
         pending: "لسه",
         forecastAnalysis: "أجندة 7 أيام",
@@ -273,12 +374,31 @@ const translations = {
         cleanDuration: "نظيفة لـ",
         days: "أيام",
         activeCriteria: "المعايير النشطة",
+        criteriaInfoTitle: "تفاصيل المعايير",
         critBadWeather: "تجنب المطر والثلج",
         critBadWeatherDesc: "يتخطى الأيام ذات الطقس السيئ.",
+        critBadWeatherInfo: "يتجاهل الأيام التي تشير فيها التوقعات إلى هطول أمطار أو ثلوج.",
         critHighPrecip: "احتمالية المطر > 30%",
         critHighPrecipDesc: "يتخطى الأيام ذات احتمالية المطر العالية.",
+        critHighPrecipInfo: "يتجاهل الأيام التي تزيد فيها فرصة هطول الأمطار عن 30٪.",
         critHighWind: "تجنب الرياح القوية",
         critHighWindDesc: "يتخطى الأيام ذات الرياح القوية (>30 كم/ساعة).",
+        critHighWindInfo: "يتجاهل الأيام التي تزيد فيها سرعة الرياح عن 30 كم/ساعة، والتي يمكن أن تنفخ الغبار على سيارتك.",
+        critFreezing: "تجنب التجمد",
+        critFreezingDesc: "يتخطى الأيام تحت 0°C.",
+        critFreezingInfo: "يتجاهل الأيام التي تنخفض فيها درجة الحرارة عن 0 درجة مئوية لمنع تجمد المياه.",
+        critExtremeHeat: "تجنب الحر الشديد",
+        critExtremeHeatDesc: "يتخطى الأيام فوق 32°C.",
+        critExtremeHeatInfo: "يتجاهل الأيام التي تتجاوز فيها درجات الحرارة 32 درجة مئوية.",
+        critHighUV: "تجنب الأشعة فوق البنفسجية",
+        critHighUVDesc: "يتخطى الأيام بمؤشر UV > 7.",
+        critHighUVInfo: "يتجاهل الأيام التي يكون فيها مؤشر الأشعة فوق البنفسجية أعلى من 7.",
+        reason_badWeather: "مطر أو ثلج",
+        reason_highPrecip: "فرص عالية للمطر",
+        reason_highWind: "رياح قوية",
+        reason_freezing: "درجات حرارة متجمدة",
+        reason_extremeHeat: "حرارة شديدة",
+        reason_highUV: "مستويات عالية من الأشعة فوق البنفسجية",
         weather: {
             0: "صافي", 1: "صافي غالباً", 2: "مغيم", 3: "غيوم",
             45: "ضباب", 48: "ضباب بيجمد", 51: "رذاذ", 53: "رذاذ",
@@ -295,6 +415,7 @@ const translations = {
         recommendationTitle: "حرف آخر",
         waitItOut: "فعلاً دست نگه دار.",
         waitReason: "بارون تو راهه. پولتو هدر نده.",
+        dynamicWaitReason: "فعلاً دست نگه دار. پیش‌بینی‌ها نشان‌دهنده {reasons} در روزهای آینده است.",
         targetDateLabel: "تاریخ مناسب",
         pending: "نامشخص",
         forecastAnalysis: "برنامه ۷ روزه",
@@ -321,12 +442,31 @@ const translations = {
         cleanDuration: "تمیز برای",
         days: "روز",
         activeCriteria: "معیارهای فعال",
+        criteriaInfoTitle: "جزئیات معیارها",
         critBadWeather: "دوری از باران و برف",
         critBadWeatherDesc: "رد کردن روزهای با هوای بد.",
+        critBadWeatherInfo: "روزهایی که پیش‌بینی آب و هوا نشان‌دهنده بارش فعال است را نادیده می‌گیرد.",
         critHighPrecip: "احتمال بارش > 30%",
         critHighPrecipDesc: "رد کردن روزهای با احتمال بارش بالا.",
+        critHighPrecipInfo: "روزهایی را که احتمال بارندگی بیش از ۳۰ درصد است را نادیده می‌گیرد.",
         critHighWind: "دوری از باد شدید",
         critHighWindDesc: "رد کردن روزهای با باد شدید (>30km/h).",
+        critHighWindInfo: "روزهای با سرعت باد بیش از ۳۰ کیلومتر در ساعت را نادیده می‌گیرد.",
+        critFreezing: "دوری از یخبندان",
+        critFreezingDesc: "رد کردن روزهای زیر 0°C.",
+        critFreezingInfo: "روزهایی را که دما به زیر صفر درجه سانتی‌گراد می‌رسد برای جلوگیری از یخ‌زدگی آب روی ماشین نادیده می‌گیرد.",
+        critExtremeHeat: "دوری از گرمای شدید",
+        critExtremeHeatDesc: "رد کردن روزهای بالای 32°C.",
+        critExtremeHeatInfo: "روزهایی که دما از ۳۲ درجه سانتی‌گراد فراتر می‌رود را نادیده می‌گیرد.",
+        critHighUV: "دوری از اشعه UV",
+        critHighUVDesc: "رد کردن روزهای با شاخص UV > 7.",
+        critHighUVInfo: "روزهایی با شاخص UV بالاتر از ۷ را نادیده می‌گیرد.",
+        reason_badWeather: "باران یا برف",
+        reason_highPrecip: "احتمال بالای بارش",
+        reason_highWind: "بادهای شدید",
+        reason_freezing: "دمای یخبندان",
+        reason_extremeHeat: "گرمای شدید",
+        reason_highUV: "سطح بالای اشعه فرابنفش",
         weather: {
             0: "صاف", 1: "بیشتر صاف", 2: "کمی ابری", 3: "ابری",
             45: "مه", 48: "مه یخ‌زده", 51: "نم‌نم", 53: "نم‌نم",
@@ -343,10 +483,15 @@ let currentLang = 'en';
 let currentWeatherData = null;
 let currentLat = null;
 let currentLon = null;
+
+// Extreme Heat and High UV disabled by default
 let washCriteria = {
     badWeather: true,
     highPrecip: true,
-    highWind: true
+    highWind: true,
+    freezing: true,
+    extremeHeat: false,
+    highUV: false
 };
 
 function t(key, params = {}) {
@@ -437,23 +582,44 @@ function initCriteria() {
     const badWeatherToggle = document.getElementById('toggle-bad-weather');
     const highPrecipToggle = document.getElementById('toggle-high-precip');
     const highWindToggle = document.getElementById('toggle-high-wind');
+    const freezingToggle = document.getElementById('toggle-freezing');
+    const extremeHeatToggle = document.getElementById('toggle-extreme-heat');
+    const highUVToggle = document.getElementById('toggle-high-uv');
 
-    badWeatherToggle.checked = washCriteria.badWeather;
-    highPrecipToggle.checked = washCriteria.highPrecip;
-    highWindToggle.checked = washCriteria.highWind;
+    if(badWeatherToggle) badWeatherToggle.checked = washCriteria.badWeather;
+    if(highPrecipToggle) highPrecipToggle.checked = washCriteria.highPrecip;
+    if(highWindToggle) highWindToggle.checked = washCriteria.highWind;
+    if(freezingToggle) freezingToggle.checked = washCriteria.freezing;
+    if(extremeHeatToggle) extremeHeatToggle.checked = washCriteria.extremeHeat;
+    if(highUVToggle) highUVToggle.checked = washCriteria.highUV;
 
-    badWeatherToggle.addEventListener('change', (e) => {
+    if(badWeatherToggle) badWeatherToggle.addEventListener('change', (e) => {
         washCriteria.badWeather = e.target.checked;
         saveCriteria();
     });
 
-    highPrecipToggle.addEventListener('change', (e) => {
+    if(highPrecipToggle) highPrecipToggle.addEventListener('change', (e) => {
         washCriteria.highPrecip = e.target.checked;
         saveCriteria();
     });
 
-    highWindToggle.addEventListener('change', (e) => {
+    if(highWindToggle) highWindToggle.addEventListener('change', (e) => {
         washCriteria.highWind = e.target.checked;
+        saveCriteria();
+    });
+
+    if(freezingToggle) freezingToggle.addEventListener('change', (e) => {
+        washCriteria.freezing = e.target.checked;
+        saveCriteria();
+    });
+
+    if(extremeHeatToggle) extremeHeatToggle.addEventListener('change', (e) => {
+        washCriteria.extremeHeat = e.target.checked;
+        saveCriteria();
+    });
+
+    if(highUVToggle) highUVToggle.addEventListener('change', (e) => {
+        washCriteria.highUV = e.target.checked;
         saveCriteria();
     });
 }
@@ -498,6 +664,26 @@ const locationForm = document.getElementById('location-form');
 const locationInput = document.getElementById('location-input');
 const locationSearchStatus = document.getElementById('location-search-status');
 const useGpsBtn = document.getElementById('use-gps-btn');
+
+// Criteria Modal logic
+const criteriaInfoModal = document.getElementById('criteria-info-modal');
+const criteriaInfoBtn = document.getElementById('criteria-info-btn');
+const closeCriteriaModalBtn = document.getElementById('close-criteria-modal-btn');
+
+criteriaInfoBtn.addEventListener('click', () => {
+    criteriaInfoModal.classList.remove('hidden');
+});
+
+closeCriteriaModalBtn.addEventListener('click', () => {
+    criteriaInfoModal.classList.add('hidden');
+});
+
+criteriaInfoModal.addEventListener('click', (e) => {
+    if (e.target === criteriaInfoModal) {
+        criteriaInfoModal.classList.add('hidden');
+    }
+});
+
 
 const weatherCodes = {
     0: { icon: 'sun', badForWash: false },
@@ -734,7 +920,7 @@ function saveAndFetchLocation(lat, lon, name) {
 
 async function fetchWeatherData(lat, lon) {
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,uv_index_max&timezone=auto`;
         const response = await fetch(url);
 
         if (!response.ok) throw new Error("Weather data request failed.");
@@ -758,6 +944,7 @@ function processData(daily) {
         const descriptionStr = translations[currentLang]?.weather?.[code] || translations['en'].weather[code] || 'Unknown';
         const precipProb = daily.precipitation_probability_max[i];
         const windSpeed = daily.windspeed_10m_max[i];
+        const uvIndexRaw = daily.uv_index_max && daily.uv_index_max[i] !== null ? daily.uv_index_max[i] : 0;
 
         const dateObj = new Date(today);
         dateObj.setDate(today.getDate() + i);
@@ -767,10 +954,16 @@ function processData(daily) {
 
         let dayName = i === 0 ? t('todayStr') : i === 1 ? t('tomorrowStr') : localWeekday;
 
-        const isDirtyDay =
-            (washCriteria.badWeather && weatherInfo.badForWash) ||
-            (washCriteria.highPrecip && precipProb > 30) ||
-            (washCriteria.highWind && windSpeed > 30);
+        // Collect all reasons why this day might be flagged as dirty based on criteria
+        const dirtyReasons = [];
+        if (washCriteria.badWeather && weatherInfo.badForWash) dirtyReasons.push('badWeather');
+        if (washCriteria.highPrecip && precipProb > 30) dirtyReasons.push('highPrecip');
+        if (washCriteria.highWind && windSpeed > 30) dirtyReasons.push('highWind');
+        if (washCriteria.freezing && daily.temperature_2m_min[i] <= 0) dirtyReasons.push('freezing');
+        if (washCriteria.extremeHeat && daily.temperature_2m_max[i] > 32) dirtyReasons.push('extremeHeat');
+        if (washCriteria.highUV && uvIndexRaw > 7) dirtyReasons.push('highUV');
+
+        const isDirtyDay = dirtyReasons.length > 0;
 
         daysData.push({
             index: i,
@@ -780,9 +973,11 @@ function processData(daily) {
             minTemp: Math.round(daily.temperature_2m_min[i]),
             precipProb: precipProb,
             windSpeed: Math.round(windSpeed),
+            uvIndex: Math.round(uvIndexRaw),
             desc: descriptionStr,
             icon: weatherInfo.icon,
-            isDirty: isDirtyDay
+            isDirty: isDirtyDay,
+            dirtyReasons: dirtyReasons
         });
     }
 
@@ -830,7 +1025,33 @@ function renderDashboard(days, bestDayIndex, streakLength) {
     if (bestDayIndex === -1) {
         verdictCard.classList.add('bg-accent-400', 'text-slate-900');
         verdictTitle.innerText = t('waitItOut');
-        verdictReason.innerText = t('waitReason');
+
+        // Dynamic wait reason construction
+        let foundReasons = new Set();
+        // Check reasons for the next 3 days to give a relevant dynamic explanation
+        for(let i=0; i<3; i++) {
+            if(days[i] && days[i].dirtyReasons) {
+                days[i].dirtyReasons.forEach(r => foundReasons.add(r));
+            }
+        }
+
+        // Fallback to checking all 7 days if the first 3 days were somehow skipped
+        if(foundReasons.size === 0) {
+            for(let i=0; i<7; i++) {
+                if(days[i] && days[i].dirtyReasons) {
+                    days[i].dirtyReasons.forEach(r => foundReasons.add(r));
+                }
+            }
+        }
+
+        if (foundReasons.size > 0) {
+            let translatedReasons = Array.from(foundReasons).map(r => t('reason_' + r));
+            let reasonsString = translatedReasons.join(', ');
+            verdictReason.innerText = t('dynamicWaitReason', { reasons: reasonsString });
+        } else {
+            verdictReason.innerText = t('waitReason');
+        }
+
         targetDateText.innerText = t('checkBackLater');
     } else {
         verdictCard.classList.add('bg-brand-700', 'text-white');
@@ -887,11 +1108,14 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                     <div class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-1" dir="ltr">
                         ${day.maxTemp}° <span class="text-slate-400 font-medium text-xs">${day.minTemp}°</span>
                     </div>
-                    <div class="flex items-center gap-2 text-[11px] font-bold">
-                        <span class="${day.precipProb > 30 ? 'text-accent-500' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr">
+                    <div class="flex items-center justify-end gap-2 text-[11px] font-bold w-full">
+                        <span class="${day.precipProb > 30 ? 'text-accent-500' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Precipitation">
                             <i data-lucide="droplets" class="w-3 h-3"></i> ${day.precipProb}%
                         </span>
-                        <span class="${day.windSpeed > 30 ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr">
+                        <span class="${day.uvIndex > 7 ? 'text-purple-500 dark:text-purple-400' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="UV Index">
+                            <i data-lucide="sun-dim" class="w-3 h-3"></i> ${day.uvIndex}
+                        </span>
+                        <span class="${day.windSpeed > 30 ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind">
                             <i data-lucide="wind" class="w-3 h-3"></i> ${day.windSpeed}<span class="text-[9px] font-medium uppercase opacity-80">km/h</span>
                         </span>
                     </div>

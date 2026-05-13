@@ -139,7 +139,13 @@
                 </div>
 
                 <div class="mt-4 pt-6 border-t border-slate-100 dark:border-slate-800">
-                    <h3 class="text-lg font-bold mb-4" data-i18n="activeCriteria">Active Criteria</h3>
+                    <div class="flex items-center gap-2 mb-4">
+                        <h3 class="text-lg font-bold" data-i18n="activeCriteria">Active Criteria</h3>
+                        <button id="criteria-info-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Criteria Details">
+                            <i data-lucide="info" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+
                     <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
 
                         <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
@@ -187,6 +193,54 @@
                             <div>
                                 <h4 class="font-bold text-sm" data-i18n="critHighWind">Avoid High Wind</h4>
                                 <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critHighWindDesc">Skips days with high wind speeds (>30km/h).</p>
+                            </div>
+                        </label>
+
+                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <div class="flex items-center gap-3 w-full justify-between">
+                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
+                                    <i data-lucide="thermometer-snowflake" class="w-5 h-5 text-blue-500"></i>
+                                </div>
+                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="toggle-freezing" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm" data-i18n="critFreezing">Avoid Freezing</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critFreezingDesc">Skips days below 0°C (32°F).</p>
+                            </div>
+                        </label>
+
+                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <div class="flex items-center gap-3 w-full justify-between">
+                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
+                                    <i data-lucide="thermometer-sun" class="w-5 h-5 text-red-500"></i>
+                                </div>
+                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="toggle-extreme-heat" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm" data-i18n="critExtremeHeat">Avoid Extreme Heat</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critExtremeHeatDesc">Skips days above 32°C (90°F).</p>
+                            </div>
+                        </label>
+
+                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <div class="flex items-center gap-3 w-full justify-between">
+                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
+                                    <i data-lucide="sun-dim" class="w-5 h-5 text-purple-500"></i>
+                                </div>
+                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="toggle-high-uv" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm" data-i18n="critHighUV">Avoid High UV</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critHighUVDesc">Skips days with UV Index > 7.</p>
                             </div>
                         </label>
 
@@ -251,6 +305,7 @@
         </a>
     </footer>
 
+    <!-- Location Modal -->
     <div id="location-modal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
         <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 md:p-10 w-full max-w-md shadow-2xl transform transition-all border border-slate-100 dark:border-slate-800">
             <div class="flex justify-between items-center mb-8">
@@ -274,6 +329,74 @@
                 <button type="button" id="use-gps-btn" class="w-full text-sm bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 px-5 py-4 rounded-2xl transition-colors flex items-center justify-center gap-3 font-semibold text-slate-700 dark:text-slate-300">
                     <i data-lucide="navigation" class="w-4 h-4 text-brand-600 dark:text-brand-400"></i> <span data-i18n="useCurrentLoc">Use my location</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Criteria Info Modal -->
+    <div id="criteria-info-modal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
+        <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 md:p-10 w-full max-w-lg shadow-2xl transform transition-all border border-slate-100 dark:border-slate-800 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" data-i18n="criteriaInfoTitle">Criteria Details</h3>
+                <button id="close-criteria-modal-btn" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="flex flex-col gap-6 text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="cloud-rain" class="w-5 h-5 text-brand-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critBadWeather" class="text-slate-900 dark:text-white block mb-1">Avoid Rain & Snow</strong>
+                        <span data-i18n="critBadWeatherInfo">This ignores days where the weather forecast indicates active precipitation like rain, sleet, or snow.</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="umbrella" class="w-5 h-5 text-accent-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critHighPrecip" class="text-slate-900 dark:text-white block mb-1">Precipitation > 30%</strong>
+                        <span data-i18n="critHighPrecipInfo">This ignores days where the chance of rain is higher than 30%, even if it is not actively raining.</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="wind" class="w-5 h-5 text-slate-500 dark:text-slate-400"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critHighWind" class="text-slate-900 dark:text-white block mb-1">Avoid High Wind</strong>
+                        <span data-i18n="critHighWindInfo">This ignores days with wind speeds over 30km/h, which can blow dust and dirt onto your wet car before it dries.</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="thermometer-snowflake" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critFreezing" class="text-slate-900 dark:text-white block mb-1">Avoid Freezing</strong>
+                        <span data-i18n="critFreezingInfo">This ignores days where the temperature drops below 0°C (32°F) to prevent water from freezing on your car doors and locks.</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="thermometer-sun" class="w-5 h-5 text-red-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critExtremeHeat" class="text-slate-900 dark:text-white block mb-1">Avoid Extreme Heat</strong>
+                        <span data-i18n="critExtremeHeatInfo">This ignores days where temperatures exceed 32°C (90°F), which causes soap and water to dry too quickly and leave stubborn spots.</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="sun-dim" class="w-5 h-5 text-purple-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critHighUV" class="text-slate-900 dark:text-white block mb-1">Avoid High UV</strong>
+                        <span data-i18n="critHighUVInfo">This ignores days with a UV index higher than 7, which can bake washing chemicals directly into your paint.</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

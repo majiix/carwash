@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#0f766e" />
+    </linearGradient>
+    <linearGradient id="car-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#cbd5e1" />
+    </linearGradient>
+  </defs>
+  <!-- Background Round Rect -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)" />
+  <!-- Sparkles -->
+  <path d="M120 100 L125 115 L140 120 L125 125 L120 140 L115 125 L100 120 L115 115 Z" fill="#fbbf24" />
+  <path d="M400 360 L403 370 L413 373 L403 376 L400 386 L397 376 L387 373 L397 370 Z" fill="#fbbf24" />
+  <!-- Droplets -->
+  <path d="M256 60 C240 90 220 110 220 130 C220 150 236 166 256 166 C276 166 292 150 292 130 C292 110 272 90 256 60 Z" fill="#38bdf8" opacity="0.8" />
+  <path d="M170 120 C160 140 145 155 145 170 C145 185 157 197 170 197 C183 197 195 185 195 170 C195 155 180 140 170 120 Z" fill="#38bdf8" opacity="0.6" />
+  <!-- Sleek Car Shape -->
+  <path d="M130 330 C130 310 150 290 200 280 L230 235 C240 220 260 210 280 210 L350 210 C370 210 385 220 395 235 L425 280 C462 290 482 310 482 330 C482 355 450 370 410 370 L202 370 C162 370 130 355 130 330 Z" fill="url(#car-grad)" />
+  <!-- Car Cabin Glass -->
+  <path d="M245 275 L280 225 L345 225 L375 275 Z" fill="#1e293b" />
+  <!-- Bubbles -->
+  <circle cx="340" cy="150" r="16" fill="#f0fdfa" opacity="0.9" stroke="#5eead4" stroke-width="2" />
+  <circle cx="370" cy="130" r="10" fill="#f0fdfa" opacity="0.9" stroke="#5eead4" stroke-width="2" />
+  <circle cx="310" cy="120" r="8" fill="#f0fdfa" opacity="0.8" stroke="#5eead4" stroke-width="1.5" />
+</svg>

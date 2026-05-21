@@ -20,6 +20,7 @@ const translations = {
         errorConnecting: "Oops, connection error.",
         typeInEnglishOnly: "Location access denied. Please type city name in English.",
         defaultLocation: "New York, USA",
+        currentLocation: "Current Location",
         checkBackLater: "Check back later",
         washToday: "Go for it today!",
         washTodayStreak: "Weather's gorgeous today! Wash it now and enjoy spotless days.",
@@ -38,31 +39,47 @@ const translations = {
         critBadWeather: "Avoid Rain & Snow",
         critBadWeatherDesc: "Skips days with active bad weather.",
         critBadWeatherInfo: "This ignores days where the weather forecast indicates active precipitation like rain, sleet, or snow.",
-        critHighPrecip: "Precipitation > 30%",
+        critHighPrecip: "Precipitation > {val}%",
         critHighPrecipDesc: "Skips days with high chance of rain.",
-        critHighPrecipInfo: "This ignores days where the chance of rain is higher than 30%, even if it is not actively raining.",
+        critHighPrecipInfo: "This ignores days where the chance of rain is higher than {val}%, even if it is not actively raining.",
         critHighWind: "Avoid High Wind",
-        critHighWindDesc: "Skips days with high wind speeds (>30km/h).",
-        critHighWindInfo: "This ignores days with wind speeds over 30km/h, which can blow dust and dirt onto your wet car before it dries.",
+        critHighWindDesc: "Skips days with high wind speeds (>{val}km/h).",
+        critHighWindInfo: "This ignores days with wind speeds over {val}km/h, which can blow dust and dirt onto your wet car before it dries.",
         critFreezing: "Avoid Freezing",
-        critFreezingDesc: "Skips days below 0°C (32°F).",
-        critFreezingInfo: "This ignores days where the temperature drops below 0°C (32°F) to prevent water from freezing on your car doors and locks.",
+        critFreezingDesc: "Skips days below {val}°C.",
+        critFreezingInfo: "This ignores days where the temperature drops below {val}°C ({val_f}°F) to prevent water from freezing on your car doors and locks.",
         critExtremeHeat: "Avoid Extreme Heat",
-        critExtremeHeatDesc: "Skips days above 32°C (90°F).",
-        critExtremeHeatInfo: "This ignores days where temperatures exceed 32°C (90°F), which causes soap and water to dry too quickly and leave stubborn spots.",
+        critExtremeHeatDesc: "Skips days above {val}°C.",
+        critExtremeHeatInfo: "This ignores days where temperatures exceed {val}°C ({val_f}°F), which causes soap and water to dry too quickly and leave stubborn spots.",
         critHighUV: "Avoid High UV",
-        critHighUVDesc: "Skips days with UV Index > 7.",
-        critHighUVInfo: "This ignores days with a UV index higher than 7, which can bake washing chemicals directly into your paint.",
+        critHighUVDesc: "Skips days with UV Index > {val}.",
+        critHighUVInfo: "This ignores days with a UV index higher than {val}, which can bake washing chemicals directly into your paint.",
         reason_badWeather: "rain or snow",
         reason_highPrecip: "high chances of rain",
         reason_highWind: "strong winds",
         reason_freezing: "freezing temperatures",
         reason_extremeHeat: "extreme heat",
         reason_highUV: "high UV levels",
+        adjustThresholds: "Adjust Thresholds",
+        labelPrecip: "Precipitation Limit",
+        labelWind: "Wind Speed Limit",
+        labelFreezing: "Freezing Point",
+        labelHeat: "Extreme Heat Limit",
+        labelUV: "UV Index Limit",
+        descPrecip: "Maximum allowed probability of precipitation.",
+        descWind: "Maximum wind speed limit before washing is discouraged.",
+        descFreezing: "Avoid washing if temperature drops below this value.",
+        descHeat: "Avoid washing if temperature exceeds this value.",
+        descUV: "Avoid washing if UV index exceeds this value.",
+        resetDefaults: "Defaults",
+        saveBtn: "Save & Apply",
+        dataProvided: "Data by Open-Meteo",
         weather: {
             0: "Clear skies", 1: "Mostly clear", 2: "Partly cloudy", 3: "Cloudy",
             45: "Foggy", 48: "Freezing fog", 51: "Light drizzle", 53: "Drizzling",
-            55: "Heavy drizzle", 61: "Light rain", 63: "Raining", 65: "Pouring rain",
+            55: "Heavy drizzle", 56: "Light freezing drizzle", 57: "Dense freezing drizzle",
+            61: "Light rain", 63: "Raining", 65: "Pouring rain", 66: "Light freezing rain",
+            67: "Heavy freezing rain",
             71: "Light snow", 73: "Snowing", 75: "Heavy snow", 77: "Snow grains",
             80: "Light showers", 81: "Showers", 82: "Heavy showers",
             85: "Snow showers", 86: "Heavy snow showers", 95: "Thunderstorms",
@@ -88,6 +105,7 @@ const translations = {
         errorConnecting: "Error de conexión.",
         typeInEnglishOnly: "Acceso a ubicación denegado. Escribe la ciudad en inglés.",
         defaultLocation: "Nueva York, EE.UU.",
+        currentLocation: "Ubicación actual",
         checkBackLater: "Vuelve luego",
         washToday: "¡Hazlo hoy!",
         washTodayStreak: "¡El clima está genial! Lávalo hoy y disfruta días impecables.",
@@ -106,31 +124,47 @@ const translations = {
         critBadWeather: "Evitar Lluvia/Nieve",
         critBadWeatherDesc: "Omite días con mal tiempo.",
         critBadWeatherInfo: "Ignora los días en los que el pronóstico indica precipitaciones activas como lluvia, aguanieve o nieve.",
-        critHighPrecip: "Probabilidad > 30%",
+        critHighPrecip: "Probabilidad > {val}%",
         critHighPrecipDesc: "Omite días con alta probabilidad de lluvia.",
-        critHighPrecipInfo: "Ignora los días en los que la probabilidad de lluvia es superior al 30%, incluso si no llueve activamente.",
+        critHighPrecipInfo: "Ignora los días en los que la probabilidad de lluvia es superior al {val}%, incluso si no llueve activamente.",
         critHighWind: "Evitar Viento Fuerte",
-        critHighWindDesc: "Omite días con vientos fuertes (>30km/h).",
-        critHighWindInfo: "Ignora los días con vientos superiores a 30 km/h, que pueden soplar polvo y suciedad sobre tu auto mojado.",
+        critHighWindDesc: "Omite días con vientos fuertes (>{val}km/h).",
+        critHighWindInfo: "Ignora los días con vientos superiores a {val} km/h, que pueden soplar polvo y suciedad sobre tu auto.",
         critFreezing: "Evitar Heladas",
-        critFreezingDesc: "Omite días bajo 0°C.",
-        critFreezingInfo: "Ignora los días en que la temperatura desciende por debajo de 0°C para evitar que el agua se congele en las puertas de tu auto.",
+        critFreezingDesc: "Omite días bajo {val}°C.",
+        critFreezingInfo: "Ignora los días en que la temperatura desciende por debajo de {val}°C ({val_f}°F) para evitar congelaciones.",
         critExtremeHeat: "Evitar Calor Extremo",
-        critExtremeHeatDesc: "Omite días sobre 32°C.",
-        critExtremeHeatInfo: "Ignora los días en los que la temperatura supera los 32°C, lo que hace que el jabón y el agua se sequen demasiado rápido.",
+        critExtremeHeatDesc: "Omite días sobre {val}°C.",
+        critExtremeHeatInfo: "Ignora los días en los que la temperatura supera los {val}°C ({val_f}°F), lo que seca el jabón demasiado rápido.",
         critHighUV: "Evitar UV Alto",
-        critHighUVDesc: "Omite días con Índice UV > 7.",
-        critHighUVInfo: "Ignora los días con un índice UV superior a 7, que puede hornear los productos químicos de lavado en tu pintura.",
+        critHighUVDesc: "Omite días con Índice UV > {val}.",
+        critHighUVInfo: "Ignora los días con un índice UV superior a {val}, que puede hornear los productos químicos en la pintura.",
         reason_badWeather: "lluvia o nieve",
         reason_highPrecip: "alta probabilidad de lluvia",
         reason_highWind: "fuertes vientos",
         reason_freezing: "temperaturas bajo cero",
         reason_extremeHeat: "calor extremo",
         reason_highUV: "altos niveles de UV",
+        adjustThresholds: "Ajustar Límites",
+        labelPrecip: "Límite de Precipitación",
+        labelWind: "Límite de Viento",
+        labelFreezing: "Punto de Congelación",
+        labelHeat: "Límite de Calor Extremo",
+        labelUV: "Límite de Índice UV",
+        descPrecip: "Probabilidad máxima permitida de precipitación.",
+        descWind: "Velocidad máxima del viento permitida antes de desaconsejar el lavado.",
+        descFreezing: "Evita lavar si la temperatura baja de este valor.",
+        descHeat: "Evita lavar si la temperatura supera este valor.",
+        descUV: "Evita lavar si el índice UV supera este valor.",
+        resetDefaults: "Por Defecto",
+        saveBtn: "Guardar y Aplicar",
+        dataProvided: "Datos de Open-Meteo",
         weather: {
             0: "Despejado", 1: "Casi despejado", 2: "Nublado parcial", 3: "Nublado",
             45: "Niebla", 48: "Niebla helada", 51: "Llovizna", 53: "Llovizna",
-            55: "Llovizna fuerte", 61: "Lluvia ligera", 63: "Lloviendo", 65: "Aguacero",
+            55: "Llovizna fuerte", 56: "Llovizna helada ligera", 57: "Llovizna helada densa",
+            61: "Lluvia ligera", 63: "Lloviendo", 65: "Aguacero", 66: "Lluvia helada ligera",
+            67: "Lluvia helada fuerte",
             71: "Nieve ligera", 73: "Nevando", 75: "Mucha nieve", 77: "Granizo",
             80: "Chubascos", 81: "Chubascos", 82: "Tormenta",
             85: "Nieve", 86: "Tormenta nieve", 95: "Tormentas",
@@ -156,6 +190,7 @@ const translations = {
         errorConnecting: "Erreur de connexion.",
         typeInEnglishOnly: "Position refusée. Veuillez taper la ville en anglais.",
         defaultLocation: "New York, USA",
+        currentLocation: "Position actuelle",
         checkBackLater: "Reviens plus tard",
         washToday: "Vas-y aujourd'hui !",
         washTodayStreak: "Le temps est superbe ! Lave-la maintenant.",
@@ -174,31 +209,47 @@ const translations = {
         critBadWeather: "Éviter Pluie/Neige",
         critBadWeatherDesc: "Ignore les jours de mauvais temps.",
         critBadWeatherInfo: "Ignore les jours où les prévisions météorologiques indiquent des précipitations actives comme la pluie ou la neige.",
-        critHighPrecip: "Précipitations > 30%",
+        critHighPrecip: "Précipitations > {val}%",
         critHighPrecipDesc: "Ignore les jours avec risque de pluie.",
-        critHighPrecipInfo: "Ignore les jours où les risques de pluie dépassent 30 %, même s'il ne pleut pas activement.",
+        critHighPrecipInfo: "Ignore les jours où les risques de pluie dépassent {val}%, même s'il ne pleut pas activement.",
         critHighWind: "Éviter Vent Fort",
-        critHighWindDesc: "Ignore les jours avec vent fort (>30km/h).",
-        critHighWindInfo: "Ignore les jours avec des vents de plus de 30 km/h, qui peuvent souffler de la poussière sur votre voiture.",
+        critHighWindDesc: "Ignore les jours avec vent fort (>{val}km/h).",
+        critHighWindInfo: "Ignore les jours avec des vents de plus de {val} km/h, qui peuvent souffler de la poussière.",
         critFreezing: "Éviter le Gel",
-        critFreezingDesc: "Ignore les jours sous 0°C.",
-        critFreezingInfo: "Ignore les jours où la température descend en dessous de 0°C pour éviter que l'eau ne gèle sur vos portières.",
+        critFreezingDesc: "Ignore les jours sous {val}°C.",
+        critFreezingInfo: "Ignore les jours où la température descend en dessous de {val}°C ({val_f}°F) pour éviter le gel.",
         critExtremeHeat: "Éviter la Chaleur",
-        critExtremeHeatDesc: "Ignore les jours au-dessus de 32°C.",
-        critExtremeHeatInfo: "Ignore les jours où la température dépasse 32°C, ce qui fait sécher le savon trop rapidement.",
+        critExtremeHeatDesc: "Ignore les jours au-dessus de {val}°C.",
+        critExtremeHeatInfo: "Ignore les jours où la température dépasse {val}°C ({val_f}°F), faisant sécher le savon trop vite.",
         critHighUV: "Éviter UV Élevé",
-        critHighUVDesc: "Ignore les jours avec un Indice UV > 7.",
-        critHighUVInfo: "Ignore les jours avec un indice UV supérieur à 7, qui peut cuire les produits chimiques sur votre peinture.",
+        critHighUVDesc: "Ignore les jours avec un Indice UV > {val}.",
+        critHighUVInfo: "Ignore les jours avec un indice UV supérieur à {val}, ce qui cuit les produits sur la peinture.",
         reason_badWeather: "pluie ou neige",
         reason_highPrecip: "forts risques de pluie",
         reason_highWind: "vents violents",
         reason_freezing: "températures glaciales",
         reason_extremeHeat: "chaleur extrême",
         reason_highUV: "niveaux UV élevés",
+        adjustThresholds: "Ajuster les Seuils",
+        labelPrecip: "Limite de Précipitations",
+        labelWind: "Limite de Vitesse du Vent",
+        labelFreezing: "Point de Gel",
+        labelHeat: "Limite de Chaleur Extrême",
+        labelUV: "Limite d'Indice UV",
+        descPrecip: "Probabilité maximale de précipitations autorisée.",
+        descWind: "Vitesse maximale du vent autorisée avant de déconseiller le lavage.",
+        descFreezing: "Éviter le lavage si la température descend en dessous de cette valeur.",
+        descHeat: "Éviter le lavage si la température dépasse cette valeur.",
+        descUV: "Éviter le lavage si l'indice UV dépasse cette valeur.",
+        resetDefaults: "Par Défaut",
+        saveBtn: "Enregistrer & Appliquer",
+        dataProvided: "Données par Open-Meteo",
         weather: {
             0: "Dégagé", 1: "Presque dégagé", 2: "Nuageux", 3: "Couvert",
             45: "Brouillard", 48: "Brouillard givrant", 51: "Petite bruine", 53: "Bruine",
-            55: "Forte bruine", 61: "Petite pluie", 63: "Pluie", 65: "Forte pluie",
+            55: "Forte bruine", 56: "Bruine verglaçante légère", 57: "Bruine verglaçante forte",
+            61: "Petite pluie", 63: "Pluie", 65: "Forte pluie", 66: "Pluie verglaçante légère",
+            67: "Pluie verglaçante forte",
             71: "Neige légère", 73: "Neige", 75: "Forte neige", 77: "Grains neige",
             80: "Averses", 81: "Averses", 82: "Fortes averses",
             85: "Averses neige", 86: "Tempête neige", 95: "Orages",
@@ -224,6 +275,7 @@ const translations = {
         errorConnecting: "连不上网了。",
         typeInEnglishOnly: "定位权限被拒绝。请仅用英文搜索城市。",
         defaultLocation: "纽约，美国",
+        currentLocation: "当前位置",
         checkBackLater: "晚点来看看",
         washToday: "今天就洗吧！",
         washTodayStreak: "今天天气完美！现在洗能帅好几天。",
@@ -242,31 +294,47 @@ const translations = {
         critBadWeather: "避开雨雪",
         critBadWeatherDesc: "避开天气恶劣的日子。",
         critBadWeatherInfo: "忽略天气预报显示有雨、雨夹雪或雪的日子。",
-        critHighPrecip: "降水概率 > 30%",
+        critHighPrecip: "降水概率 > {val}%",
         critHighPrecipDesc: "避开降水概率高的日子。",
-        critHighPrecipInfo: "忽略降水概率高于 30% 的日子，即使当前没有下雨。",
+        critHighPrecipInfo: "忽略降水概率高于 {val}% 的日子，即使当前没有下雨。",
         critHighWind: "避开大风",
-        critHighWindDesc: "避开风速高的日子 (>30km/h)。",
-        critHighWindInfo: "忽略风速超过 30 公里/小时的日子，大风会把灰尘吹到湿漉漉的车上。",
+        critHighWindDesc: "避开风速高的日子 (>{val}km/h)。",
+        critHighWindInfo: "忽略风速超过 {val} 公里/小时的日子，大风会把灰尘吹到湿漉漉的车上。",
         critFreezing: "避开结冰",
-        critFreezingDesc: "避开低于0°C的日子。",
-        critFreezingInfo: "忽略气温低于 0°C (32°F) 的日子，防止水在车门上结冰。",
+        critFreezingDesc: "避开低于 {val}°C 的日子。",
+        critFreezingInfo: "忽略气温低于 {val}°C ({val_f}°F) 的日子，防止水在车门上结冰。",
         critExtremeHeat: "避开极热",
-        critExtremeHeatDesc: "避开高于32°C的日子。",
-        critExtremeHeatInfo: "忽略气温超过 32°C (90°F) 的日子，高温会让洗车液干得太快并留下水渍。",
+        critExtremeHeatDesc: "避开高于 {val}°C 的日子。",
+        critExtremeHeatInfo: "忽略气温超过 {val}°C ({val_f}°F) 的日子，高温会让洗车液干得太快并留下水渍。",
         critHighUV: "避开高紫外线",
-        critHighUVDesc: "避开紫外线指数>7的日子。",
-        critHighUVInfo: "忽略紫外线指数高于 7 的日子，强紫外线会把化学物质烤入车漆。",
+        critHighUVDesc: "避开紫外线指数 > {val} 的日子。",
+        critHighUVInfo: "忽略紫外线指数高于 {val} 的日子，强紫外线会把化学物质烤入车漆。",
         reason_badWeather: "雨雪天气",
         reason_highPrecip: "高降水概率",
         reason_highWind: "强风",
         reason_freezing: "冰冻气温",
         reason_extremeHeat: "极端高温",
         reason_highUV: "高紫外线",
+        adjustThresholds: "调整阈值",
+        labelPrecip: "降水概率限制",
+        labelWind: "风速限制",
+        labelFreezing: "冰点限制",
+        labelHeat: "极端高温限制",
+        labelUV: "紫外线指数限制",
+        descPrecip: "允许的最大降水概率。",
+        descWind: "洗车前允许的最大风速限制。",
+        descFreezing: "如果温度低于此值，请避免洗车。",
+        descHeat: "如果温度超过此值，请避免洗车。",
+        descUV: "如果紫外线指数超过此值，请避免洗车。",
+        resetDefaults: "恢复默认",
+        saveBtn: "保存并应用",
+        dataProvided: "数据源自 Open-Meteo",
         weather: {
             0: "大晴天", 1: "多半晴天", 2: "有点云", 3: "阴天",
             45: "大雾", 48: "雾凇", 51: "毛毛雨", 53: "小雨",
-            55: "密集毛毛雨", 61: "小雨", 63: "下雨啦", 65: "大雨",
+            55: "密集毛毛雨", 56: "轻度冻毛毛雨", 57: "重度冻毛毛雨",
+            61: "小雨", 63: "下雨啦", 65: "大雨", 66: "轻度冻雨",
+            67: "重度冻雨",
             71: "小雪", 73: "下雪", 75: "大雪", 77: "米雪",
             80: "小阵雨", 81: "阵雨", 82: "大阵雨",
             85: "阵雪", 86: "暴风雪", 95: "打雷闪电",
@@ -277,7 +345,7 @@ const translations = {
         appTitle: "मुझे अपनी कार कब धोनी चाहिए?",
         locating: "ढूंढ रहा है...",
         recommendationTitle: "हमारी सलाह",
-        waitItOut: "अभी रहने दो यार।",
+        waitItOut: "अभी रहने do यार।",
         waitReason: "बारिश होने वाली है। पैसे बचाओ।",
         dynamicWaitReason: "अभी रुक जाएं। आने वाले दिनों में {reasons} की उम्मीद है।",
         targetDateLabel: "सही तारीख",
@@ -292,6 +360,7 @@ const translations = {
         errorConnecting: "कनेक्शन एरर।",
         typeInEnglishOnly: "लोकेशन नहीं मिली। कृपया केवल अंग्रेजी में शहर खोजें।",
         defaultLocation: "न्यूयॉर्क, यूएसए",
+        currentLocation: "वर्तमान स्थान",
         checkBackLater: "बाद में आना",
         washToday: "आज ही धो डालो!",
         washTodayStreak: "आज मौसम मस्त है! कार चकाचक रहेगी।",
@@ -310,34 +379,50 @@ const translations = {
         critBadWeather: "बारिश/बर्फ से बचें",
         critBadWeatherDesc: "खराब मौसम वाले दिनों को छोड़ें।",
         critBadWeatherInfo: "यह उन दिनों को अनदेखा करता है जहां मौसम पूर्वानुमान सक्रिय वर्षा को दर्शाता है।",
-        critHighPrecip: "बारिश की संभावना > 30%",
+        critHighPrecip: "बारिश की संभावना > {val}%",
         critHighPrecipDesc: "बारिश की उच्च संभावना वाले दिनों को छोड़ें।",
-        critHighPrecipInfo: "यह उन दिनों को अनदेखा करता है जहां बारिश की संभावना 30% से अधिक है।",
+        critHighPrecipInfo: "यह उन दिनों को अनदेखा करता है जहां बारिश की संभावना {val}% से अधिक है।",
         critHighWind: "तेज़ हवा से बचें",
-        critHighWindDesc: "तेज़ हवा वाले दिनों को छोड़ें (>30km/h)।",
-        critHighWindInfo: "यह 30 किमी/घंटा से अधिक हवा की गति वाले दिनों को अनदेखा करता है।",
+        critHighWindDesc: "तेज़ हवा वाले दिनों को छोड़ें (>{val}km/h)।",
+        critHighWindInfo: "यह {val} किमी/घंटा से अधिक हवा की गति वाले दिनों को अनदेखा करता है।",
         critFreezing: "जमने से बचें",
-        critFreezingDesc: "0°C से कम तापमान वाले दिनों को छोड़ें।",
-        critFreezingInfo: "यह उन दिनों को अनदेखा करता है जहां तापमान 0°C (32°F) से नीचे चला जाता है।",
+        critFreezingDesc: "Skips days below {val}°C.",
+        critFreezingInfo: "यह उन दिनों को अनदेखा करता है जहां तापमान {val}°C ({val_f}°F) से नीचे चला जाता है।",
         critExtremeHeat: "तेज़ गर्मी से बचें",
-        critExtremeHeatDesc: "32°C से अधिक तापमान वाले दिनों को छोड़ें।",
-        critExtremeHeatInfo: "यह उन दिनों को अनदेखा करता है जहां तापमान 32°C (90°F) से अधिक हो जाता है।",
+        critExtremeHeatDesc: "Skips days above {val}°C.",
+        critExtremeHeatInfo: "यह उन दिनों को अनदेखा करता है जहां तापमान {val}°C ({val_f}°F) से अधिक हो जाता है।",
         critHighUV: "उच्च UV से बचें",
-        critHighUVDesc: "UV इंडेक्स > 7 वाले दिनों को छोड़ें।",
-        critHighUVInfo: "यह 7 से अधिक यूवी इंडेक्स वाले दिनों को अनदेखा करता है।",
+        critHighUVDesc: "UV इंडेक्स > {val} वाले दिनों को छोड़ें।",
+        critHighUVInfo: "यह {val} से अधिक यूवी इंडेक्स वाले दिनों को अनदेखा करता है।",
         reason_badWeather: "बारिश या बर्फ",
         reason_highPrecip: "बारिश की उच्च संभावना",
         reason_highWind: "तेज हवाएं",
         reason_freezing: "जमा देने वाला तापमान",
         reason_extremeHeat: "भीषण गर्मी",
         reason_highUV: "उच्च यूवी (UV) स्तर",
+        adjustThresholds: "सीमाएं बदलें",
+        labelPrecip: "बारिश की सीमा",
+        labelWind: "हवा की गति सीमा",
+        labelFreezing: "जमने का बिंदु",
+        labelHeat: "तेज़ गर्मी की सीमा",
+        labelUV: "यूवी (UV) इंडेक्स सीमा",
+        descPrecip: "बारिश होने की अधिकतम स्वीकार्य संभावना।",
+        descWind: "कार धोने से पहले हवा की अधिकतम स्वीकार्य गति।",
+        descFreezing: "यदि तापमान इस मान से नीचे जाता है तो धोने से बचें।",
+        descHeat: "यदि तापमान इस मान से ऊपर जाता है तो धोने से बचें।",
+        descUV: "यदि यूवी सूचकांक इस मान से अधिक है तो धोने से बचें।",
+        resetDefaults: "डिफ़ॉल्ट मान",
+        saveBtn: "सहेजें और लागू करें",
+        dataProvided: "Open-Meteo द्वारा डेटा",
         weather: {
             0: "साफ़", 1: "ज़्यादातर साफ़", 2: "थोड़े बादल", 3: "बादल",
             45: "कोहरा", 48: "जमता कोहरा", 51: "बूंदाबांदी", 53: "बूंदाबांदी",
-            55: "घनी बूंदाबांदी", 61: "हल्की बारिश", 63: "बारिश", 65: "ज़ोरदार बारिश",
+            55: "घनी बूंदाबांदी", 56: "हल्की जमी हुई बूंदाबांदी", 57: "सघन जमी हुई बूंदाबांदी",
+            61: "हल्की बारिश", 63: "बारिश", 65: "ज़ोरदार बारिश", 66: "हल्की जमी हुई बारिश",
+            67: "भारी जमी हुई बारिश",
             71: "हल्की बर्फ", 73: "बर्फ", 75: "भारी बर्फबारी", 77: "बर्फ दाने",
             80: "बौछारें", 81: "बौछारें", 82: "भारी बौछारें",
-            85: "बर्फ बौछारें", 86: "भारी बर्फबारी", 95: "आंधी-तूफ़ान",
+            85: "बर्फ बौछارें", 86: "भारी बर्फबारी", 95: "आंधी-तूफ़ान",
             96: "तूफ़ान/ओले", 99: "भारी तूफ़ान"
         }
     },
@@ -360,6 +445,7 @@ const translations = {
         errorConnecting: "مشكلة اتصال.",
         typeInEnglishOnly: "الموقع غير متاح. يرجى كتابة اسم المدينة باللغة الإنجليزية فقط.",
         defaultLocation: "نيويورك، أمريكا",
+        currentLocation: "الموقع الحالي",
         checkBackLater: "شوفنا بعدين",
         washToday: "اغسلها اليوم!",
         washTodayStreak: "الجو تحفة! اغسلها وهتفضل بتلمع.",
@@ -378,31 +464,47 @@ const translations = {
         critBadWeather: "تجنب المطر والثلج",
         critBadWeatherDesc: "يتخطى الأيام ذات الطقس السيئ.",
         critBadWeatherInfo: "يتجاهل الأيام التي تشير فيها التوقعات إلى هطول أمطار أو ثلوج.",
-        critHighPrecip: "احتمالية المطر > 30%",
+        critHighPrecip: "احتمالية المطر > {val}%",
         critHighPrecipDesc: "يتخطى الأيام ذات احتمالية المطر العالية.",
-        critHighPrecipInfo: "يتجاهل الأيام التي تزيد فيها فرصة هطول الأمطار عن 30٪.",
+        critHighPrecipInfo: "يتجاهل الأيام التي تزيد فيها فرصة هطول الأمطار عن {val}%.",
         critHighWind: "تجنب الرياح القوية",
-        critHighWindDesc: "يتخطى الأيام ذات الرياح القوية (>30 كم/ساعة).",
-        critHighWindInfo: "يتجاهل الأيام التي تزيد فيها سرعة الرياح عن 30 كم/ساعة، والتي يمكن أن تنفخ الغبار على سيارتك.",
+        critHighWindDesc: "يتخطى الأيام ذات الرياح القوية (>{val} كم/ساعة).",
+        critHighWindInfo: "يتجاهل الأيام التي تزيد فيها سرعة الرياح عن {val} كم/ساعة، والتي يمكن أن تنفخ الغبار.",
         critFreezing: "تجنب التجمد",
-        critFreezingDesc: "يتخطى الأيام تحت 0°C.",
-        critFreezingInfo: "يتجاهل الأيام التي تنخفض فيها درجة الحرارة عن 0 درجة مئوية لمنع تجمد المياه.",
+        critFreezingDesc: "يتخطى الأيام تحت {val}°م.",
+        critFreezingInfo: "يتجاهل الأيام التي تنخفض فيها درجة الحرارة عن {val}°م ({val_f}°ف) لمنع تجمد المياه.",
         critExtremeHeat: "تجنب الحر الشديد",
-        critExtremeHeatDesc: "يتخطى الأيام فوق 32°C.",
-        critExtremeHeatInfo: "يتجاهل الأيام التي تتجاوز فيها درجات الحرارة 32 درجة مئوية.",
+        critExtremeHeatDesc: "يتخطى الأيام فوق {val}°م.",
+        critExtremeHeatInfo: "يتجاهل الأيام التي تتجاوز فيها درجات الحرارة {val}°م ({val_f}°ف).",
         critHighUV: "تجنب الأشعة فوق البنفسجية",
-        critHighUVDesc: "يتخطى الأيام بمؤشر UV > 7.",
-        critHighUVInfo: "يتجاهل الأيام التي يكون فيها مؤشر الأشعة فوق البنفسجية أعلى من 7.",
+        critHighUVDesc: "يتخطى الأيام بمؤشر UV > {val}.",
+        critHighUVInfo: "يتجاهل الأيام التي يكون فيها مؤشر الأشعة فوق البنفسجية أعلى من {val}.",
         reason_badWeather: "مطر أو ثلج",
         reason_highPrecip: "فرص عالية للمطر",
         reason_highWind: "رياح قوية",
         reason_freezing: "درجات حرارة متجمدة",
         reason_extremeHeat: "حرارة شديدة",
         reason_highUV: "مستويات عالية من الأشعة فوق البنفسجية",
+        adjustThresholds: "ضبط المعايير",
+        labelPrecip: "حد احتمالية المطر",
+        labelWind: "حد سرعة الرياح",
+        labelFreezing: "درجة التجمد",
+        labelHeat: "حد الحرارة الشديدة",
+        labelUV: "حد مؤشر الأشعة فوق البنفسجية",
+        descPrecip: "الحد الأقصى المسموح به لاحتمالية هطول الأمطار.",
+        descWind: "الحد الأقصى لسرعة الرياح المسموح بها قبل غسيل السيارة.",
+        descFreezing: "تجنب غسل السيارة إذا انخفضت درجة الحرارة عن هذه القيمة.",
+        descHeat: "تجنب غسل السيارة إذا تجاوزت درجة الحرارة هذه القيمة.",
+        descUV: "تجنب غسل السيارة إذا تجاوز مؤشر الأشعة فوق البنفسجية هذه القيمة.",
+        resetDefaults: "الافتراضي",
+        saveBtn: "حفظ وتطبيق",
+        dataProvided: "البيانات مقدمة من Open-Meteo",
         weather: {
             0: "صافي", 1: "صافي غالباً", 2: "مغيم", 3: "غيوم",
             45: "ضباب", 48: "ضباب بيجمد", 51: "رذاذ", 53: "رذاذ",
-            55: "رذاذ تقيل", 61: "مطر خفيف", 63: "مطر", 65: "مطر شديد",
+            55: "رذاذ تقيل", 56: "رذاذ متجمد خفيف", 57: "رذاذ متجمد كثيف",
+            61: "مطر خفيف", 63: "مطر", 65: "مطر شديد", 66: "مطر متجمد خفيف",
+            67: "مطر متجمد غزير",
             71: "تلج خفيف", 73: "تلج", 75: "تلج شديد", 77: "حبيبات تلج",
             80: "زخات", 81: "زخات", 82: "زخات شديدة",
             85: "زخات تلج", 86: "عاصفة تلج", 95: "رعد وبرق",
@@ -428,6 +530,7 @@ const translations = {
         errorConnecting: "اینترنت قطع شد.",
         typeInEnglishOnly: "دسترسی مکان داده نشد. لطفاً نام شهر را فقط به انگلیسی وارد کنید.",
         defaultLocation: "نیویورک",
+        currentLocation: "مکان فعلی",
         checkBackLater: "بعداً بیا",
         washToday: "همین امروز بشور!",
         washTodayStreak: "هوا عالیه! ماشینت تمیز می‌مونه.",
@@ -446,31 +549,47 @@ const translations = {
         critBadWeather: "دوری از باران و برف",
         critBadWeatherDesc: "رد کردن روزهای با هوای بد.",
         critBadWeatherInfo: "روزهایی که پیش‌بینی آب و هوا نشان‌دهنده بارش فعال است را نادیده می‌گیرد.",
-        critHighPrecip: "احتمال بارش > 30%",
+        critHighPrecip: "احتمال بارش > {val}%",
         critHighPrecipDesc: "رد کردن روزهای با احتمال بارش بالا.",
-        critHighPrecipInfo: "روزهایی را که احتمال بارندگی بیش از ۳۰ درصد است را نادیده می‌گیرد.",
+        critHighPrecipInfo: "روزهایی را که احتمال بارندگی بیش از {val} درصد است را نادیده می‌گیرد.",
         critHighWind: "دوری از باد شدید",
-        critHighWindDesc: "رد کردن روزهای با باد شدید (>30km/h).",
-        critHighWindInfo: "روزهای با سرعت باد بیش از ۳۰ کیلومتر در ساعت را نادیده می‌گیرد.",
+        critHighWindDesc: "رد کردن روزهای با باد شدید (>{val}km/h).",
+        critHighWindInfo: "روزهای با سرعت باد بیش از {val} کیلومتر در ساعت را نادیده می‌گیرد.",
         critFreezing: "دوری از یخبندان",
-        critFreezingDesc: "رد کردن روزهای زیر 0°C.",
-        critFreezingInfo: "روزهایی را که دما به زیر صفر درجه سانتی‌گراد می‌رسد برای جلوگیری از یخ‌زدگی آب روی ماشین نادیده می‌گیرد.",
+        critFreezingDesc: "رد کردن روزهای زیر {val}°C.",
+        critFreezingInfo: "روزهایی را که دما به زیر {val} درجه سانتی‌گراد ({val_f}°F) می‌رسد نادیده می‌گیرد.",
         critExtremeHeat: "دوری از گرمای شدید",
-        critExtremeHeatDesc: "رد کردن روزهای بالای 32°C.",
-        critExtremeHeatInfo: "روزهایی که دما از ۳۲ درجه سانتی‌گراد فراتر می‌رود را نادیده می‌گیرد.",
+        critExtremeHeatDesc: "رد کردن روزهای بالای {val}°C.",
+        critExtremeHeatInfo: "روزهایی که دما از {val} درجه سانتی‌گراد ({val_f}°F) فراتر می‌رود را نادیده می‌گیرد.",
         critHighUV: "دوری از اشعه UV",
-        critHighUVDesc: "رد کردن روزهای با شاخص UV > 7.",
-        critHighUVInfo: "روزهایی با شاخص UV بالاتر از ۷ را نادیده می‌گیرد.",
+        critHighUVDesc: "رد کردن روزهای با شاخص UV > {val}.",
+        critHighUVInfo: "روزهایی با شاخص UV بالاتر از {val} را نادیده می‌گیرد.",
         reason_badWeather: "باران یا برف",
         reason_highPrecip: "احتمال بالای بارش",
         reason_highWind: "بادهای شدید",
         reason_freezing: "دمای یخبندان",
         reason_extremeHeat: "گرمای شدید",
         reason_highUV: "سطح بالای اشعه فرابنفش",
+        adjustThresholds: "تنظیم آستانه‌ها",
+        labelPrecip: "حد احتمال بارش",
+        labelWind: "حد سرعت باد",
+        labelFreezing: "نقطه یخبندان",
+        labelHeat: "حد گرمای شدید",
+        labelUV: "حد شاخص UV",
+        descPrecip: "حداکثر احتمال مجاز برای بارندگی.",
+        descWind: "حداکثر سرعت مجاز باد قبل از توصیه به عدم شستشو.",
+        descFreezing: "اگر دما به زیر این مقدار رسید از شستشو خودداری کنید.",
+        descHeat: "اگر دما از این مقدار بالاتر رفت از شستشو خودداری کنید.",
+        descUV: "اگر شاخص UV از این مقدار بالاتر رفت از شستشو خودداری کنید.",
+        resetDefaults: "پیش‌فرض‌ها",
+        saveBtn: "ذخیره و اعمال",
+        dataProvided: "داده‌ها از Open-Meteo",
         weather: {
             0: "صاف", 1: "بیشتر صاف", 2: "کمی ابری", 3: "ابری",
             45: "مه", 48: "مه یخ‌زده", 51: "نم‌نم", 53: "نم‌نم",
-            55: "نم‌نم شدید", 61: "بارون خفیف", 63: "بارون", 65: "بارون شدید",
+            55: "نم‌نم شدید", 56: "نم‌نم باران یخ‌زده خفیف", 57: "نم‌نم باران یخ‌زده شدید",
+            61: "بارون خفیف", 63: "بارون", 65: "بارون شدید", 66: "باران یخ‌زده خفیف",
+            67: "باران یخ‌زده شدید",
             71: "برف خفیف", 73: "برف", 75: "برف شدید", 77: "دانه‌های برف",
             80: "رگبار", 81: "رگبار", 82: "رگبار شدید",
             85: "رگبار برف", 86: "طوفان برف", 95: "رعد و برق",
@@ -484,6 +603,15 @@ let currentWeatherData = null;
 let currentLat = null;
 let currentLon = null;
 
+// Threshold default settings
+let washCriteriaThresholds = {
+    highPrecip: 30,
+    highWind: 30,
+    freezing: 0,
+    extremeHeat: 32,
+    highUV: 7
+};
+
 // Extreme Heat and High UV disabled by default
 let washCriteria = {
     badWeather: true,
@@ -495,9 +623,9 @@ let washCriteria = {
 };
 
 function t(key, params = {}) {
-    let str = translations[currentLang][key] || translations['en'][key] || key;
+    let str = (translations[currentLang] && translations[currentLang][key]) || (translations['en'] && translations['en'][key]) || key;
     for (let [k, v] of Object.entries(params)) {
-        str = str.replace(`{${k}}`, v);
+        str = str.replaceAll(`{${k}}`, v);
     }
     return str;
 }
@@ -505,11 +633,24 @@ function t(key, params = {}) {
 function updateStaticTexts() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (translations[currentLang][key]) {
-            el.innerText = translations[currentLang][key];
+        let params = {};
+        if (key.includes('Precip')) {
+            params = { val: washCriteriaThresholds.highPrecip };
+        } else if (key.includes('Wind')) {
+            params = { val: washCriteriaThresholds.highWind };
+        } else if (key.includes('Freezing')) {
+            params = { val: washCriteriaThresholds.freezing, val_f: Math.round(washCriteriaThresholds.freezing * 9/5 + 32) };
+        } else if (key.includes('ExtremeHeat') || key.includes('critExtremeHeat') || key.includes('descHeat')) {
+            params = { val: washCriteriaThresholds.extremeHeat, val_f: Math.round(washCriteriaThresholds.extremeHeat * 9/5 + 32) };
+        } else if (key.includes('HighUV')) {
+            params = { val: washCriteriaThresholds.highUV };
         }
+        el.innerText = t(key, params);
     });
-    document.getElementById('location-input').placeholder = t('enterCityPlaceholder');
+    const locationInputEl = document.getElementById('location-input');
+    if (locationInputEl) {
+        locationInputEl.placeholder = t('enterCityPlaceholder');
+    }
 }
 
 function setLanguage(lang) {
@@ -571,11 +712,54 @@ function updateLocationUrlParams(lat, lon, name) {
     }
 }
 
+function updateSlidersUI() {
+    const inputPrecip = document.getElementById('input-precip');
+    const inputWind = document.getElementById('input-wind');
+    const inputFreezing = document.getElementById('input-freezing');
+    const inputHeat = document.getElementById('input-heat');
+    const inputUv = document.getElementById('input-uv');
+
+    if (inputPrecip) inputPrecip.value = washCriteriaThresholds.highPrecip;
+    if (inputWind) inputWind.value = washCriteriaThresholds.highWind;
+    if (inputFreezing) inputFreezing.value = washCriteriaThresholds.freezing;
+    if (inputHeat) inputHeat.value = washCriteriaThresholds.extremeHeat;
+    if (inputUv) inputUv.value = washCriteriaThresholds.highUV;
+
+    updateSliderBubbles();
+}
+
+function updateSliderBubbles() {
+    const inputPrecip = document.getElementById('input-precip');
+    const inputWind = document.getElementById('input-wind');
+    const inputFreezing = document.getElementById('input-freezing');
+    const inputHeat = document.getElementById('input-heat');
+    const inputUv = document.getElementById('input-uv');
+
+    const sliderPrecipVal = document.getElementById('slider-precip-val');
+    const sliderWindVal = document.getElementById('slider-wind-val');
+    const sliderFreezingVal = document.getElementById('slider-freezing-val');
+    const sliderHeatVal = document.getElementById('slider-heat-val');
+    const sliderUvVal = document.getElementById('slider-uv-val');
+
+    if (sliderPrecipVal) sliderPrecipVal.innerText = `${inputPrecip ? inputPrecip.value : washCriteriaThresholds.highPrecip}%`;
+    if (sliderWindVal) sliderWindVal.innerText = `${inputWind ? inputWind.value : washCriteriaThresholds.highWind} km/h`;
+    if (sliderFreezingVal) sliderFreezingVal.innerText = `${inputFreezing ? inputFreezing.value : washCriteriaThresholds.freezing}°C`;
+    if (sliderHeatVal) sliderHeatVal.innerText = `${inputHeat ? inputHeat.value : washCriteriaThresholds.extremeHeat}°C`;
+    if (sliderUvVal) sliderUvVal.innerText = inputUv ? inputUv.value : washCriteriaThresholds.highUV;
+}
+
 function initCriteria() {
     const saved = localStorage.getItem('washCriteria');
     if (saved) {
         try {
             washCriteria = { ...washCriteria, ...JSON.parse(saved) };
+        } catch (e) {}
+    }
+
+    const savedThresholds = localStorage.getItem('washCriteriaThresholds');
+    if (savedThresholds) {
+        try {
+            washCriteriaThresholds = { ...washCriteriaThresholds, ...JSON.parse(savedThresholds) };
         } catch (e) {}
     }
 
@@ -622,6 +806,87 @@ function initCriteria() {
         washCriteria.highUV = e.target.checked;
         saveCriteria();
     });
+
+    // Wire up sliders and thresholds settings modal controls
+    const criteriaSettingsModal = document.getElementById('criteria-settings-modal');
+    const criteriaSettingsBtn = document.getElementById('criteria-settings-btn');
+    const closeSettingsModalBtn = document.getElementById('close-settings-modal-btn');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
+    const resetSettingsBtn = document.getElementById('reset-settings-btn');
+
+    const inputPrecip = document.getElementById('input-precip');
+    const inputWind = document.getElementById('input-wind');
+    const inputFreezing = document.getElementById('input-freezing');
+    const inputHeat = document.getElementById('input-heat');
+    const inputUv = document.getElementById('input-uv');
+
+    updateSlidersUI();
+
+    if (inputPrecip) inputPrecip.addEventListener('input', updateSliderBubbles);
+    if (inputWind) inputWind.addEventListener('input', updateSliderBubbles);
+    if (inputFreezing) inputFreezing.addEventListener('input', updateSliderBubbles);
+    if (inputHeat) inputHeat.addEventListener('input', updateSliderBubbles);
+    if (inputUv) inputUv.addEventListener('input', updateSliderBubbles);
+
+    if (criteriaSettingsBtn) {
+        criteriaSettingsBtn.addEventListener('click', () => {
+            updateSlidersUI();
+            if (criteriaSettingsModal) {
+                criteriaSettingsModal.classList.remove('hidden');
+            }
+            history.pushState({ modalOpen: true }, '', '');
+        });
+    }
+
+    if (closeSettingsModalBtn) {
+        closeSettingsModalBtn.addEventListener('click', () => {
+            if (criteriaSettingsModal) {
+                criteriaSettingsModal.classList.add('hidden');
+            }
+            if (history.state && history.state.modalOpen) history.back();
+        });
+    }
+
+    if (criteriaSettingsModal) {
+        criteriaSettingsModal.addEventListener('click', (e) => {
+            if (e.target === criteriaSettingsModal) {
+                criteriaSettingsModal.classList.add('hidden');
+                if (history.state && history.state.modalOpen) history.back();
+            }
+        });
+    }
+
+    if (resetSettingsBtn) {
+        resetSettingsBtn.addEventListener('click', () => {
+            washCriteriaThresholds = {
+                highPrecip: 30,
+                highWind: 30,
+                freezing: 0,
+                extremeHeat: 32,
+                highUV: 7
+            };
+            updateSlidersUI();
+        });
+    }
+
+    if (saveSettingsBtn) {
+        saveSettingsBtn.addEventListener('click', () => {
+            washCriteriaThresholds.highPrecip = parseInt(inputPrecip ? inputPrecip.value : 30);
+            washCriteriaThresholds.highWind = parseInt(inputWind ? inputWind.value : 30);
+            washCriteriaThresholds.freezing = parseInt(inputFreezing ? inputFreezing.value : 0);
+            washCriteriaThresholds.extremeHeat = parseInt(inputHeat ? inputHeat.value : 32);
+            washCriteriaThresholds.highUV = parseInt(inputUv ? inputUv.value : 7);
+
+            localStorage.setItem('washCriteriaThresholds', JSON.stringify(washCriteriaThresholds));
+            if (criteriaSettingsModal) {
+                criteriaSettingsModal.classList.add('hidden');
+            }
+            if (history.state && history.state.modalOpen) history.back();
+
+            updateStaticTexts();
+            saveCriteria();
+        });
+    }
 }
 
 function saveCriteria() {
@@ -677,6 +942,8 @@ window.addEventListener('popstate', () => {
     locationSearchStatus.classList.add('hidden');
     if (searchResultsContainer) searchResultsContainer.classList.add('hidden');
     criteriaInfoModal.classList.add('hidden');
+    const criteriaSettingsModal = document.getElementById('criteria-settings-modal');
+    if (criteriaSettingsModal) criteriaSettingsModal.classList.add('hidden');
 });
 
 criteriaInfoBtn.addEventListener('click', () => {
@@ -707,9 +974,13 @@ const weatherCodes = {
     51: { icon: 'cloud-drizzle', badForWash: true },
     53: { icon: 'cloud-drizzle', badForWash: true },
     55: { icon: 'cloud-drizzle', badForWash: true },
+    56: { icon: 'cloud-drizzle', badForWash: true },
+    57: { icon: 'cloud-drizzle', badForWash: true },
     61: { icon: 'cloud-rain', badForWash: true },
     63: { icon: 'cloud-rain', badForWash: true },
     65: { icon: 'cloud-rain', badForWash: true },
+    66: { icon: 'cloud-rain', badForWash: true },
+    67: { icon: 'cloud-rain', badForWash: true },
     71: { icon: 'snowflake', badForWash: true },
     73: { icon: 'snowflake', badForWash: true },
     75: { icon: 'snowflake', badForWash: true },
@@ -915,11 +1186,14 @@ function initApp() {
 }
 
 function showLocationModalWithError() {
+    if (!history.state || !history.state.modalOpen) {
+        history.pushState({ modalOpen: true }, '', '');
+    }
     locationModal.classList.remove('hidden');
-    locationSearchStatus.classList.remove('hidden');
     locationSearchStatus.classList.remove('text-red-500', 'text-slate-500');
     locationSearchStatus.classList.add('text-brand-600', 'dark:text-brand-400');
     locationSearchStatus.innerText = t('typeInEnglishOnly');
+    locationSearchStatus.classList.remove('hidden');
     locationInput.focus();
 
     locationName.innerText = t('defaultLocation');
@@ -971,6 +1245,12 @@ async function fetchWeatherData(lat, lon) {
         processData(currentWeatherData);
 
     } catch (error) {
+        hideSkeleton();
+        verdictCard.classList.remove('bg-brand-700', 'bg-accent-400', 'text-slate-900', 'text-white', 'verdict-recommend-bg', 'verdict-wait-bg');
+        verdictCard.classList.add('verdict-error-bg', 'text-white');
+        verdictTitle.innerText = t('errorConnecting');
+        verdictReason.innerText = t('checkBackLater');
+        targetDateText.innerText = t('pending');
     }
 }
 
@@ -998,11 +1278,11 @@ function processData(daily) {
         // Collect all reasons why this day might be flagged as dirty based on criteria
         const dirtyReasons = [];
         if (washCriteria.badWeather && weatherInfo.badForWash) dirtyReasons.push('badWeather');
-        if (washCriteria.highPrecip && precipProb > 30) dirtyReasons.push('highPrecip');
-        if (washCriteria.highWind && windSpeed > 30) dirtyReasons.push('highWind');
-        if (washCriteria.freezing && daily.temperature_2m_min[i] <= 0) dirtyReasons.push('freezing');
-        if (washCriteria.extremeHeat && daily.temperature_2m_max[i] > 32) dirtyReasons.push('extremeHeat');
-        if (washCriteria.highUV && uvIndexRaw > 7) dirtyReasons.push('highUV');
+        if (washCriteria.highPrecip && precipProb > washCriteriaThresholds.highPrecip) dirtyReasons.push('highPrecip');
+        if (washCriteria.highWind && windSpeed > washCriteriaThresholds.highWind) dirtyReasons.push('highWind');
+        if (washCriteria.freezing && daily.temperature_2m_min[i] <= washCriteriaThresholds.freezing) dirtyReasons.push('freezing');
+        if (washCriteria.extremeHeat && daily.temperature_2m_max[i] > washCriteriaThresholds.extremeHeat) dirtyReasons.push('extremeHeat');
+        if (washCriteria.highUV && uvIndexRaw > washCriteriaThresholds.highUV) dirtyReasons.push('highUV');
 
         const isDirtyDay = dirtyReasons.length > 0;
 
@@ -1033,24 +1313,23 @@ function analyzeBestWashDay(days) {
     for (let i = 0; i < 7; i++) {
         if (days[i].isDirty) continue;
 
-        let currentScore = 100;
-        let clearStreak = 0;
-
-        for (let j = i + 1; j < 7; j++) {
-            const daysAhead = j - i;
+        let guaranteedCleanDays = 0;
+        for (let j = i; j < 7; j++) {
             if (days[j].isDirty) {
-                currentScore -= (60 / daysAhead);
                 break;
-            } else {
-                currentScore += 10;
-                clearStreak++;
             }
+            guaranteedCleanDays++;
         }
+
+        // Each guaranteed clean day adds 50 points to the score.
+        // A proximity penalty of 5 points per day is subtracted based on how far in the future the day is.
+        // This naturally favors closer days when streak lengths are equal, and avoids boundary-truncation advantages.
+        let currentScore = (guaranteedCleanDays * 50) - (5 * i);
 
         if (currentScore > bestScore) {
             bestScore = currentScore;
             bestDayIndex = i;
-            streakLength = clearStreak;
+            streakLength = guaranteedCleanDays - 1;
         }
     }
 
@@ -1061,10 +1340,10 @@ function renderDashboard(days, bestDayIndex, streakLength) {
     hideSkeleton();
     streakBadge.classList.add('hidden');
 
-    verdictCard.classList.remove('bg-brand-700', 'bg-accent-400', 'text-white', 'text-slate-900');
+    verdictCard.classList.remove('bg-brand-700', 'bg-accent-400', 'bg-red-500', 'text-white', 'text-slate-900', 'verdict-recommend-bg', 'verdict-wait-bg', 'verdict-error-bg');
 
     if (bestDayIndex === -1) {
-        verdictCard.classList.add('bg-accent-400', 'text-slate-900');
+        verdictCard.classList.add('verdict-wait-bg', 'text-slate-900');
         verdictTitle.innerText = t('waitItOut');
 
         // Dynamic wait reason construction
@@ -1095,7 +1374,7 @@ function renderDashboard(days, bestDayIndex, streakLength) {
 
         targetDateText.innerText = t('checkBackLater');
     } else {
-        verdictCard.classList.add('bg-brand-700', 'text-white');
+        verdictCard.classList.add('verdict-recommend-bg', 'text-white');
         const recommendedDay = days[bestDayIndex];
         targetDateText.innerText = recommendedDay.dayName + ", " + recommendedDay.dateFormatted;
 
@@ -1156,13 +1435,13 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                         ${day.maxTemp}° <span class="text-slate-400 font-medium text-xs">${day.minTemp}°</span>
                     </div>
                     <div class="flex items-center justify-end gap-2 text-[11px] font-bold w-full">
-                        <span class="${day.precipProb > 30 ? 'text-accent-500' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Precipitation">
+                        <span class="${(washCriteria.highPrecip && day.precipProb > washCriteriaThresholds.highPrecip) ? 'text-accent-500' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Precipitation">
                             <i data-lucide="droplets" class="w-3 h-3"></i> ${day.precipProb}%
                         </span>
-                        <span class="${day.uvIndex > 7 ? 'text-purple-500 dark:text-purple-400' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="UV Index">
+                        <span class="${(washCriteria.highUV && day.uvIndex > washCriteriaThresholds.highUV) ? 'text-purple-500 dark:text-purple-400' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="UV Index">
                             <i data-lucide="sun-dim" class="w-3 h-3"></i> ${day.uvIndex}
                         </span>
-                        <span class="${day.windSpeed > 30 ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind">
+                        <span class="${(washCriteria.highWind && day.windSpeed > washCriteriaThresholds.highWind) ? 'text-slate-600 dark:text-slate-300' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind">
                             <i data-lucide="wind" class="w-3 h-3"></i> ${day.windSpeed}<span class="text-[9px] font-medium uppercase opacity-80">km/h</span>
                         </span>
                     </div>
@@ -1178,3 +1457,16 @@ function renderDashboard(days, bestDayIndex, streakLength) {
 
 lucide.createIcons();
 document.addEventListener('DOMContentLoaded', initApp);
+
+// Register service worker for offline support / Progressive Web App capabilities
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => {
+                console.log('Service Worker registered successfully on scope:', reg.scope);
+            })
+            .catch(err => {
+                console.error('Service Worker registration failed:', err);
+            });
+    });
+}

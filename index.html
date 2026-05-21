@@ -5,8 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Wash Planner</title>
+    
+    <meta name="theme-color" content="#0d9488">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon_192.png">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
 
     <script src="js/tailwindcss.js"></script>
     <script>
@@ -15,7 +23,8 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Vazirmatn', 'sans-serif'],
+                        sans: ['Vazirmatn', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        display: ['Outfit', 'Vazirmatn', 'sans-serif'],
                     },
                     colors: {
                         appBg: '#e5efee',
@@ -43,9 +52,15 @@
     <!-- App Styles -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="p-0 md:p-6 lg:p-10 min-h-screen bg-appBg dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 selection:bg-brand-500 selection:text-white flex flex-col items-center justify-center">
+<body class="p-0 md:p-6 lg:p-10 min-h-screen bg-appBg dark:bg-slate-950 text-slate-800 dark:text-slate-100 transition-colors duration-300 selection:bg-brand-500 selection:text-white flex flex-col items-center justify-center relative overflow-x-hidden">
 
-    <main class="w-full max-w-[1200px] bg-white dark:bg-slate-900 md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[100dvh] md:min-h-[85vh] relative z-10">
+    <!-- Ambient background blobs -->
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-brand-200 to-brand-500 opacity-20 blur-[120px] dark:from-brand-950 dark:to-teal-800 dark:opacity-30 animate-pulse" style="animation-duration: 8s;"></div>
+        <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-gradient-to-br from-accent-400 to-brand-500 opacity-20 blur-[120px] dark:from-indigo-950 dark:to-brand-800 dark:opacity-30 animate-pulse" style="animation-duration: 12s;"></div>
+    </div>
+
+    <main class="w-full max-w-[1200px] bg-white/80 dark:bg-slate-900/85 backdrop-blur-lg border border-white/20 dark:border-slate-800/50 md:rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row min-h-[100dvh] md:min-h-[85vh] relative z-10">
 
         <div class="w-full lg:w-7/12 xl:w-2/3 p-6 md:p-10 lg:p-12 flex flex-col">
 
@@ -87,7 +102,7 @@
             </header>
 
             <div class="mb-8">
-                <h1 class="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight" data-i18n="appTitle">When should I wash my car?</h1>
+                <h1 class="text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white tracking-tight font-display" data-i18n="appTitle">When should I wash my car?</h1>
             </div>
 
             <div id="dashboard-skeleton" class="flex-col gap-6 flex-1 w-full flex">
@@ -108,13 +123,13 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-                    <div id="verdict-card" class="md:col-span-2 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-lg transition-colors duration-500 bg-brand-700">
+                    <div id="verdict-card" class="md:col-span-2 rounded-[2rem] p-8 text-white relative overflow-hidden shadow-lg transition-all duration-500 hover:scale-[1.01] hover:shadow-xl bg-brand-700">
                         <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-white opacity-10"></div>
                         <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white opacity-5"></div>
 
                         <div class="relative z-10 flex flex-col h-full justify-between">
                             <span class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2" data-i18n="recommendationTitle">The Verdict</span>
-                            <div id="verdict-title" class="text-3xl lg:text-4xl font-bold leading-tight mb-4">
+                            <div id="verdict-title" class="text-3xl lg:text-4xl font-bold font-display leading-tight mb-4">
                                 Go for it today!
                             </div>
                             <p id="verdict-reason" class="text-sm opacity-90 leading-relaxed font-medium">
@@ -140,9 +155,12 @@
 
                 <div class="mt-4 pt-6 border-t border-slate-100 dark:border-slate-800">
                     <div class="flex items-center gap-2 mb-4">
-                        <h3 class="text-lg font-bold" data-i18n="activeCriteria">Active Criteria</h3>
+                        <h3 class="text-lg font-bold font-display" data-i18n="activeCriteria">Active Criteria</h3>
                         <button id="criteria-info-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Criteria Details">
                             <i data-lucide="info" class="w-5 h-5"></i>
+                        </button>
+                        <button id="criteria-settings-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Adjust Thresholds">
+                            <i data-lucide="sliders" class="w-5 h-5"></i>
                         </button>
                     </div>
 
@@ -278,7 +296,7 @@
             </div>
 
             <div class="mb-8">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white" data-i18n="forecastAnalysis">7-Day Agenda</h2>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white font-display" data-i18n="forecastAnalysis">7-Day Agenda</h2>
                 <p class="text-sm text-slate-500 mt-1" id="agenda-date">Today</p>
             </div>
 
@@ -400,6 +418,100 @@
                         <span data-i18n="critHighUVInfo">This ignores days with a UV index higher than 7, which can bake washing chemicals directly into your paint.</span>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Threshold Settings Modal -->
+    <div id="criteria-settings-modal" class="hidden fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
+        <div class="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md rounded-[2rem] p-8 md:p-10 w-full max-w-lg shadow-2xl transform transition-all border border-white/20 dark:border-slate-800 max-h-[90vh] overflow-y-auto no-scrollbar">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold font-display text-slate-900 dark:text-white tracking-tight" data-i18n="adjustThresholds">Adjust Thresholds</h3>
+                <button id="close-settings-modal-btn" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="flex flex-col gap-6">
+                <!-- Precipitation Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="umbrella" class="w-4 h-4 text-accent-500"></i>
+                            <span data-i18n="labelPrecip">Precipitation Limit</span>
+                        </span>
+                        <span id="slider-precip-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">30%</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <input type="range" id="input-precip" min="0" max="100" step="5" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descPrecip">Maximum allowed probability of precipitation.</span>
+                </div>
+
+                <!-- Wind Speed Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="wind" class="w-4 h-4 text-slate-500 dark:text-slate-400"></i>
+                            <span data-i18n="labelWind">Wind Speed Limit</span>
+                        </span>
+                        <span id="slider-wind-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">30 km/h</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <input type="range" id="input-wind" min="10" max="100" step="5" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descWind">Maximum wind speed limit before washing is discouraged.</span>
+                </div>
+
+                <!-- Freezing Point Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="thermometer-snowflake" class="w-4 h-4 text-blue-500"></i>
+                            <span data-i18n="labelFreezing">Freezing Point</span>
+                        </span>
+                        <span id="slider-freezing-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">0°C</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <input type="range" id="input-freezing" min="-20" max="15" step="1" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descFreezing">Avoid washing if temperature drops below this value.</span>
+                </div>
+
+                <!-- Extreme Heat Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="thermometer-sun" class="w-4 h-4 text-red-500"></i>
+                            <span data-i18n="labelHeat">Extreme Heat Limit</span>
+                        </span>
+                        <span id="slider-heat-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">32°C</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <input type="range" id="input-heat" min="20" max="45" step="1" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descHeat">Avoid washing if temperature exceeds this value.</span>
+                </div>
+
+                <!-- UV Index Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="sun-dim" class="w-4 h-4 text-purple-500"></i>
+                            <span data-i18n="labelUV">UV Index Limit</span>
+                        </span>
+                        <span id="slider-uv-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">7</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <input type="range" id="input-uv" min="1" max="11" step="1" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descUV">Avoid washing if UV index exceeds this value.</span>
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
+                <button type="button" id="reset-settings-btn" class="flex-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm" data-i18n="resetDefaults">Defaults</button>
+                <button type="button" id="save-settings-btn" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm shadow-md" data-i18n="saveBtn">Save</button>
             </div>
         </div>
     </div>

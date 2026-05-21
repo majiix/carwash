@@ -153,4 +153,125 @@ input[type="range"].custom-slider::-moz-range-thumb:hover {
 input[type="range"].custom-slider::-moz-range-thumb:active {
     transform: scale(0.92);
     background: #115e59;
-}
+}
+
+/* Animated SVG weather icon keyframes */
+@keyframes sun-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+.animate-sun-spin {
+    transform-origin: center;
+    animation: sun-spin 25s linear infinite;
+}
+
+@keyframes pulse-subtle {
+    0%, 100% { opacity: 0.85; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.04); }
+}
+.animate-pulse-subtle {
+    transform-origin: center;
+    animation: pulse-subtle 4s ease-in-out infinite;
+}
+
+@keyframes cloud-drift {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(6px); }
+}
+.animate-cloud-drift {
+    animation: cloud-drift 8s ease-in-out infinite;
+}
+
+@keyframes rain-fall {
+    0% { transform: translateY(-6px); opacity: 0; }
+    30% { opacity: 0.9; }
+    80% { opacity: 0.9; }
+    100% { transform: translateY(14px); opacity: 0; }
+}
+.animate-rain-fall-1 { animation: rain-fall 2s ease-in-out infinite; }
+.animate-rain-fall-2 { animation: rain-fall 2.2s ease-in-out infinite; animation-delay: 0.4s; }
+.animate-rain-fall-3 { animation: rain-fall 1.8s ease-in-out infinite; animation-delay: 0.8s; }
+
+@keyframes wind-gust {
+    0% { transform: translateX(-12px); opacity: 0; }
+    20% { opacity: 0.7; }
+    80% { opacity: 0.7; }
+    100% { transform: translateX(18px); opacity: 0; }
+}
+.animate-wind-gust {
+    animation: wind-gust 3.5s ease-in-out infinite;
+}
+
+/* Weather Trend Chart Custom Gradients and Styles */
+.chart-grid-line {
+    stroke: #f1f5f9;
+    stroke-dasharray: 4 4;
+}
+.dark .chart-grid-line {
+    stroke: #334155;
+}
+.chart-path-precip {
+    stroke: #3b82f6;
+    stroke-width: 3.5;
+    fill: none;
+    transition: d 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chart-fill-precip {
+    fill: url(#precip-gradient);
+    stroke: none;
+    transition: d 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chart-path-wind {
+    stroke: #14b8a6;
+    stroke-width: 3.5;
+    fill: none;
+    transition: d 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.chart-point {
+    transition: r 0.2s ease, stroke-width 0.2s ease;
+}
+.chart-point:hover {
+    r: 6;
+    stroke-width: 3.5;
+    cursor: pointer;
+}
+
+/* Mobile Bottom-sheet Drawers */
+@media (max-w: 640px) {
+    .fixed-modal-center {
+        align-items: flex-end !important;
+        padding: 0 !important;
+    }
+    
+    .fixed-modal-center > div {
+        border-bottom-left-radius: 0 !important;
+        border-bottom-right-radius: 0 !important;
+        border-top-left-radius: 2.5rem !important;
+        border-top-right-radius: 2.5rem !important;
+        width: 100% !important;
+        max-w: none !important;
+        margin-bottom: 0 !important;
+        transform: translateY(100%);
+        transition: transform 0.35s cubic-bezier(0.32, 0.94, 0.6, 1) !important;
+        box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.15), 0 -8px 10px -6px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .fixed-modal-center.modal-active > div {
+        transform: translateY(0) !important;
+    }
+
+    /* Grab Handle for bottom sheet */
+    .bottom-sheet-handle {
+        width: 40px;
+        height: 5px;
+        background-color: #cbd5e1;
+        border-radius: 9999px;
+        margin: -12px auto 20px auto;
+        display: block;
+    }
+    .dark .bottom-sheet-handle {
+        background-color: #475569;
+    }
+}
+
+

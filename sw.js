@@ -1,4 +1,4 @@
-const CACHE_NAME = 'carwash-planner-cache-v4';
+const CACHE_NAME = 'carwash-planner-cache-v7';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
@@ -14,7 +14,14 @@ const ASSETS_TO_CACHE = [
   'fonts/Vazirmatn-Regular.woff2',
   'fonts/Vazirmatn-Medium.woff2',
   'fonts/Vazirmatn-Bold.woff2',
-  'fonts/Vazirmatn-SemiBold.woff2'
+  'fonts/Vazirmatn-SemiBold.woff2',
+  'js/lang/en.js',
+  'js/lang/es.js',
+  'js/lang/fr.js',
+  'js/lang/zh.js',
+  'js/lang/hi.js',
+  'js/lang/ar.js',
+  'js/lang/fa.js'
 ];
 
 // Install Event - Pre-cache Assets

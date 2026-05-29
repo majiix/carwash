@@ -1312,12 +1312,210 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// PWA & Notification features implementation
+const pwaModal = document.getElementById('pwa-settings-modal');
+const pwaBtn = document.getElementById('pwa-settings-btn');
+const closePwaBtn = document.getElementById('close-pwa-modal-btn');
+const pwaCloseBtnBtn = document.getElementById('pwa-close-btn');
+const pwaGrantBtn = document.getElementById('pwa-grant-btn');
+const pwaTestBtn = document.getElementById('pwa-test-btn');
+const pwaNotificationStatus = document.getElementById('pwa-notification-status');
+const pwaConnectionText = document.getElementById('pwa-connection-text');
+const pwaConnectionBadge = document.getElementById('pwa-connection-badge');
+const pwaBgSyncBadge = document.getElementById('pwa-bg-sync-badge');
+const pwaPeriodicSyncBadge = document.getElementById('pwa-periodic-sync-badge');
+
+let swRegistration = null;
+
+// Track online/offline status
+function updateOnlineStatus() {
+    const isOnline = navigator.onLine;
+    if (pwaConnectionText && pwaConnectionBadge) {
+        if (isOnline) {
+            pwaConnectionText.innerText = "Online";
+            pwaConnectionBadge.className = "text-[9px] font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 px-2.5 py-1 rounded uppercase tracking-wider flex items-center gap-1";
+            pwaConnectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-pulse"></span> Online`;
+        } else {
+            pwaConnectionText.innerText = "Offline";
+            pwaConnectionBadge.className = "text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2.5 py-1 rounded uppercase tracking-wider flex items-center gap-1";
+            pwaConnectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Offline`;
+        }
+    }
+}
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+updateOnlineStatus();
+
+// Check support for background APIs
+function checkPwaApiSupport() {
+    if (pwaBgSyncBadge) {
+        if ('SyncManager' in window) {
+            pwaBgSyncBadge.innerText = "Supported";
+            pwaBgSyncBadge.className = "font-bold text-green-600 dark:text-green-400";
+        } else {
+            pwaBgSyncBadge.innerText = "Not Supported";
+            pwaBgSyncBadge.className = "font-bold text-slate-400 dark:text-slate-500";
+        }
+    }
+    if (pwaPeriodicSyncBadge) {
+        if (swRegistration && 'periodicSync' in swRegistration) {
+            pwaPeriodicSyncBadge.innerText = "Supported";
+            pwaPeriodicSyncBadge.className = "font-bold text-green-600 dark:text-green-400";
+        } else {
+            pwaPeriodicSyncBadge.innerText = "Not Supported";
+            pwaPeriodicSyncBadge.className = "font-bold text-slate-400 dark:text-slate-500";
+        }
+    }
+}
+
+// Update Notification UI based on current permission status
+function updateNotificationUI() {
+    if (!('Notification' in window)) {
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Not supported in this browser";
+        if (pwaGrantBtn) pwaGrantBtn.classList.add('hidden');
+        return;
+    }
+
+    if (Notification.permission === 'granted') {
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Notifications Enabled";
+        if (pwaGrantBtn) pwaGrantBtn.classList.add('hidden');
+        if (pwaTestBtn) pwaTestBtn.removeAttribute('disabled');
+    } else if (Notification.permission === 'denied') {
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Notifications Blocked";
+        if (pwaGrantBtn) {
+            pwaGrantBtn.classList.remove('hidden');
+            pwaGrantBtn.innerText = "Blocked";
+            pwaGrantBtn.disabled = true;
+        }
+        if (pwaTestBtn) pwaTestBtn.setAttribute('disabled', 'true');
+    } else {
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Permission required";
+        if (pwaGrantBtn) {
+            pwaGrantBtn.classList.remove('hidden');
+            pwaGrantBtn.innerText = "Enable";
+            pwaGrantBtn.disabled = false;
+        }
+        if (pwaTestBtn) pwaTestBtn.setAttribute('disabled', 'true');
+    }
+}
+
+// Register Periodic Sync
+async function registerPeriodicSync() {
+    if (swRegistration && 'periodicSync' in swRegistration) {
+        try {
+            const status = await navigator.permissions.query({
+                name: 'periodic-background-sync',
+            });
+            if (status.state === 'granted') {
+                await swRegistration.periodicSync.register('fetch-weather', {
+                    minInterval: 24 * 60 * 60 * 1000, // 24 hours
+                });
+                console.log('Periodic sync registered successfully');
+            }
+        } catch (error) {
+            console.warn('Periodic sync could not be registered:', error);
+        }
+    }
+}
+
+// Register Background Sync
+async function registerBackgroundSync() {
+    if (swRegistration && 'sync' in swRegistration) {
+        try {
+            await swRegistration.sync.register('sync-weather');
+            console.log('Background sync registered successfully');
+        } catch (error) {
+            console.warn('Background sync registration failed:', error);
+        }
+    }
+}
+
+// Listeners for PWA settings modal
+if (pwaBtn) {
+    pwaBtn.addEventListener('click', () => {
+        if (pwaModal) {
+            pwaModal.classList.remove('hidden');
+        }
+        updateOnlineStatus();
+        updateNotificationUI();
+        checkPwaApiSupport();
+        history.pushState({ modalOpen: true }, '', '');
+    });
+}
+
+function closePwaModal() {
+    if (pwaModal) {
+        pwaModal.classList.add('hidden');
+    }
+}
+
+if (closePwaBtn) closePwaBtn.addEventListener('click', () => {
+    closePwaModal();
+    if (history.state && history.state.modalOpen) history.back();
+});
+if (pwaCloseBtnBtn) pwaCloseBtnBtn.addEventListener('click', () => {
+    closePwaModal();
+    if (history.state && history.state.modalOpen) history.back();
+});
+if (pwaModal) {
+    pwaModal.addEventListener('click', (e) => {
+        if (e.target === pwaModal) {
+            closePwaModal();
+            if (history.state && history.state.modalOpen) history.back();
+        }
+    });
+}
+window.addEventListener('popstate', () => {
+    if (pwaModal) pwaModal.classList.add('hidden');
+});
+
+// Grant Permission Handler
+if (pwaGrantBtn) {
+    pwaGrantBtn.addEventListener('click', () => {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(permission => {
+                updateNotificationUI();
+                if (permission === 'granted') {
+                    registerPeriodicSync();
+                }
+            });
+        }
+    });
+}
+
+// Test Notification button
+if (pwaTestBtn) {
+    pwaTestBtn.addEventListener('click', () => {
+        if (swRegistration && Notification.permission === 'granted') {
+            swRegistration.showNotification('Car Wash Planner', {
+                body: 'This is a test notification from your app. Service Workers are working perfectly!',
+                icon: './icon_192.png',
+                badge: './icon.svg',
+                tag: 'test-notification'
+            });
+        }
+    });
+}
+
 // Register service worker for offline support / Progressive Web App capabilities
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
             .then(reg => {
                 console.log('Service Worker registered successfully on scope:', reg.scope);
+                swRegistration = reg;
+                
+                // Check API support and notify UI
+                checkPwaApiSupport();
+                updateNotificationUI();
+                
+                // Attempt to register periodic background sync
+                registerPeriodicSync();
+                
+                // Register background sync on connection changes
+                window.addEventListener('online', () => {
+                    registerBackgroundSync();
+                });
             })
             .catch(err => {
                 console.error('Service Worker registration failed:', err);

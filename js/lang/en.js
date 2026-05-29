@@ -100,6 +100,10 @@ window.translations.en = {
     calendarSummary: "Car Wash - Recommended Day",
     calendarDesc: "Perfect day to wash your car at {location}! Weather will stay clean for {streak} days.",
     calendarHelp: "Download the .ics file and open it to add this event to Google Calendar, Apple Calendar, or Outlook.",
+    pwaSettingsTitle: "Notifications & Offline Settings",
+    connectionStatus: "Connection Status",
+    pushNotifications: "Push Notifications",
+    backgroundSyncServices: "Background Services",
     weather: {
         0: "Clear skies", 1: "Mostly clear", 2: "Partly cloudy", 3: "Cloudy",
         45: "Foggy", 48: "Freezing fog", 51: "Light drizzle", 53: "Drizzling",

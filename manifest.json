@@ -78,14 +78,20 @@
     {
       "src": "icon_512.png",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     },
     {
       "src": "icon_192.png",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any"
     }
-  ]
+  ],
+  "id": "carwash-planner-pwa",
+  "categories": [
+    "weather",
+    "utilities"
+  ],
+  "description": "A premium, adaptive car wash planning application that recommends the best days to wash your vehicle based on local weather forecasts."
 }

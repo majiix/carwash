@@ -959,7 +959,7 @@ function downloadIcsFile() {
     const icsLines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
-        'PRODID:-//Antigravity//CarWashPlanner//EN',
+        'PRODID:-//X//CarWashPlanner//EN',
         'BEGIN:VEVENT',
         `UID:carwash-${timestamp}@carwash.planner`,
         `DTSTAMP:${timestamp}`,
@@ -974,7 +974,7 @@ function downloadIcsFile() {
     const icsContent = icsLines.join('\r\n');
     const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
     const url = URL.createObjectURL(blob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `car_wash_${dateStart}.ics`;
@@ -1504,14 +1504,14 @@ if ('serviceWorker' in navigator) {
             .then(reg => {
                 console.log('Service Worker registered successfully on scope:', reg.scope);
                 swRegistration = reg;
-                
+
                 // Check API support and notify UI
                 checkPwaApiSupport();
                 updateNotificationUI();
-                
+
                 // Attempt to register periodic background sync
                 registerPeriodicSync();
-                
+
                 // Register background sync on connection changes
                 window.addEventListener('online', () => {
                     registerBackgroundSync();

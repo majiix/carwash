@@ -10,7 +10,7 @@ Smart Recommendation Engine: Analyzes precipitation probability and weather code
 
 Zero Setup & No API Keys: Built entirely with Vanilla JavaScript and uses the free, open-source Open-Meteo API for weather and geocoding data.
 
-Multilingual & RTL Support: Fully translated into 7 languages (English, Spanish, French, Chinese, Hindi, Arabic, Farsi) with automatic Right-to-Left (RTL) layout switching and dynamic font loading for perfect typography.
+Multilingual & RTL Support: Fully translated into 2 languages (English and Farsi) with automatic Right-to-Left (RTL) layout switching and dynamic font loading for perfect typography.
 
 Dark & Light Mode: Seamlessly adapts to system preferences with a manual toggle switch.
 

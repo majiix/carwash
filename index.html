@@ -77,11 +77,6 @@
                         <div class="relative">
                             <select class="lang-selector bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 ps-3 pe-8 py-2 rounded-full text-xs font-bold focus:outline-none focus:border-brand-500 cursor-pointer shadow-sm">
                                 <option value="en">EN</option>
-                                <option value="zh">ZH</option>
-                                <option value="hi">HI</option>
-                                <option value="es">ES</option>
-                                <option value="fr">FR</option>
-                                <option value="ar">AR</option>
                                 <option value="fa">FA</option>
                             </select>
                         </div>
@@ -128,7 +123,10 @@
                         <div class="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white opacity-5"></div>
 
                         <div class="relative z-10 flex flex-col h-full justify-between">
-                            <span class="text-xs font-bold uppercase tracking-widest opacity-80 mb-2" data-i18n="recommendationTitle">The Verdict</span>
+                            <div class="flex items-center justify-between gap-2 mb-2">
+                                <span class="text-xs font-bold uppercase tracking-widest opacity-80" data-i18n="recommendationTitle">The Verdict</span>
+                                <span id="verdict-score-badge" class="hidden px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-white/20 backdrop-blur-sm border border-white/30 text-white"></span>
+                            </div>
                             <div id="verdict-title" class="text-3xl lg:text-4xl font-bold font-display leading-tight mb-4">
                                 Go for it today!
                             </div>
@@ -275,6 +273,22 @@
                             </div>
                         </label>
 
+                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                            <div class="flex items-center gap-3 w-full justify-between">
+                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
+                                    <i data-lucide="clock" class="w-5 h-5 text-teal-500"></i>
+                                </div>
+                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
+                                    <input type="checkbox" id="toggle-daytime-focus" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm" data-i18n="critDaytimeFocus">Daytime Only (7 AM - 8 PM)</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critDaytimeFocusDesc">Evaluates 7 AM to 8 PM weather so nighttime rain does not spoil wash scores.</p>
+                            </div>
+                        </label>
+
                     </div>
                 </div>
 
@@ -340,11 +354,6 @@
                 <div class="relative">
                     <select class="lang-selector bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 ps-4 pe-8 py-2 rounded-full text-xs font-bold focus:outline-none focus:border-brand-500 cursor-pointer shadow-sm">
                         <option value="en">English</option>
-                        <option value="zh">中文 (Chinese)</option>
-                        <option value="hi">हिन्दी (Hindi)</option>
-                        <option value="es">Español</option>
-                        <option value="fr">Français</option>
-                        <option value="ar">العربية (Arabic)</option>
                         <option value="fa">فارسی (Farsi)</option>
                     </select>
                 </div>
@@ -490,6 +499,24 @@
                         <span data-i18n="critHighUVInfo">This ignores days with a UV index higher than 7, which can bake washing chemicals directly into your paint.</span>
                     </div>
                 </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="clock" class="w-5 h-5 text-teal-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critDaytimeFocus" class="text-slate-900 dark:text-white block mb-1">Daytime Only (7 AM - 8 PM)</strong>
+                        <span data-i18n="critDaytimeFocusInfo">When enabled, evaluates precipitation and wind between 7:00 AM and 8:00 PM local time. Overnight rainfall that dries by morning will not penalize daytime wash opportunities.</span>
+                    </div>
+                </div>
+                <div class="flex gap-4">
+                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
+                        <i data-lucide="cloud-drizzle" class="w-5 h-5 text-blue-500"></i>
+                    </div>
+                    <div>
+                        <strong data-i18n="critPrecipAmount" class="text-slate-900 dark:text-white block mb-1">Rain Volume > 0.5mm</strong>
+                        <span data-i18n="critPrecipAmountInfo">Allows small trace precipitation below 0.5 mm without penalizing wash suitability.</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -506,6 +533,21 @@
             </div>
             
             <div class="flex flex-col gap-6">
+                <!-- Daytime Focus Switch -->
+                <div class="flex justify-between items-center p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+                    <div class="flex flex-col pe-2">
+                        <span class="font-bold text-sm text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="clock" class="w-4 h-4 text-teal-500"></i>
+                            <span data-i18n="labelDaytimeFocus">Daytime Focus (7 AM - 8 PM)</span>
+                        </span>
+                        <span class="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5" data-i18n="descDaytimeFocus">Only check precipitation and winds between 7:00 AM and 8:00 PM.</span>
+                    </div>
+                    <div class="relative inline-flex items-center cursor-pointer shrink-0">
+                        <input type="checkbox" id="input-daytime-focus" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
+                    </div>
+                </div>
+
                 <!-- Precipitation Slider -->
                 <div class="flex flex-col gap-2">
                     <div class="flex justify-between items-center text-sm">
@@ -519,6 +561,21 @@
                         <input type="range" id="input-precip" min="0" max="100" step="5" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
                     </div>
                     <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descPrecip">Maximum allowed probability of precipitation.</span>
+                </div>
+
+                <!-- Rain Volume Limit Slider -->
+                <div class="flex flex-col gap-2">
+                    <div class="flex justify-between items-center text-sm">
+                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                            <i data-lucide="cloud-drizzle" class="w-4 h-4 text-blue-500"></i>
+                            <span data-i18n="labelRainVolume">Rain Volume Tolerance</span>
+                        </span>
+                        <span id="slider-rain-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">0.5 mm</span>
+                    </div>
+                    <div class="relative flex items-center">
+                        <input type="range" id="input-rain-volume" min="0" max="5" step="0.1" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
+                    </div>
+                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descRainVolume">Maximum allowed rain accumulation before washing is discouraged.</span>
                 </div>
 
                 <!-- Wind Speed Slider -->

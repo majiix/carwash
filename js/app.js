@@ -36,20 +36,22 @@ let vehicleCoating = localStorage.getItem('vehicleCoating') || 'regular';
 // Threshold default settings
 let washCriteriaThresholds = {
     highPrecip: 30,
+    rainVolume: 0.5,
     highWind: 30,
     freezing: 0,
     extremeHeat: 32,
     highUV: 7
 };
 
-// Extreme Heat and High UV disabled by default
+// Extreme Heat and High UV disabled by default; Daytime Focus enabled
 let washCriteria = {
     badWeather: true,
     highPrecip: true,
     highWind: true,
     freezing: true,
     extremeHeat: false,
-    highUV: false
+    highUV: false,
+    daytimeFocus: true
 };
 
 function t(key, params = {}) {
@@ -64,7 +66,9 @@ function updateStaticTexts() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         let params = {};
-        if (key.includes('Precip')) {
+        if (key.includes('PrecipAmount')) {
+            params = { val: washCriteriaThresholds.rainVolume };
+        } else if (key.includes('Precip')) {
             params = { val: washCriteriaThresholds.highPrecip };
         } else if (key.includes('Wind')) {
             params = { val: washCriteriaThresholds.highWind };
@@ -97,13 +101,13 @@ function setLanguage(lang) {
     } catch (e) {
     }
 
-    const isRtl = ['ar', 'fa'].includes(lang);
+    const isRtl = lang === 'fa';
     document.documentElement.dir = isRtl ? 'rtl' : 'ltr';
     document.documentElement.lang = lang;
 
     const localeMap = {
-        'en': 'en-US', 'es': 'es-ES', 'fr': 'fr-FR',
-        'zh': 'zh-CN', 'hi': 'hi-IN', 'ar': 'ar-SA', 'fa': 'fa-IR'
+        'en': 'en-US',
+        'fa': 'fa-IR'
     };
     document.documentElement.dataset.locale = localeMap[lang];
 
@@ -147,34 +151,41 @@ function updateLocationUrlParams(lat, lon, name) {
 
 function updateSlidersUI() {
     const inputPrecip = document.getElementById('input-precip');
+    const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
     const inputHeat = document.getElementById('input-heat');
     const inputUv = document.getElementById('input-uv');
+    const inputDaytimeFocus = document.getElementById('input-daytime-focus');
 
     if (inputPrecip) inputPrecip.value = washCriteriaThresholds.highPrecip;
+    if (inputRainVolume) inputRainVolume.value = washCriteriaThresholds.rainVolume;
     if (inputWind) inputWind.value = washCriteriaThresholds.highWind;
     if (inputFreezing) inputFreezing.value = washCriteriaThresholds.freezing;
     if (inputHeat) inputHeat.value = washCriteriaThresholds.extremeHeat;
     if (inputUv) inputUv.value = washCriteriaThresholds.highUV;
+    if (inputDaytimeFocus) inputDaytimeFocus.checked = washCriteria.daytimeFocus !== false;
 
     updateSliderBubbles();
 }
 
 function updateSliderBubbles() {
     const inputPrecip = document.getElementById('input-precip');
+    const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
     const inputHeat = document.getElementById('input-heat');
     const inputUv = document.getElementById('input-uv');
 
     const sliderPrecipVal = document.getElementById('slider-precip-val');
+    const sliderRainVal = document.getElementById('slider-rain-val');
     const sliderWindVal = document.getElementById('slider-wind-val');
     const sliderFreezingVal = document.getElementById('slider-freezing-val');
     const sliderHeatVal = document.getElementById('slider-heat-val');
     const sliderUvVal = document.getElementById('slider-uv-val');
 
     if (sliderPrecipVal) sliderPrecipVal.innerText = `${inputPrecip ? inputPrecip.value : washCriteriaThresholds.highPrecip}%`;
+    if (sliderRainVal) sliderRainVal.innerText = `${inputRainVolume ? inputRainVolume.value : washCriteriaThresholds.rainVolume} mm`;
     if (sliderWindVal) sliderWindVal.innerText = `${inputWind ? inputWind.value : washCriteriaThresholds.highWind} km/h`;
     if (sliderFreezingVal) sliderFreezingVal.innerText = `${inputFreezing ? inputFreezing.value : washCriteriaThresholds.freezing}°C`;
     if (sliderHeatVal) sliderHeatVal.innerText = `${inputHeat ? inputHeat.value : washCriteriaThresholds.extremeHeat}°C`;
@@ -202,41 +213,50 @@ function initCriteria() {
     const freezingToggle = document.getElementById('toggle-freezing');
     const extremeHeatToggle = document.getElementById('toggle-extreme-heat');
     const highUVToggle = document.getElementById('toggle-high-uv');
+    const daytimeFocusToggle = document.getElementById('toggle-daytime-focus');
 
-    if(badWeatherToggle) badWeatherToggle.checked = washCriteria.badWeather;
-    if(highPrecipToggle) highPrecipToggle.checked = washCriteria.highPrecip;
-    if(highWindToggle) highWindToggle.checked = washCriteria.highWind;
-    if(freezingToggle) freezingToggle.checked = washCriteria.freezing;
-    if(extremeHeatToggle) extremeHeatToggle.checked = washCriteria.extremeHeat;
-    if(highUVToggle) highUVToggle.checked = washCriteria.highUV;
+    if (badWeatherToggle) badWeatherToggle.checked = washCriteria.badWeather;
+    if (highPrecipToggle) highPrecipToggle.checked = washCriteria.highPrecip;
+    if (highWindToggle) highWindToggle.checked = washCriteria.highWind;
+    if (freezingToggle) freezingToggle.checked = washCriteria.freezing;
+    if (extremeHeatToggle) extremeHeatToggle.checked = washCriteria.extremeHeat;
+    if (highUVToggle) highUVToggle.checked = washCriteria.highUV;
+    if (daytimeFocusToggle) daytimeFocusToggle.checked = washCriteria.daytimeFocus !== false;
 
-    if(badWeatherToggle) badWeatherToggle.addEventListener('change', (e) => {
+    if (badWeatherToggle) badWeatherToggle.addEventListener('change', (e) => {
         washCriteria.badWeather = e.target.checked;
         saveCriteria();
     });
 
-    if(highPrecipToggle) highPrecipToggle.addEventListener('change', (e) => {
+    if (highPrecipToggle) highPrecipToggle.addEventListener('change', (e) => {
         washCriteria.highPrecip = e.target.checked;
         saveCriteria();
     });
 
-    if(highWindToggle) highWindToggle.addEventListener('change', (e) => {
+    if (highWindToggle) highWindToggle.addEventListener('change', (e) => {
         washCriteria.highWind = e.target.checked;
         saveCriteria();
     });
 
-    if(freezingToggle) freezingToggle.addEventListener('change', (e) => {
+    if (freezingToggle) freezingToggle.addEventListener('change', (e) => {
         washCriteria.freezing = e.target.checked;
         saveCriteria();
     });
 
-    if(extremeHeatToggle) extremeHeatToggle.addEventListener('change', (e) => {
+    if (extremeHeatToggle) extremeHeatToggle.addEventListener('change', (e) => {
         washCriteria.extremeHeat = e.target.checked;
         saveCriteria();
     });
 
-    if(highUVToggle) highUVToggle.addEventListener('change', (e) => {
+    if (highUVToggle) highUVToggle.addEventListener('change', (e) => {
         washCriteria.highUV = e.target.checked;
+        saveCriteria();
+    });
+
+    if (daytimeFocusToggle) daytimeFocusToggle.addEventListener('change', (e) => {
+        washCriteria.daytimeFocus = e.target.checked;
+        const inputDaytimeFocus = document.getElementById('input-daytime-focus');
+        if (inputDaytimeFocus) inputDaytimeFocus.checked = washCriteria.daytimeFocus;
         saveCriteria();
     });
 
@@ -248,14 +268,17 @@ function initCriteria() {
     const resetSettingsBtn = document.getElementById('reset-settings-btn');
 
     const inputPrecip = document.getElementById('input-precip');
+    const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
     const inputHeat = document.getElementById('input-heat');
     const inputUv = document.getElementById('input-uv');
+    const inputDaytimeFocus = document.getElementById('input-daytime-focus');
 
     updateSlidersUI();
 
     if (inputPrecip) inputPrecip.addEventListener('input', updateSliderBubbles);
+    if (inputRainVolume) inputRainVolume.addEventListener('input', updateSliderBubbles);
     if (inputWind) inputWind.addEventListener('input', updateSliderBubbles);
     if (inputFreezing) inputFreezing.addEventListener('input', updateSliderBubbles);
     if (inputHeat) inputHeat.addEventListener('input', updateSliderBubbles);
@@ -293,11 +316,15 @@ function initCriteria() {
         resetSettingsBtn.addEventListener('click', () => {
             washCriteriaThresholds = {
                 highPrecip: 30,
+                rainVolume: 0.5,
                 highWind: 30,
                 freezing: 0,
                 extremeHeat: 32,
                 highUV: 7
             };
+            washCriteria.daytimeFocus = true;
+            if (inputDaytimeFocus) inputDaytimeFocus.checked = true;
+            if (daytimeFocusToggle) daytimeFocusToggle.checked = true;
             updateSlidersUI();
         });
     }
@@ -305,10 +332,16 @@ function initCriteria() {
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', () => {
             washCriteriaThresholds.highPrecip = parseInt(inputPrecip ? inputPrecip.value : 30);
+            washCriteriaThresholds.rainVolume = parseFloat(inputRainVolume ? inputRainVolume.value : 0.5);
             washCriteriaThresholds.highWind = parseInt(inputWind ? inputWind.value : 30);
             washCriteriaThresholds.freezing = parseInt(inputFreezing ? inputFreezing.value : 0);
             washCriteriaThresholds.extremeHeat = parseInt(inputHeat ? inputHeat.value : 32);
             washCriteriaThresholds.highUV = parseInt(inputUv ? inputUv.value : 7);
+
+            if (inputDaytimeFocus) {
+                washCriteria.daytimeFocus = inputDaytimeFocus.checked;
+                if (daytimeFocusToggle) daytimeFocusToggle.checked = washCriteria.daytimeFocus;
+            }
 
             localStorage.setItem('washCriteriaThresholds', JSON.stringify(washCriteriaThresholds));
             if (criteriaSettingsModal) {
@@ -590,11 +623,14 @@ function initApp() {
     const urlParams = new URLSearchParams(window.location.search);
 
     const langParam = urlParams.get('lang');
-    const validLangs = ['en', 'es', 'fr', 'zh', 'hi', 'ar', 'fa'];
+    const validLangs = ['en', 'fa'];
+    const savedLang = localStorage.getItem('appLang');
     if (langParam && validLangs.includes(langParam)) {
         currentLang = langParam;
+    } else if (savedLang && validLangs.includes(savedLang)) {
+        currentLang = savedLang;
     } else {
-        currentLang = localStorage.getItem('appLang') || 'en';
+        currentLang = 'en';
     }
 
     showSkeleton();
@@ -680,13 +716,16 @@ function saveAndFetchLocation(lat, lon, name) {
 
 async function fetchWeatherData(lat, lon) {
     try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max,windspeed_10m_max,uv_index_max&timezone=auto&forecast_days=10`;
+        const dailyParams = 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,uv_index_max';
+        const hourlyParams = 'precipitation_probability,precipitation,wind_gusts_10m,weather_code';
+        const currentParams = 'temperature_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m';
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&models=ecmwf_ifs025&daily=${dailyParams}&hourly=${hourlyParams}&current=${currentParams}&timezone=auto&forecast_days=10`;
         const response = await fetch(url);
 
         if (!response.ok) throw new Error("Weather data request failed.");
 
         const data = await response.json();
-        currentWeatherData = data.daily;
+        currentWeatherData = data;
         processData(currentWeatherData);
 
     } catch (error) {
@@ -696,21 +735,143 @@ async function fetchWeatherData(lat, lon) {
         verdictTitle.innerText = t('errorConnecting');
         verdictReason.innerText = t('checkBackLater');
         targetDateText.innerText = t('pending');
+        const verdictScoreBadge = document.getElementById('verdict-score-badge');
+        if (verdictScoreBadge) verdictScoreBadge.classList.add('hidden');
     }
 }
 
-function processData(daily) {
+function extractDayMetrics(daily, hourly, dayIndex) {
+    const probArr = daily.precipitation_probability_max || [];
+    const rainArr = daily.precipitation_sum || [];
+    const windArr = daily.wind_speed_10m_max || daily.windspeed_10m_max || [];
+    const gustArr = daily.wind_gusts_10m_max || daily.windgusts_10m_max || windArr;
+
+    const defaultProb = probArr[dayIndex] || 0;
+    const defaultRain = rainArr[dayIndex] || 0;
+    const defaultWind = windArr[dayIndex] || 0;
+    const defaultGust = gustArr[dayIndex] || defaultWind;
+
+    // Scan all 24 hours of the day for bad weather codes (rain, drizzle, snow, thunderstorm)
+    const hourlyCodes = (hourly && (hourly.weather_code || hourly.weathercode)) ? (hourly.weather_code || hourly.weathercode) : [];
+    const day24Start = dayIndex * 24;
+    const day24End = dayIndex * 24 + 23;
+    const dayCodes = hourlyCodes.slice(day24Start, day24End + 1);
+
+    let badForWashHourly = false;
+    let representativeCode = null;
+    for (const c of dayCodes) {
+        if (weatherCodes[c] && weatherCodes[c].badForWash) {
+            badForWashHourly = true;
+            if (representativeCode === null || c > representativeCode) {
+                representativeCode = c;
+            }
+        }
+    }
+
+    if (!washCriteria.daytimeFocus || !hourly || !hourly.precipitation_probability) {
+        return {
+            precipProb: defaultProb,
+            precipSum: Math.round(defaultRain * 10) / 10,
+            windSpeed: Math.round(defaultWind),
+            windGust: Math.round(defaultGust),
+            badForWashHourly: badForWashHourly,
+            representativeCode: representativeCode
+        };
+    }
+
+    const start = dayIndex * 24 + 7;
+    const end = dayIndex * 24 + 20;
+    const probs = (hourly.precipitation_probability || []).slice(start, end + 1);
+    const rains = (hourly.precipitation || []).slice(start, end + 1);
+    const hourlyGusts = hourly.wind_gusts_10m || hourly.windgusts_10m || [];
+    const gusts = hourlyGusts.slice(start, end + 1);
+
+    const daytimeProb = probs.length > 0 ? Math.max(...probs) : defaultProb;
+    const daytimeRain = rains.length > 0 ? rains.reduce((a, b) => a + (b || 0), 0) : defaultRain;
+    const daytimeGust = gusts.length > 0 ? Math.max(...gusts) : defaultGust;
+
+    return {
+        precipProb: daytimeProb,
+        precipSum: Math.round(daytimeRain * 10) / 10,
+        windSpeed: Math.round(defaultWind),
+        windGust: Math.round(daytimeGust),
+        badForWashHourly: badForWashHourly,
+        representativeCode: representativeCode
+    };
+}
+
+function calculateWashScore(data) {
+    let score = 100;
+    const dirtyReasons = [];
+
+    if (data.activeRain) {
+        score -= 50;
+        dirtyReasons.push('activeRain');
+    }
+
+    if (data.precipSum > data.rainLimit) {
+        const excess = data.precipSum - data.rainLimit;
+        score -= Math.min(55, Math.round(15 + excess * 18));
+        dirtyReasons.push('rainVolume');
+    }
+
+    if (washCriteria.highPrecip && data.precipProb > data.precipLimit) {
+        const excessProb = data.precipProb - data.precipLimit;
+        score -= Math.min(45, Math.round(excessProb * 0.9));
+        dirtyReasons.push('highPrecip');
+    }
+
+    if (washCriteria.badWeather && data.badForWash) {
+        score -= 45;
+        if (!dirtyReasons.includes('badWeather') && !dirtyReasons.includes('activeRain')) {
+            dirtyReasons.push('badWeather');
+        }
+    }
+
+    if (washCriteria.highWind && data.windGust > data.windLimit) {
+        const excessWind = data.windGust - data.windLimit;
+        score -= Math.min(30, Math.round(excessWind * 0.75));
+        dirtyReasons.push(data.windGust > data.windLimit + 15 ? 'highGusts' : 'highWind');
+    }
+
+    if (washCriteria.freezing && data.minTemp <= data.freezingLimit) {
+        score -= 40;
+        dirtyReasons.push('freezing');
+    }
+    if (washCriteria.extremeHeat && data.maxTemp > data.heatLimit) {
+        score -= 20;
+        dirtyReasons.push('extremeHeat');
+    }
+    if (washCriteria.highUV && data.uvIndex > data.uvLimit) {
+        score -= 15;
+        dirtyReasons.push('highUV');
+    }
+
+    const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+    const tier = finalScore >= 80 ? 'ideal' : finalScore >= 60 ? 'good' : finalScore >= 40 ? 'fair' : 'poor';
+
+    return {
+        score: finalScore,
+        tier: tier,
+        isDirty: finalScore < 50 || dirtyReasons.length > 0,
+        dirtyReasons: dirtyReasons
+    };
+}
+
+function processData(weatherData) {
+    if (!weatherData) return;
+    const daily = weatherData.daily || weatherData;
+    const hourly = weatherData.hourly || null;
+    const current = weatherData.current || null;
     const daysData = [];
     const today = new Date();
     const localeString = document.documentElement.dataset.locale || 'en-US';
-    const numDays = daily.weathercode.length;
+    const dailyCodes = daily.weather_code || daily.weathercode || [];
+    const numDays = dailyCodes.length;
 
     for (let i = 0; i < numDays; i++) {
-        const code = daily.weathercode[i];
-        const weatherInfo = weatherCodes[code] || { icon: 'help-circle', badForWash: false };
-        const descriptionStr = translations[currentLang]?.weather?.[code] || translations['en'].weather[code] || 'Unknown';
-        const precipProb = daily.precipitation_probability_max[i];
-        const windSpeed = daily.windspeed_10m_max[i];
+        let code = dailyCodes[i];
+        let weatherInfo = weatherCodes[code] || { icon: 'help-circle', badForWash: false };
         const uvIndexRaw = daily.uv_index_max && daily.uv_index_max[i] !== null ? daily.uv_index_max[i] : 0;
 
         const dateObj = new Date(today);
@@ -718,23 +879,56 @@ function processData(daily) {
 
         const localWeekday = dateObj.toLocaleDateString(localeString, { weekday: 'short' });
         const localDate = dateObj.toLocaleDateString(localeString, { month: 'short', day: 'numeric' });
+        const dayName = i === 0 ? t('todayStr') : i === 1 ? t('tomorrowStr') : localWeekday;
 
-        let dayName = i === 0 ? t('todayStr') : i === 1 ? t('tomorrowStr') : localWeekday;
+        const activePrecipLimit = washCriteriaThresholds.highPrecip + (vehicleCoating === 'wax' ? 5 : (vehicleCoating === 'ceramic' ? 15 : 0));
+        const activeRainLimit = washCriteriaThresholds.rainVolume + (vehicleCoating === 'wax' ? 0.3 : (vehicleCoating === 'ceramic' ? 0.8 : 0));
+        const activeWindLimit = washCriteriaThresholds.highWind + (vehicleCoating === 'ceramic' ? 10 : 0);
+        const activeUvLimit = Math.max(1, washCriteriaThresholds.highUV - (vehicleColor === 'dark' ? 2 : 0));
 
-        let activePrecipLimit = washCriteriaThresholds.highPrecip + (vehicleCoating === 'wax' ? 5 : (vehicleCoating === 'ceramic' ? 15 : 0));
-        let activeWindLimit = washCriteriaThresholds.highWind + (vehicleCoating === 'ceramic' ? 10 : 0);
-        let activeUvLimit = Math.max(1, washCriteriaThresholds.highUV - (vehicleColor === 'dark' ? 2 : 0));
+        const metrics = extractDayMetrics(daily, hourly, i);
+        let badForWash = weatherInfo.badForWash || metrics.badForWashHourly;
 
-        // Collect all reasons why this day might be flagged as dirty based on criteria
-        const dirtyReasons = [];
-        if (washCriteria.badWeather && weatherInfo.badForWash) dirtyReasons.push('badWeather');
-        if (washCriteria.highPrecip && precipProb > activePrecipLimit) dirtyReasons.push('highPrecip');
-        if (washCriteria.highWind && windSpeed > activeWindLimit) dirtyReasons.push('highWind');
-        if (washCriteria.freezing && daily.temperature_2m_min[i] <= washCriteriaThresholds.freezing) dirtyReasons.push('freezing');
-        if (washCriteria.extremeHeat && daily.temperature_2m_max[i] > washCriteriaThresholds.extremeHeat) dirtyReasons.push('extremeHeat');
-        if (washCriteria.highUV && uvIndexRaw > activeUvLimit) dirtyReasons.push('highUV');
+        if (metrics.badForWashHourly && metrics.representativeCode !== null) {
+            code = metrics.representativeCode;
+            weatherInfo = weatherCodes[code] || weatherInfo;
+        }
 
-        const isDirtyDay = dirtyReasons.length > 0;
+        let isActiveRainToday = false;
+        if (i === 0 && current) {
+            const currentPrecip = current.precipitation || 0;
+            const currentCode = current.weather_code !== undefined ? current.weather_code : current.weathercode;
+            const currentBad = currentCode !== undefined && weatherCodes[currentCode] ? weatherCodes[currentCode].badForWash : false;
+
+            if (currentPrecip > 0 || currentBad) {
+                badForWash = true;
+                isActiveRainToday = true;
+                if (currentCode !== undefined && weatherCodes[currentCode]) {
+                    code = currentCode;
+                    weatherInfo = weatherCodes[currentCode];
+                }
+            }
+        }
+
+        const descriptionStr = translations[currentLang]?.weather?.[code] || translations['en']?.weather?.[code] || 'Unknown';
+
+        const scored = calculateWashScore({
+            precipProb: metrics.precipProb,
+            precipSum: metrics.precipSum,
+            windSpeed: metrics.windSpeed,
+            windGust: metrics.windGust,
+            badForWash: badForWash,
+            activeRain: isActiveRainToday,
+            minTemp: daily.temperature_2m_min[i],
+            maxTemp: daily.temperature_2m_max[i],
+            uvIndex: uvIndexRaw,
+            precipLimit: activePrecipLimit,
+            rainLimit: activeRainLimit,
+            windLimit: activeWindLimit,
+            freezingLimit: washCriteriaThresholds.freezing,
+            heatLimit: washCriteriaThresholds.extremeHeat,
+            uvLimit: activeUvLimit
+        });
 
         daysData.push({
             index: i,
@@ -742,15 +936,20 @@ function processData(daily) {
             dateFormatted: localDate,
             maxTemp: Math.round(daily.temperature_2m_max[i]),
             minTemp: Math.round(daily.temperature_2m_min[i]),
-            precipProb: precipProb,
-            windSpeed: Math.round(windSpeed),
+            precipProb: metrics.precipProb,
+            precipSum: metrics.precipSum,
+            windSpeed: metrics.windSpeed,
+            windGust: metrics.windGust,
             uvIndex: Math.round(uvIndexRaw),
             desc: descriptionStr,
             icon: weatherInfo.icon,
-            isDirty: isDirtyDay,
-            dirtyReasons: dirtyReasons,
+            score: scored.score,
+            tier: scored.tier,
+            isDirty: scored.isDirty,
+            dirtyReasons: scored.dirtyReasons,
             dateObj: dateObj,
             precipLimit: activePrecipLimit,
+            rainLimit: activeRainLimit,
             windLimit: activeWindLimit,
             uvLimit: activeUvLimit
         });
@@ -767,29 +966,54 @@ function analyzeBestWashDay(days) {
     const numDays = days.length;
 
     for (let i = 0; i < numDays; i++) {
-        if (days[i].isDirty) continue;
+        if (days[i].score < 50) continue;
 
         let guaranteedCleanDays = 0;
         for (let j = i; j < numDays; j++) {
-            if (days[j].isDirty) {
-                break;
-            }
+            if (days[j].score < 50) break;
             guaranteedCleanDays++;
         }
 
-        // Each guaranteed clean day adds 50 points to the score.
-        // A proximity penalty of 5 points per day is subtracted based on how far in the future the day is.
-        // This naturally favors closer days when streak lengths are equal, and avoids boundary-truncation advantages.
-        let currentScore = (guaranteedCleanDays * 50) - (5 * i);
+        const d0 = days[i].score;
+        const d1 = i + 1 < numDays ? days[i + 1].score : d0;
+        const d2 = i + 2 < numDays ? days[i + 2].score : d1;
+        const d3 = i + 3 < numDays ? days[i + 3].score : d2;
 
-        if (currentScore > bestScore) {
-            bestScore = currentScore;
+        const forwardScore = (d0 * 0.40) + (d1 * 0.25) + (d2 * 0.20) + (d3 * 0.15) + (guaranteedCleanDays * 12) - (2.5 * i);
+
+        if (forwardScore > bestScore) {
+            bestScore = forwardScore;
             bestDayIndex = i;
-            streakLength = guaranteedCleanDays - 1;
+            streakLength = Math.max(0, guaranteedCleanDays - 1);
         }
     }
 
     renderDashboard(days, bestDayIndex, streakLength);
+}
+
+function getTierBadgeClasses(tier) {
+    switch (tier) {
+        case 'ideal':
+            return {
+                badge: 'bg-emerald-500 text-white',
+                icon: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400'
+            };
+        case 'good':
+            return {
+                badge: 'bg-teal-500 text-white',
+                icon: 'bg-teal-50 dark:bg-teal-950/40 text-teal-600 dark:text-teal-400'
+            };
+        case 'fair':
+            return {
+                badge: 'bg-amber-500 text-white',
+                icon: 'bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400'
+            };
+        default:
+            return {
+                badge: 'bg-rose-500 text-white',
+                icon: 'bg-rose-50 dark:bg-rose-950/40 text-rose-500 dark:text-rose-400'
+            };
+    }
 }
 
 function renderDashboard(days, bestDayIndex, streakLength) {
@@ -800,6 +1024,7 @@ function renderDashboard(days, bestDayIndex, streakLength) {
 
     const addToCalendarBtn = document.getElementById('add-to-calendar-btn');
     const calendarHelpText = document.getElementById('calendar-help-text');
+    const verdictScoreBadge = document.getElementById('verdict-score-badge');
 
     if (bestDayIndex === -1) {
         currentRecommendedDate = null;
@@ -810,20 +1035,25 @@ function renderDashboard(days, bestDayIndex, streakLength) {
         verdictCard.classList.add('verdict-wait-bg', 'text-slate-900');
         verdictTitle.innerText = t('waitItOut');
 
-        // Dynamic wait reason construction
+        if (verdictScoreBadge) {
+            const topScore = days[0] ? days[0].score : 0;
+            const topTier = days[0] ? days[0].tier : 'poor';
+            const tierStr = t('score' + topTier.charAt(0).toUpperCase() + topTier.slice(1));
+            verdictScoreBadge.innerText = `${topScore}% · ${tierStr}`;
+            verdictScoreBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-rose-500/20 text-rose-800 dark:text-rose-200 border border-rose-400/30';
+            verdictScoreBadge.classList.remove('hidden');
+        }
+
         let foundReasons = new Set();
-        // Check reasons for the next 3 days to give a relevant dynamic explanation
         const checkLimit = Math.min(3, days.length);
-        for(let i=0; i<checkLimit; i++) {
-            if(days[i] && days[i].dirtyReasons) {
+        for (let i = 0; i < checkLimit; i++) {
+            if (days[i] && days[i].dirtyReasons) {
                 days[i].dirtyReasons.forEach(r => foundReasons.add(r));
             }
         }
-
-        // Fallback to checking all days if the first 3 days were somehow skipped
-        if(foundReasons.size === 0) {
-            for(let i=0; i<days.length; i++) {
-                if(days[i] && days[i].dirtyReasons) {
+        if (foundReasons.size === 0) {
+            for (let i = 0; i < days.length; i++) {
+                if (days[i] && days[i].dirtyReasons) {
                     days[i].dirtyReasons.forEach(r => foundReasons.add(r));
                 }
             }
@@ -848,6 +1078,13 @@ function renderDashboard(days, bestDayIndex, streakLength) {
         verdictCard.classList.add('verdict-recommend-bg', 'text-white');
         targetDateText.innerText = recommendedDay.dayName + ", " + recommendedDay.dateFormatted;
 
+        if (verdictScoreBadge) {
+            const tierStr = t('score' + recommendedDay.tier.charAt(0).toUpperCase() + recommendedDay.tier.slice(1));
+            verdictScoreBadge.innerText = `${recommendedDay.score}% · ${tierStr}`;
+            verdictScoreBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-white/20 text-white border border-white/30 backdrop-blur-sm';
+            verdictScoreBadge.classList.remove('hidden');
+        }
+
         if (streakLength > 0) {
             streakBadge.classList.remove('hidden');
             streakNumber.innerText = streakLength + 1;
@@ -869,19 +1106,14 @@ function renderDashboard(days, bestDayIndex, streakLength) {
 
     days.forEach((day, idx) => {
         const isRecommended = idx === bestDayIndex;
+        const styles = getTierBadgeClasses(day.tier);
+        const tierName = t('score' + day.tier.charAt(0).toUpperCase() + day.tier.slice(1));
 
         const cardClasses = isRecommended
             ? "bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border-l-4 border-brand-500 relative flex items-center justify-between gap-3 transform hover:scale-[1.01] transition-transform"
             : "p-3 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between gap-3 transition-colors text-slate-500 dark:text-slate-400";
 
         const titleColor = isRecommended ? "text-slate-900 dark:text-white font-bold" : "font-medium text-slate-700 dark:text-slate-300";
-
-        let iconContainer = "";
-        if (day.isDirty) {
-            iconContainer = "bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400";
-        } else {
-            iconContainer = "bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400";
-        }
 
         const badgeHtml = isRecommended
             ? `<div class="absolute -top-2.5 right-4 bg-brand-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">${t('bestDayBadge')}</div>`
@@ -890,13 +1122,19 @@ function renderDashboard(days, bestDayIndex, streakLength) {
         const cardHtml = `
             <div class="${cardClasses}">
                 ${badgeHtml}
-                <div class="flex items-center gap-4">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${iconContainer}">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${styles.icon}">
                         <i data-lucide="${day.icon}" class="w-5 h-5"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="${titleColor} leading-tight">${day.dayName}</span>
                         <span class="text-[11px] font-medium opacity-80">${day.dateFormatted} &middot; ${day.desc}</span>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${styles.badge}">
+                                ${day.score}% · ${tierName}
+                            </span>
+                            ${day.precipSum > 0 ? `<span class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-1.5 py-0.5 rounded">${day.precipSum}mm</span>` : ''}
+                        </div>
                     </div>
                 </div>
 
@@ -911,8 +1149,8 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                         <span class="${(washCriteria.highUV && day.uvIndex > day.uvLimit) ? 'text-purple-500 dark:text-purple-400 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="UV Index">
                             <i data-lucide="sun-dim" class="w-3 h-3"></i> ${day.uvIndex}
                         </span>
-                        <span class="${(washCriteria.highWind && day.windSpeed > day.windLimit) ? 'text-slate-600 dark:text-slate-300 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind">
-                            <i data-lucide="wind" class="w-3 h-3"></i> ${day.windSpeed}<span class="text-[9px] font-medium uppercase opacity-80">km/h</span>
+                        <span class="${(washCriteria.highWind && day.windGust > day.windLimit) ? 'text-slate-600 dark:text-slate-300 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind Gusts">
+                            <i data-lucide="wind" class="w-3 h-3"></i> ${day.windGust}<span class="text-[9px] font-medium uppercase opacity-80">km/h</span>
                         </span>
                     </div>
                 </div>

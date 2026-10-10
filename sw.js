@@ -1,4 +1,4 @@
-const CACHE_NAME = 'carwash-planner-cache-v8';
+const CACHE_NAME = 'carwash-planner-cache-v11';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',
@@ -16,11 +16,6 @@ const ASSETS_TO_CACHE = [
   'fonts/Vazirmatn-Bold.woff2',
   'fonts/Vazirmatn-SemiBold.woff2',
   'js/lang/en.js',
-  'js/lang/es.js',
-  'js/lang/fr.js',
-  'js/lang/zh.js',
-  'js/lang/hi.js',
-  'js/lang/ar.js',
   'js/lang/fa.js'
 ];
 

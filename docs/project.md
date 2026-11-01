@@ -40,6 +40,7 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 
 ## Current Features
 - Continuous 0-100 Wash Score: Evaluates precipitation chance, rain volume (mm), wind gusts (km/h), freezing temperature, extreme heat, and UV index.
+- Zero-Tolerance Rain & Snow Protection: Automated protection that strictly rejects any forecasted rain or snow accumulation (precipSum > 0 mm) or bad weather codes (drizzle, rain, snow, thunderstorms), alongside a 30% PoP cutoff and mild score deduction for trace probabilities below 30%.
 - ECMWF IFS Global Model: Powered by the ECMWF 0.25° model, preventing false clean recommendations in regions where default models miss precipitation events.
 - 24-Hour Weather Code Scan: Evaluates all 24 hours of each day to detect drizzle, rain, or thunderstorms (codes 51-99) and reflects the rainy icon on the daily agenda.
 - Real-Time Rain Safeguard: Ingests `current` weather conditions to immediately flag today as dirty if precipitation is actively occurring.
@@ -48,7 +49,7 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - Forward Window Recommendation: Selects optimal wash day by weighing current suitability against multi-day forward streak quality.
 - Dual Language Support: English (`en`) and Farsi (`fa`) with full RTL alignment and Persian number/date formatting.
 - Dynamic Language Loading: Loads translation modules on demand with automatic fallback to English.
-- Custom Criteria and Thresholds: Allows users to customize thresholds for precipitation probability, rain volume (mm), wind speed, and freezing point.
+- Custom Criteria and Thresholds: Allows users to customize thresholds for wind speed and freezing point, alongside an optional Daytime Focus toggle.
 - Calendar Export: Generates downloadable `.ics` files for the recommended wash day.
 - Modal Scroll Containment: Prevents background document scroll and chaining when modals or bottom sheets are open, isolating scroll exclusively to modal content.
 - Offline Capability: Pre-caches application assets via Service Worker for reliable offline access.
@@ -60,8 +61,10 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - Language Scope: Only English (`en`) and Farsi (`fa`) are retained. Unused language files (`ar.js`, `es.js`, `fr.js`, `hi.js`, `zh.js`) were permanently removed from the repository.
 - Preference Fallback: Stored language preferences in `localStorage` or URL query parameters that do not match `en` or `fa` automatically reset to English (`en`).
 - Daytime Hours: Set to 7:00 AM through 8:00 PM local time when daytime-focus is enabled.
-- Default Thresholds and Flags: Daytime focus toggle is off by default. Rain volume tolerance defaults to 0 mm, and wind speed limit defaults to 15 km/h.
-- Clean Window Recommendation Requirement: A wash day candidate is only eligible if the car is guaranteed to keep clean for at least one full day after washing (guaranteedCleanDays >= 2, requiring streakLength >= 1). Days followed immediately by precipitation (active rain, rain accumulation, or bad weather codes) or score < 50 are disqualified. If no multi-day clean window exists in the forecast, the engine defaults to "Wait it out" rather than suggesting an isolated clean day before rain.
+- Default Thresholds and Flags: Daytime focus toggle is off by default. Wind speed limit defaults to 15 km/h, and freezing point defaults to 0°C.
+- Zero-Tolerance Precipitation Architecture: The manual Precipitation Limit slider has been removed. All days with measurable precipitation (precipSum > 0 mm) or bad weather codes (51-99) are strictly disqualified. When volume is 0.0 mm, precipitation probabilities (PoP) of 30% or higher disqualify the day as dirty, while trace probabilities below 30% incur a mild linear deduction (1 to 15 points) without disqualifying the wash window.
+- Consolidated Criteria Modal: Dashboard criteria boxes are replaced by a single prominent entry card ("Customize Wash Criteria & Thresholds"). Direct numerical threshold sliders in the modal allow customization of wind speed and freezing point, while Daytime Focus is housed in an Additional Settings section.
+- Clean Window Recommendation Requirement: A wash day candidate is only eligible if the car is guaranteed to keep clean for at least one full day after washing (guaranteedCleanDays >= 2, requiring streakLength >= 1). Days followed immediately by precipitation (active rain, rain accumulation, bad weather codes, or PoP >= 30%) or score < 50 are disqualified. If no multi-day clean window exists in the forecast, the engine defaults to "Wait it out" rather than suggesting an isolated clean day before rain.
 - First-Time Visitor Default Locations: Instead of prompting for browser geolocation on initial visit, default coordinates and location names are automatically set according to the selected language: Tehran (lat: 35.69439, lon: 51.42151, locName: 'Tehran, Tehran') for Farsi (`fa`), and New York (lat: 40.71427, lon: -74.00597, locName: 'New York, New York') for English (`en`).
 
 ## Verification Commands

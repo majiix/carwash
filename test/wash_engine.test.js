@@ -35,16 +35,12 @@ const weatherCodes = {
 
 // Mock criteria configuration
 const washCriteria = {
-    badWeather: true,
-    highPrecip: true,
-    highWind: true,
-    freezing: true,
     daytimeFocus: false
 };
 
+const POP_DISQUALIFY_THRESHOLD = 30;
+
 const washCriteriaThresholds = {
-    highPrecip: 30,
-    rainVolume: 0,
     highWind: 15,
     freezing: 0
 };
@@ -58,32 +54,37 @@ function calculateWashScore(data) {
         dirtyReasons.push('activeRain');
     }
 
-    if (data.precipSum > data.rainLimit) {
-        const excess = data.precipSum - data.rainLimit;
-        score -= Math.min(55, Math.round(15 + excess * 18));
-        dirtyReasons.push('rainVolume');
-    }
-
-    if (washCriteria.highPrecip && data.precipProb > data.precipLimit) {
-        const excessProb = data.precipProb - data.precipLimit;
-        score -= Math.min(45, Math.round(excessProb * 0.9));
-        dirtyReasons.push('highPrecip');
-    }
-
-    if (washCriteria.badWeather && data.badForWash) {
-        score -= 45;
+    if (data.badForWash) {
+        score -= 50;
         if (!dirtyReasons.includes('badWeather') && !dirtyReasons.includes('activeRain')) {
             dirtyReasons.push('badWeather');
         }
     }
 
-    if (washCriteria.highWind && data.windGust > data.windLimit) {
+    if (data.precipSum > 0) {
+        score -= Math.min(50, Math.max(25, Math.round(data.precipSum * 20)));
+        if (!dirtyReasons.includes('rainVolume')) {
+            dirtyReasons.push('rainVolume');
+        }
+    }
+
+    const prob = data.precipProb || 0;
+    if (prob >= POP_DISQUALIFY_THRESHOLD) {
+        const excessProb = prob - POP_DISQUALIFY_THRESHOLD;
+        score -= Math.min(50, Math.round(20 + excessProb * 0.7));
+        dirtyReasons.push('highPrecip');
+    } else if (prob > 0) {
+        const mildDeduction = Math.round((prob / POP_DISQUALIFY_THRESHOLD) * 15);
+        score -= mildDeduction;
+    }
+
+    if (data.windGust > data.windLimit) {
         const excessWind = data.windGust - data.windLimit;
         score -= Math.min(30, Math.round(excessWind * 0.75));
         dirtyReasons.push(data.windGust > data.windLimit + 15 ? 'highGusts' : 'highWind');
     }
 
-    if (washCriteria.freezing && data.minTemp <= data.freezingLimit) {
+    if (data.minTemp <= data.freezingLimit) {
         score -= 40;
         dirtyReasons.push('freezing');
     }
@@ -161,12 +162,11 @@ function extractDayMetrics(daily, hourly, dayIndex) {
 
 function isCleanDay(day) {
     if (!day || day.score < 50) return false;
-    const precipReasons = ['activeRain', 'rainVolume', 'highPrecip', 'badWeather'];
+    const precipReasons = ['activeRain', 'highPrecip', 'badWeather', 'rainVolume'];
     if (day.dirtyReasons && day.dirtyReasons.some(r => precipReasons.includes(r))) {
         return false;
     }
-    const limit = day.rainLimit !== undefined ? day.rainLimit : 0;
-    if (day.precipSum > limit) {
+    if (day.precipSum > 0) {
         return false;
     }
     return true;
@@ -212,7 +212,7 @@ function runTests() {
     // Test 1: Typical Input - Ideal clear day
     {
         const result = calculateWashScore({
-            precipProb: 5,
+            precipProb: 0,
             precipSum: 0.0,
             windSpeed: 12,
             windGust: 18,
@@ -220,8 +220,6 @@ function runTests() {
             minTemp: 14,
             maxTemp: 24,
             uvIndex: 4,
-            precipLimit: 30,
-            rainLimit: 0.5,
             windLimit: 30,
             freezingLimit: 0,
             heatLimit: 32,
@@ -234,28 +232,29 @@ function runTests() {
         console.log('Test 1 Passed: Typical ideal sunny day scores 100 (Ideal)');
     }
 
-    // Test 2: Edge Case - Trace mist below rain volume limit
+    // Test 2: Mon Nov 9 Scenario - Trace PoP (19%) with 0.0 mm rain maintains high score without dirty flag
     {
         const result = calculateWashScore({
-            precipProb: 20,
-            precipSum: 0.2, // Below 0.5 mm limit
+            precipProb: 19,
+            precipSum: 0.0,
             windSpeed: 14,
             windGust: 20,
             badForWash: false,
             minTemp: 12,
             maxTemp: 20,
             uvIndex: 3,
-            precipLimit: 30,
-            rainLimit: 0.5,
             windLimit: 30,
             freezingLimit: 0,
             heatLimit: 32,
             uvLimit: 7
         });
 
-        assert.ok(result.score >= 80, 'Trace mist below threshold should maintain high score');
-        assert.strictEqual(result.tier, 'ideal', 'Tier should remain ideal for trace mist');
-        console.log('Test 2 Passed: Trace mist below limit is tolerated without harsh penalty');
+        // 100 - round(19 / 30 * 15) = 100 - 10 = 90
+        assert.strictEqual(result.score, 90, 'Trace probability (19%) should result in mild 10pt deduction');
+        assert.strictEqual(result.tier, 'ideal', 'Tier should remain ideal for 90 score');
+        assert.strictEqual(result.isDirty, false, 'Trace probability below 30% without rain must not be marked dirty');
+        assert.strictEqual(result.dirtyReasons.length, 0, 'No dirty reasons should be present');
+        console.log('Test 2 Passed: Trace PoP (19%) with 0.0 mm rain maintains high score without dirty flag');
     }
 
     // Test 3: Failure Case - Heavy rain and bad weather code
@@ -280,7 +279,7 @@ function runTests() {
         assert.strictEqual(result.score, 0, 'Heavy rain should receive 0 points');
         assert.strictEqual(result.tier, 'poor', 'Tier should be poor');
         assert.strictEqual(result.isDirty, true, 'Heavy rain day must be marked dirty');
-        assert.ok(result.dirtyReasons.includes('rainVolume'), 'Should flag rainVolume');
+        assert.ok(result.dirtyReasons.includes('highPrecip'), 'Should flag highPrecip');
         assert.ok(result.dirtyReasons.includes('badWeather'), 'Should flag badWeather');
         console.log('Test 3 Passed: Heavy storm correctly drops score to 0 (Poor)');
     }
@@ -468,10 +467,9 @@ function runTests() {
             uvLimit: 7
         });
 
-        assert.ok(qomScored.score <= 30, `Qom score must be poor (got ${qomScored.score})`);
+        assert.ok(qomScored.score < 40, `Qom score must be poor (got ${qomScored.score})`);
         assert.strictEqual(qomScored.tier, 'poor', 'Qom tier must be poor');
         assert.strictEqual(qomScored.isDirty, true, 'Qom must be flagged as dirty');
-        assert.ok(qomScored.dirtyReasons.includes('rainVolume'), 'Must flag rainVolume');
         assert.ok(qomScored.dirtyReasons.includes('badWeather'), 'Must flag badWeather');
         assert.ok(qomScored.dirtyReasons.includes('highGusts'), 'Must flag highGusts');
         console.log('Test 9 Passed: Qom rain regression test scores Poor (<= 30) instead of Ideal');
@@ -489,8 +487,6 @@ function runTests() {
             minTemp: 15,
             maxTemp: 25,
             uvIndex: 3,
-            precipLimit: washCriteriaThresholds.highPrecip,
-            rainLimit: washCriteriaThresholds.rainVolume,
             windLimit: washCriteriaThresholds.highWind,
             freezingLimit: washCriteriaThresholds.freezing
         });
@@ -569,7 +565,45 @@ function runTests() {
         console.log('Test 14 Passed: Multi-day clean window starting today recommends today with verified streak');
     }
 
-    console.log('All 14 Predictive Wash Engine tests passed successfully!');
+    // Test 15: Zero-tolerance rain volume safeguard (0.1 mm) disqualifies day as dirty
+    {
+        const rainResult = calculateWashScore({
+            precipProb: 10,
+            precipSum: 0.1,
+            windSpeed: 10,
+            windGust: 15,
+            badForWash: false,
+            minTemp: 15,
+            maxTemp: 25,
+            windLimit: 30,
+            freezingLimit: 0
+        });
+
+        assert.strictEqual(rainResult.isDirty, true, 'Measurable rain accumulation (0.1mm) must mark day dirty');
+        assert.ok(rainResult.dirtyReasons.includes('rainVolume'), 'Must include rainVolume dirty reason');
+        console.log('Test 15 Passed: Zero-tolerance rain volume safeguard (0.1 mm) disqualifies day as dirty');
+    }
+
+    // Test 16: PoP >= 30% cutoff with 0.0 mm rain flags highPrecip and marks day dirty
+    {
+        const popCutoffResult = calculateWashScore({
+            precipProb: 35,
+            precipSum: 0.0,
+            windSpeed: 10,
+            windGust: 15,
+            badForWash: false,
+            minTemp: 15,
+            maxTemp: 25,
+            windLimit: 30,
+            freezingLimit: 0
+        });
+
+        assert.strictEqual(popCutoffResult.isDirty, true, 'PoP >= 30% must mark day dirty');
+        assert.ok(popCutoffResult.dirtyReasons.includes('highPrecip'), 'Must include highPrecip dirty reason');
+        console.log('Test 16 Passed: PoP >= 30% cutoff with 0.0 mm rain flags highPrecip and marks day dirty');
+    }
+
+    console.log('All 16 Predictive Wash Engine tests passed successfully!');
 }
 
 runTests();

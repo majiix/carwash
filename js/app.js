@@ -33,17 +33,11 @@ let currentStreakLength = 0;
 
 // Threshold default settings
 let washCriteriaThresholds = {
-    highPrecip: 30,
-    rainVolume: 0,
     highWind: 15,
     freezing: 0
 };
 
 let washCriteria = {
-    badWeather: true,
-    highPrecip: true,
-    highWind: true,
-    freezing: true,
     daytimeFocus: false
 };
 
@@ -59,11 +53,7 @@ function updateStaticTexts() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         let params = {};
-        if (key.includes('PrecipAmount')) {
-            params = { val: washCriteriaThresholds.rainVolume };
-        } else if (key.includes('Precip')) {
-            params = { val: washCriteriaThresholds.highPrecip };
-        } else if (key.includes('Wind')) {
+        if (key.includes('Wind')) {
             params = { val: washCriteriaThresholds.highWind };
         } else if (key.includes('Freezing')) {
             params = { val: washCriteriaThresholds.freezing, val_f: Math.round(washCriteriaThresholds.freezing * 9/5 + 32) };
@@ -121,9 +111,20 @@ function updateAgendaDate() {
 }
 
 function initTheme() {
-    const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const isDark = localStorage.theme === 'dark' || (!('theme' in localStorage) && mediaQuery.matches);
     if (isDark) document.documentElement.classList.add('dark');
     else document.documentElement.classList.remove('dark');
+
+    if (!initTheme.listenerAttached && mediaQuery.addEventListener) {
+        mediaQuery.addEventListener('change', (e) => {
+            if (!('theme' in localStorage)) {
+                if (e.matches) document.documentElement.classList.add('dark');
+                else document.documentElement.classList.remove('dark');
+            }
+        });
+        initTheme.listenerAttached = true;
+    }
 }
 
 function toggleTheme() {
@@ -143,13 +144,9 @@ function updateLocationUrlParams(lat, lon, name) {
 }
 
 function updateSlidersUI() {
-    const inputPrecip = document.getElementById('input-precip');
-    const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
 
-    if (inputPrecip) inputPrecip.value = washCriteriaThresholds.highPrecip;
-    if (inputRainVolume) inputRainVolume.value = washCriteriaThresholds.rainVolume;
     if (inputWind) inputWind.value = washCriteriaThresholds.highWind;
     if (inputFreezing) inputFreezing.value = washCriteriaThresholds.freezing;
 
@@ -157,18 +154,12 @@ function updateSlidersUI() {
 }
 
 function updateSliderBubbles() {
-    const inputPrecip = document.getElementById('input-precip');
-    const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
 
-    const sliderPrecipVal = document.getElementById('slider-precip-val');
-    const sliderRainVal = document.getElementById('slider-rain-val');
     const sliderWindVal = document.getElementById('slider-wind-val');
     const sliderFreezingVal = document.getElementById('slider-freezing-val');
 
-    if (sliderPrecipVal) sliderPrecipVal.innerText = `${inputPrecip ? inputPrecip.value : washCriteriaThresholds.highPrecip}%`;
-    if (sliderRainVal) sliderRainVal.innerText = `${inputRainVolume ? inputRainVolume.value : washCriteriaThresholds.rainVolume} mm`;
     if (sliderWindVal) sliderWindVal.innerText = `${inputWind ? inputWind.value : washCriteriaThresholds.highWind} km/h`;
     if (sliderFreezingVal) sliderFreezingVal.innerText = `${inputFreezing ? inputFreezing.value : washCriteriaThresholds.freezing}°C`;
 }
@@ -184,74 +175,45 @@ function initCriteria() {
     const savedThresholds = localStorage.getItem('washCriteriaThresholds');
     if (savedThresholds) {
         try {
-            washCriteriaThresholds = { ...washCriteriaThresholds, ...JSON.parse(savedThresholds) };
+            const parsed = JSON.parse(savedThresholds);
+            if (parsed.highWind !== undefined) washCriteriaThresholds.highWind = parsed.highWind;
+            if (parsed.freezing !== undefined) washCriteriaThresholds.freezing = parsed.freezing;
         } catch (e) {}
     }
 
-    const badWeatherToggle = document.getElementById('toggle-bad-weather');
-    const highPrecipToggle = document.getElementById('toggle-high-precip');
-    const highWindToggle = document.getElementById('toggle-high-wind');
-    const freezingToggle = document.getElementById('toggle-freezing');
     const daytimeFocusToggle = document.getElementById('toggle-daytime-focus');
-
-    if (badWeatherToggle) badWeatherToggle.checked = washCriteria.badWeather;
-    if (highPrecipToggle) highPrecipToggle.checked = washCriteria.highPrecip;
-    if (highWindToggle) highWindToggle.checked = washCriteria.highWind;
-    if (freezingToggle) freezingToggle.checked = washCriteria.freezing;
     if (daytimeFocusToggle) daytimeFocusToggle.checked = !!washCriteria.daytimeFocus;
-
-    if (badWeatherToggle) badWeatherToggle.addEventListener('change', (e) => {
-        washCriteria.badWeather = e.target.checked;
-        saveCriteria();
-    });
-
-    if (highPrecipToggle) highPrecipToggle.addEventListener('change', (e) => {
-        washCriteria.highPrecip = e.target.checked;
-        saveCriteria();
-    });
-
-    if (highWindToggle) highWindToggle.addEventListener('change', (e) => {
-        washCriteria.highWind = e.target.checked;
-        saveCriteria();
-    });
-
-    if (freezingToggle) freezingToggle.addEventListener('change', (e) => {
-        washCriteria.freezing = e.target.checked;
-        saveCriteria();
-    });
-
-    if (daytimeFocusToggle) daytimeFocusToggle.addEventListener('change', (e) => {
-        washCriteria.daytimeFocus = e.target.checked;
-        saveCriteria();
-    });
 
     // Wire up sliders and thresholds settings modal controls
     const criteriaSettingsModal = document.getElementById('criteria-settings-modal');
+    const openCriteriaSettingsCard = document.getElementById('open-criteria-settings-card');
     const criteriaSettingsBtn = document.getElementById('criteria-settings-btn');
     const closeSettingsModalBtn = document.getElementById('close-settings-modal-btn');
     const saveSettingsBtn = document.getElementById('save-settings-btn');
     const resetSettingsBtn = document.getElementById('reset-settings-btn');
 
-    const inputPrecip = document.getElementById('input-precip');
-    const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
 
     updateSlidersUI();
 
-    if (inputPrecip) inputPrecip.addEventListener('input', updateSliderBubbles);
-    if (inputRainVolume) inputRainVolume.addEventListener('input', updateSliderBubbles);
     if (inputWind) inputWind.addEventListener('input', updateSliderBubbles);
     if (inputFreezing) inputFreezing.addEventListener('input', updateSliderBubbles);
 
+    const openSettingsModal = () => {
+        updateSlidersUI();
+        if (daytimeFocusToggle) daytimeFocusToggle.checked = !!washCriteria.daytimeFocus;
+        if (criteriaSettingsModal) {
+            criteriaSettingsModal.classList.remove('hidden');
+        }
+        history.pushState({ modalOpen: true }, '', '');
+    };
+
+    if (openCriteriaSettingsCard) {
+        openCriteriaSettingsCard.addEventListener('click', openSettingsModal);
+    }
     if (criteriaSettingsBtn) {
-        criteriaSettingsBtn.addEventListener('click', () => {
-            updateSlidersUI();
-            if (criteriaSettingsModal) {
-                criteriaSettingsModal.classList.remove('hidden');
-            }
-            history.pushState({ modalOpen: true }, '', '');
-        });
+        criteriaSettingsBtn.addEventListener('click', openSettingsModal);
     }
 
     if (closeSettingsModalBtn) {
@@ -275,23 +237,33 @@ function initCriteria() {
     if (resetSettingsBtn) {
         resetSettingsBtn.addEventListener('click', () => {
             washCriteriaThresholds = {
-                highPrecip: 30,
-                rainVolume: 0,
                 highWind: 15,
                 freezing: 0
             };
+            washCriteria.daytimeFocus = false;
+            if (daytimeFocusToggle) daytimeFocusToggle.checked = false;
+
             updateSlidersUI();
+            localStorage.setItem('washCriteriaThresholds', JSON.stringify(washCriteriaThresholds));
+            localStorage.setItem('washCriteria', JSON.stringify(washCriteria));
+            if (criteriaSettingsModal) {
+                criteriaSettingsModal.classList.add('hidden');
+            }
+            if (history.state && history.state.modalOpen) history.back();
+
+            updateStaticTexts();
+            saveCriteria();
         });
     }
 
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', () => {
-            washCriteriaThresholds.highPrecip = parseInt(inputPrecip ? inputPrecip.value : 30);
-            washCriteriaThresholds.rainVolume = parseFloat(inputRainVolume ? inputRainVolume.value : 0);
             washCriteriaThresholds.highWind = parseInt(inputWind ? inputWind.value : 15);
             washCriteriaThresholds.freezing = parseInt(inputFreezing ? inputFreezing.value : 0);
+            washCriteria.daytimeFocus = !!(daytimeFocusToggle && daytimeFocusToggle.checked);
 
             localStorage.setItem('washCriteriaThresholds', JSON.stringify(washCriteriaThresholds));
+            localStorage.setItem('washCriteria', JSON.stringify(washCriteria));
             if (criteriaSettingsModal) {
                 criteriaSettingsModal.classList.add('hidden');
             }
@@ -805,6 +777,8 @@ function extractDayMetrics(daily, hourly, dayIndex) {
     };
 }
 
+const POP_DISQUALIFY_THRESHOLD = 30;
+
 function calculateWashScore(data) {
     let score = 100;
     const dirtyReasons = [];
@@ -814,32 +788,37 @@ function calculateWashScore(data) {
         dirtyReasons.push('activeRain');
     }
 
-    if (data.precipSum > data.rainLimit) {
-        const excess = data.precipSum - data.rainLimit;
-        score -= Math.min(55, Math.round(15 + excess * 18));
-        dirtyReasons.push('rainVolume');
-    }
-
-    if (washCriteria.highPrecip && data.precipProb > data.precipLimit) {
-        const excessProb = data.precipProb - data.precipLimit;
-        score -= Math.min(45, Math.round(excessProb * 0.9));
-        dirtyReasons.push('highPrecip');
-    }
-
-    if (washCriteria.badWeather && data.badForWash) {
-        score -= 45;
+    if (data.badForWash) {
+        score -= 50;
         if (!dirtyReasons.includes('badWeather') && !dirtyReasons.includes('activeRain')) {
             dirtyReasons.push('badWeather');
         }
     }
 
-    if (washCriteria.highWind && data.windGust > data.windLimit) {
+    if (data.precipSum > 0) {
+        score -= Math.min(50, Math.max(25, Math.round(data.precipSum * 20)));
+        if (!dirtyReasons.includes('rainVolume')) {
+            dirtyReasons.push('rainVolume');
+        }
+    }
+
+    const prob = data.precipProb || 0;
+    if (prob >= POP_DISQUALIFY_THRESHOLD) {
+        const excessProb = prob - POP_DISQUALIFY_THRESHOLD;
+        score -= Math.min(50, Math.round(20 + excessProb * 0.7));
+        dirtyReasons.push('highPrecip');
+    } else if (prob > 0) {
+        const mildDeduction = Math.round((prob / POP_DISQUALIFY_THRESHOLD) * 15);
+        score -= mildDeduction;
+    }
+
+    if (data.windGust > data.windLimit) {
         const excessWind = data.windGust - data.windLimit;
         score -= Math.min(30, Math.round(excessWind * 0.75));
         dirtyReasons.push(data.windGust > data.windLimit + 15 ? 'highGusts' : 'highWind');
     }
 
-    if (washCriteria.freezing && data.minTemp <= data.freezingLimit) {
+    if (data.minTemp <= data.freezingLimit) {
         score -= 40;
         dirtyReasons.push('freezing');
     }
@@ -877,8 +856,6 @@ function processData(weatherData) {
         const localDate = dateObj.toLocaleDateString(localeString, { month: 'short', day: 'numeric' });
         const dayName = i === 0 ? t('todayStr') : i === 1 ? t('tomorrowStr') : localWeekday;
 
-        const activePrecipLimit = washCriteriaThresholds.highPrecip;
-        const activeRainLimit = washCriteriaThresholds.rainVolume;
         const activeWindLimit = washCriteriaThresholds.highWind;
 
         const metrics = extractDayMetrics(daily, hourly, i);
@@ -916,8 +893,6 @@ function processData(weatherData) {
             activeRain: isActiveRainToday,
             minTemp: daily.temperature_2m_min[i],
             maxTemp: daily.temperature_2m_max[i],
-            precipLimit: activePrecipLimit,
-            rainLimit: activeRainLimit,
             windLimit: activeWindLimit,
             freezingLimit: washCriteriaThresholds.freezing
         });
@@ -939,8 +914,6 @@ function processData(weatherData) {
             isDirty: scored.isDirty,
             dirtyReasons: scored.dirtyReasons,
             dateObj: dateObj,
-            precipLimit: activePrecipLimit,
-            rainLimit: activeRainLimit,
             windLimit: activeWindLimit
         });
     }
@@ -951,12 +924,11 @@ function processData(weatherData) {
 
 function isCleanDay(day) {
     if (!day || day.score < 50) return false;
-    const precipReasons = ['activeRain', 'rainVolume', 'highPrecip', 'badWeather'];
+    const precipReasons = ['activeRain', 'highPrecip', 'badWeather', 'rainVolume'];
     if (day.dirtyReasons && day.dirtyReasons.some(r => precipReasons.includes(r))) {
         return false;
     }
-    const limit = day.rainLimit !== undefined ? day.rainLimit : 0;
-    if (day.precipSum > limit) {
+    if (day.precipSum > 0) {
         return false;
     }
     return true;
@@ -1076,7 +1048,7 @@ function renderDashboard(days, bestDayIndex, streakLength) {
     } else {
         const recommendedDay = days[bestDayIndex];
         currentRecommendedDate = recommendedDay.dateObj;
-        currentStreakLength = streakLength + 1;
+        currentStreakLength = streakLength;
         if (addToCalendarBtn) addToCalendarBtn.classList.remove('hidden');
         if (calendarHelpText) calendarHelpText.classList.remove('hidden');
 
@@ -1092,7 +1064,11 @@ function renderDashboard(days, bestDayIndex, streakLength) {
 
         if (streakLength > 0) {
             streakBadge.classList.remove('hidden');
-            streakNumber.innerText = streakLength + 1;
+            streakNumber.innerText = streakLength;
+            const streakDaysLabel = document.getElementById('streak-days-label');
+            if (streakDaysLabel) {
+                streakDaysLabel.innerText = t(streakLength === 1 ? 'day' : 'days');
+            }
         }
 
         if (bestDayIndex === 0) {
@@ -1128,18 +1104,17 @@ function renderDashboard(days, bestDayIndex, streakLength) {
             <div class="${cardClasses}">
                 ${badgeHtml}
                 <div class="flex items-center gap-3.5">
-                    <div class="w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${styles.icon}">
-                        <i data-lucide="${day.icon}" class="w-5 h-5"></i>
+                    <div class="relative shrink-0" title="${tierName}">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center ${styles.icon}">
+                            <i data-lucide="${day.icon}" class="w-5 h-5"></i>
+                        </div>
+                        <span class="absolute -top-1.5 ltr:-right-1.5 rtl:-left-1.5 ${styles.badge} text-[9px] font-black px-1.5 py-0.5 rounded-full shadow-sm border border-white dark:border-slate-800 cursor-help select-none leading-none" title="${tierName}">
+                            ${day.score}%
+                        </span>
                     </div>
                     <div class="flex flex-col">
                         <span class="${titleColor} leading-tight">${day.dayName}</span>
-                        <span class="text-[11px] font-medium opacity-80">${day.dateFormatted} &middot; ${day.desc}</span>
-                        <div class="flex items-center gap-1.5 mt-1">
-                            <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${styles.badge}">
-                                ${day.score}% · ${tierName}
-                            </span>
-                            ${day.precipSum > 0 ? `<span class="text-[10px] font-semibold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/50 px-1.5 py-0.5 rounded">${day.precipSum}mm</span>` : ''}
-                        </div>
+                        <span class="text-[11px] font-medium opacity-80">${day.dateFormatted} &middot; ${day.desc}${day.precipSum > 0 ? ` &middot; <span class="text-blue-600 dark:text-blue-400 font-semibold">${day.precipSum}mm</span>` : ''}</span>
                     </div>
                 </div>
 
@@ -1148,10 +1123,10 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                         ${day.maxTemp}° <span class="text-slate-400 font-medium text-xs">${day.minTemp}°</span>
                     </div>
                     <div class="flex items-center justify-end gap-2 text-[11px] font-bold w-full">
-                        <span class="${(washCriteria.highPrecip && day.precipProb > day.precipLimit) ? 'text-accent-500 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Precipitation">
+                        <span class="${(day.precipProb >= 30 || day.precipSum > 0) ? 'text-accent-500 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Precipitation">
                             <i data-lucide="droplets" class="w-3 h-3"></i> ${day.precipProb}%
                         </span>
-                        <span class="${(washCriteria.highWind && day.windGust > day.windLimit) ? 'text-slate-600 dark:text-slate-300 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind Gusts">
+                        <span class="${(day.windGust > day.windLimit) ? 'text-slate-600 dark:text-slate-300 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind Gusts">
                             <i data-lucide="wind" class="w-3 h-3"></i> ${day.windGust}<span class="text-[9px] font-medium uppercase opacity-80">km/h</span>
                         </span>
                     </div>

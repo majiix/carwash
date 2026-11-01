@@ -6,11 +6,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Car Wash Planner</title>
     
-    <meta name="theme-color" content="#0d9488">
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0d9488">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#020617">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="icon_192.png">
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -146,7 +155,7 @@
                         <div id="streak-badge" class="hidden bg-accent-400 rounded-[2rem] p-6 shadow-lg flex flex-col justify-center items-center text-center h-full min-h-[120px] text-slate-900">
                             <span class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1" data-i18n="cleanDuration">Clean For</span>
                             <div class="text-2xl font-black mb-1" id="streak-number">0</div>
-                            <span class="text-xs font-bold opacity-90" data-i18n="days">Days</span>
+                            <span id="streak-days-label" class="text-xs font-bold opacity-90" data-i18n="days">Days</span>
                         </div>
                         <button id="add-to-calendar-btn" class="hidden w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 px-4 py-3 rounded-2xl transition-all text-xs font-bold text-slate-600 dark:text-slate-300 flex items-center justify-center gap-2 shadow-sm shrink-0 hover:scale-[1.02]">
                             <i data-lucide="calendar-plus" class="w-4 h-4 text-brand-500"></i>
@@ -159,101 +168,29 @@
                 </div>
 
                 <div class="mt-4 pt-6 border-t border-slate-100 dark:border-slate-800">
-                    <div class="flex items-center gap-2 mb-4">
-                        <h3 class="text-lg font-bold font-display" data-i18n="activeCriteria">Active Criteria</h3>
-                        <button id="criteria-info-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Criteria Details">
-                            <i data-lucide="info" class="w-5 h-5"></i>
+                    <div class="flex items-center gap-3">
+                        <button id="open-criteria-settings-card" class="flex-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700/80 rounded-2xl p-4 transition-all duration-200 flex items-center justify-between gap-4 group cursor-pointer text-start shadow-sm">
+                            <div class="flex items-center gap-3.5">
+                                <div class="bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 p-3 rounded-xl border border-brand-100 dark:border-brand-900/50 group-hover:scale-105 transition-transform">
+                                    <i data-lucide="sliders" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" data-i18n="customizeCriteriaCardTitle">Customize Wash Criteria & Thresholds</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="customizeCriteriaCardDesc">Adjust rain limits, wind speed, freezing point, and daytime focus.</p>
+                                </div>
+                            </div>
+                            <div class="text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-all p-1">
+                                <i data-lucide="chevron-right" class="w-5 h-5 rtl:rotate-180"></i>
+                            </div>
                         </button>
-                        <button id="criteria-settings-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Adjust Thresholds">
-                            <i data-lucide="sliders" class="w-5 h-5"></i>
-                        </button>
-                        <button id="pwa-settings-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-1.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Notification Settings" data-i18n-title="pwaSettingsTitle">
-                            <i data-lucide="bell" class="w-5 h-5"></i>
-                        </button>
-                    </div>
-
-                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-
-                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <div class="flex items-center gap-3 w-full justify-between">
-                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
-                                    <i data-lucide="cloud-rain" class="w-5 h-5 text-brand-500"></i>
-                                </div>
-                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
-                                    <input type="checkbox" id="toggle-bad-weather" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm" data-i18n="critBadWeather">Avoid Rain & Snow</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critBadWeatherDesc">Skips days with active bad weather.</p>
-                            </div>
-                        </label>
-
-                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <div class="flex items-center gap-3 w-full justify-between">
-                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
-                                    <i data-lucide="umbrella" class="w-5 h-5 text-accent-500"></i>
-                                </div>
-                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
-                                    <input type="checkbox" id="toggle-high-precip" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm" data-i18n="critHighPrecip">Precipitation > 30%</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critHighPrecipDesc">Skips days with high chance of rain.</p>
-                            </div>
-                        </label>
-
-                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <div class="flex items-center gap-3 w-full justify-between">
-                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
-                                    <i data-lucide="wind" class="w-5 h-5 text-slate-500 dark:text-slate-400"></i>
-                                </div>
-                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
-                                    <input type="checkbox" id="toggle-high-wind" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm" data-i18n="critHighWind">Avoid High Wind</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critHighWindDesc">Skips days with high wind speeds (>15km/h).</p>
-                            </div>
-                        </label>
-
-                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <div class="flex items-center gap-3 w-full justify-between">
-                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
-                                    <i data-lucide="thermometer-snowflake" class="w-5 h-5 text-blue-500"></i>
-                                </div>
-                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
-                                    <input type="checkbox" id="toggle-freezing" class="sr-only peer" checked>
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm" data-i18n="critFreezing">Avoid Freezing</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critFreezingDesc">Skips days below 0°C (32°F).</p>
-                            </div>
-                        </label>
-
-                        <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex flex-col items-start justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
-                            <div class="flex items-center gap-3 w-full justify-between">
-                                <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
-                                    <i data-lucide="clock" class="w-5 h-5 text-teal-500"></i>
-                                </div>
-                                <div class="relative inline-flex items-center cursor-pointer shrink-0">
-                                    <input type="checkbox" id="toggle-daytime-focus" class="sr-only peer">
-                                    <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
-                                </div>
-                            </div>
-                            <div>
-                                <h4 class="font-bold text-sm" data-i18n="critDaytimeFocus">Daytime Only (7 AM - 8 PM)</h4>
-                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1" data-i18n="critDaytimeFocusDesc">Evaluates 7 AM to 8 PM weather so nighttime rain does not spoil wash scores.</p>
-                            </div>
-                        </label>
-
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button id="criteria-info-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Criteria Details" data-i18n-title="criteriaInfoTitle">
+                                <i data-lucide="info" class="w-5 h-5"></i>
+                            </button>
+                            <button id="pwa-settings-btn" class="text-slate-400 hover:text-brand-500 transition-colors p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 outline-none" title="Notification Settings" data-i18n-title="pwaSettingsTitle">
+                                <i data-lucide="bell" class="w-5 h-5"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -415,17 +352,8 @@
                         <i data-lucide="cloud-rain" class="w-5 h-5 text-brand-500"></i>
                     </div>
                     <div>
-                        <strong data-i18n="critBadWeather" class="text-slate-900 dark:text-white block mb-1">Avoid Rain & Snow</strong>
-                        <span data-i18n="critBadWeatherInfo">This ignores days where the weather forecast indicates active precipitation like rain, sleet, or snow.</span>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
-                        <i data-lucide="umbrella" class="w-5 h-5 text-accent-500"></i>
-                    </div>
-                    <div>
-                        <strong data-i18n="critHighPrecip" class="text-slate-900 dark:text-white block mb-1">Precipitation > 30%</strong>
-                        <span data-i18n="critHighPrecipInfo">This ignores days where the chance of rain is higher than 30%, even if it is not actively raining.</span>
+                        <strong data-i18n="critPrecipRainSnow" class="text-slate-900 dark:text-white block mb-1">Rain & Snow: Zero Tolerance</strong>
+                        <span data-i18n="critPrecipRainSnowInfo">Always active. Skips any day with forecasted rain or snow accumulation, active bad weather, or precipitation chance of 30% or higher.</span>
                     </div>
                 </div>
                 <div class="flex gap-4">
@@ -434,7 +362,7 @@
                     </div>
                     <div>
                         <strong data-i18n="critHighWind" class="text-slate-900 dark:text-white block mb-1">Avoid High Wind</strong>
-                        <span data-i18n="critHighWindInfo">This ignores days with wind speeds over 15km/h, which can blow dust and dirt onto your wet car before it dries.</span>
+                        <span data-i18n="critHighWindInfo">This skips days with wind speeds over 15km/h, which can blow dust and dirt onto your wet car before it dries.</span>
                     </div>
                 </div>
                 <div class="flex gap-4">
@@ -443,7 +371,7 @@
                     </div>
                     <div>
                         <strong data-i18n="critFreezing" class="text-slate-900 dark:text-white block mb-1">Avoid Freezing</strong>
-                        <span data-i18n="critFreezingInfo">This ignores days where the temperature drops below 0°C (32°F) to prevent water from freezing on your car doors and locks.</span>
+                        <span data-i18n="critFreezingInfo">This skips days where the temperature drops below 0°C (32°F) to prevent water from freezing on your car doors and locks.</span>
                     </div>
                 </div>
                 <div class="flex gap-4">
@@ -453,15 +381,6 @@
                     <div>
                         <strong data-i18n="critDaytimeFocus" class="text-slate-900 dark:text-white block mb-1">Daytime Only (7 AM - 8 PM)</strong>
                         <span data-i18n="critDaytimeFocusInfo">When enabled, evaluates precipitation and wind between 7:00 AM and 8:00 PM local time. Overnight rainfall that dries by morning will not penalize daytime wash opportunities.</span>
-                    </div>
-                </div>
-                <div class="flex gap-4">
-                    <div class="bg-slate-50 dark:bg-slate-800 p-2.5 rounded-full shadow-sm shrink-0 h-max">
-                        <i data-lucide="cloud-drizzle" class="w-5 h-5 text-blue-500"></i>
-                    </div>
-                    <div>
-                        <strong data-i18n="critPrecipAmount" class="text-slate-900 dark:text-white block mb-1">Rain Volume > 0.5mm</strong>
-                        <span data-i18n="critPrecipAmountInfo">Allows small trace precipitation below 0.5 mm without penalizing wash suitability.</span>
                     </div>
                 </div>
             </div>
@@ -480,36 +399,6 @@
             </div>
             
             <div class="flex flex-col gap-6">
-                <!-- Precipitation Slider -->
-                <div class="flex flex-col gap-2">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                            <i data-lucide="umbrella" class="w-4 h-4 text-accent-500"></i>
-                            <span data-i18n="labelPrecip">Precipitation Limit</span>
-                        </span>
-                        <span id="slider-precip-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">30%</span>
-                    </div>
-                    <div class="relative flex items-center">
-                        <input type="range" id="input-precip" min="0" max="100" step="5" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
-                    </div>
-                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descPrecip">Maximum allowed probability of precipitation.</span>
-                </div>
-
-                <!-- Rain Volume Limit Slider -->
-                <div class="flex flex-col gap-2">
-                    <div class="flex justify-between items-center text-sm">
-                        <span class="font-bold text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                            <i data-lucide="cloud-drizzle" class="w-4 h-4 text-blue-500"></i>
-                            <span data-i18n="labelRainVolume">Rain Volume Tolerance</span>
-                        </span>
-                        <span id="slider-rain-val" class="font-black text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50 px-2.5 py-0.5 rounded-lg">0 mm</span>
-                    </div>
-                    <div class="relative flex items-center">
-                        <input type="range" id="input-rain-volume" min="0" max="5" step="0.1" value="0" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
-                    </div>
-                    <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descRainVolume">Maximum allowed rain accumulation before washing is discouraged.</span>
-                </div>
-
                 <!-- Wind Speed Slider -->
                 <div class="flex flex-col gap-2">
                     <div class="flex justify-between items-center text-sm">
@@ -538,6 +427,26 @@
                         <input type="range" id="input-freezing" min="-20" max="15" step="1" class="custom-slider w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-brand-600">
                     </div>
                     <span class="text-[10px] text-slate-400 dark:text-slate-500" data-i18n="descFreezing">Avoid washing if temperature drops below this value.</span>
+                </div>
+
+                <!-- Additional Settings Section -->
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500" data-i18n="additionalSettingsTitle">Additional Settings</span>
+                    <label class="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-100 dark:border-slate-700 flex items-center justify-between gap-4 cursor-pointer transition-colors hover:bg-slate-100 dark:hover:bg-slate-800">
+                        <div class="flex items-center gap-3">
+                            <div class="bg-white dark:bg-slate-700 p-2.5 rounded-full shadow-sm shrink-0">
+                                <i data-lucide="clock" class="w-5 h-5 text-teal-500"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-sm" data-i18n="critDaytimeFocus">Daytime Only (7 AM - 8 PM)</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="critDaytimeFocusDesc">Evaluates 7 AM to 8 PM weather so nighttime rain does not spoil wash scores.</p>
+                            </div>
+                        </div>
+                        <div class="relative inline-flex items-center cursor-pointer shrink-0">
+                            <input type="checkbox" id="toggle-daytime-focus" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-brand-500"></div>
+                        </div>
+                    </label>
                 </div>
 
             </div>

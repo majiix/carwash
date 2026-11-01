@@ -28,7 +28,7 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
   - 24-Hour hourly weather code scanning per day to identify rain, drizzle, and storm codes even when daily summary codes indicate overcast
   - Real-time current condition safeguards detecting active precipitation today
   - Daytime-aware hourly filtering (7 AM to 8 PM) for volume and probability calculations
-  - Threshold customizer, vehicle profile settings, and calendar ICS export
+  - Threshold customizer and calendar ICS export
   - Service worker registration and PWA state management
 - `js/lang/`:
   - `en.js`: English translations
@@ -49,8 +49,8 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - Dual Language Support: English (`en`) and Farsi (`fa`) with full RTL alignment and Persian number/date formatting.
 - Dynamic Language Loading: Loads translation modules on demand with automatic fallback to English.
 - Custom Criteria and Thresholds: Allows users to customize thresholds for precipitation probability, rain volume (mm), wind speed, freezing point, extreme heat, and UV index.
-- Vehicle Profile Personalization: Adjusts wash advice based on vehicle color and surface coating.
 - Calendar Export: Generates downloadable `.ics` files for the recommended wash day.
+- Modal Scroll Containment: Prevents background document scroll and chaining when modals or bottom sheets are open, isolating scroll exclusively to modal content.
 - Offline Capability: Pre-caches application assets via Service Worker for reliable offline access.
 
 ## Decisions and Assumptions

@@ -437,7 +437,33 @@ function runTests() {
         console.log('Test 9 Passed: Qom rain regression test scores Poor (<= 30) instead of Ideal');
     }
 
-    console.log('All 9 Predictive Wash Engine tests passed successfully!');
+    // Test 10: Standard thresholds evaluate directly without vehicle profile modifiers
+    {
+        // Wind gusts at 35 km/h against standard threshold of 30 km/h (without ceramic bonus of +10)
+        const windResult = calculateWashScore({
+            precipProb: 0,
+            precipSum: 0,
+            windSpeed: 20,
+            windGust: 35,
+            badForWash: false,
+            minTemp: 15,
+            maxTemp: 25,
+            uvIndex: 3,
+            precipLimit: washCriteriaThresholds.highPrecip,
+            rainLimit: washCriteriaThresholds.rainVolume,
+            windLimit: washCriteriaThresholds.highWind,
+            freezingLimit: washCriteriaThresholds.freezing,
+            heatLimit: washCriteriaThresholds.extremeHeat,
+            uvLimit: washCriteriaThresholds.highUV
+        });
+
+        assert.strictEqual(windResult.windLimit, undefined);
+        assert.ok(windResult.dirtyReasons.includes('highWind'), 'Must trigger highWind penalty at 35 km/h against base limit 30');
+        assert.ok(windResult.score < 100, 'Score must be penalized by excess wind');
+        console.log('Test 10 Passed: Base thresholds evaluate directly without vehicle profile offsets');
+    }
+
+    console.log('All 10 Predictive Wash Engine tests passed successfully!');
 }
 
 runTests();

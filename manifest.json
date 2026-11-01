@@ -17,12 +17,6 @@
       "url": "./index.html",
       "description": "Check the car wash suitability forecast",
       "icons": [{ "src": "icon_192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Vehicle Profile",
-      "url": "./index.html?modal=vehicle",
-      "description": "Adjust vehicle settings",
-      "icons": [{ "src": "icon_192.png", "sizes": "192x192" }]
     }
   ],
   "file_handlers": [

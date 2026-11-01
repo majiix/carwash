@@ -1,4 +1,4 @@
-const CACHE_NAME = 'carwash-planner-cache-v11';
+const CACHE_NAME = 'carwash-planner-cache-v14';
 const ASSETS_TO_CACHE = [
   './',
   'index.html',

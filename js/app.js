@@ -30,8 +30,6 @@ let currentLat = null;
 let currentLon = null;
 let currentRecommendedDate = null;
 let currentStreakLength = 0;
-let vehicleColor = localStorage.getItem('vehicleColor') || 'light';
-let vehicleCoating = localStorage.getItem('vehicleCoating') || 'regular';
 
 // Threshold default settings
 let washCriteriaThresholds = {
@@ -81,12 +79,13 @@ function updateStaticTexts() {
         }
         el.innerText = t(key, params);
     });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+        const key = el.getAttribute('data-i18n-title');
+        el.title = t(key);
+    });
     const locationInputEl = document.getElementById('location-input');
     if (locationInputEl) {
         locationInputEl.placeholder = t('enterCityPlaceholder');
-    }
-    if (typeof updateVehicleProfileUI === 'function') {
-        updateVehicleProfileUI(vehicleColor, vehicleCoating);
     }
 }
 
@@ -114,6 +113,9 @@ function setLanguage(lang) {
     document.querySelectorAll('.lang-selector').forEach(el => el.value = lang);
     updateStaticTexts();
     updateAgendaDate();
+    if (typeof updateOnlineStatus === 'function') updateOnlineStatus();
+    if (typeof checkPwaApiSupport === 'function') checkPwaApiSupport();
+    if (typeof updateNotificationUI === 'function') updateNotificationUI();
 
     if (currentWeatherData) {
         processData(currentWeatherData);
@@ -397,6 +399,43 @@ const locationSearchStatus = document.getElementById('location-search-status');
 const searchResultsContainer = document.getElementById('search-results-container');
 const useGpsBtn = document.getElementById('use-gps-btn');
 
+// Modal scroll locking and containment
+function updateModalScrollLock() {
+    const hasOpenModal = Array.from(document.querySelectorAll('.fixed-modal-center')).some(
+        modal => !modal.classList.contains('hidden')
+    );
+    if (hasOpenModal) {
+        document.body.classList.add('modal-open');
+    } else {
+        document.body.classList.remove('modal-open');
+    }
+}
+
+function initModalScrollLock() {
+    const modals = document.querySelectorAll('.fixed-modal-center');
+    if (!modals.length) return;
+
+    const observer = new MutationObserver(() => {
+        updateModalScrollLock();
+    });
+
+    modals.forEach(modal => {
+        observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+        modal.addEventListener('wheel', (e) => {
+            if (e.target === modal) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+        modal.addEventListener('touchmove', (e) => {
+            if (e.target === modal) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    });
+
+    updateModalScrollLock();
+}
+
 // Criteria Modal logic
 const criteriaInfoModal = document.getElementById('criteria-info-modal');
 const criteriaInfoBtn = document.getElementById('criteria-info-btn');
@@ -410,8 +449,9 @@ window.addEventListener('popstate', () => {
     criteriaInfoModal.classList.add('hidden');
     const criteriaSettingsModal = document.getElementById('criteria-settings-modal');
     if (criteriaSettingsModal) criteriaSettingsModal.classList.add('hidden');
-    const vehicleProfileModal = document.getElementById('vehicle-profile-modal');
-    if (vehicleProfileModal) vehicleProfileModal.classList.add('hidden');
+    const pwaSettingsModal = document.getElementById('pwa-settings-modal');
+    if (pwaSettingsModal) pwaSettingsModal.classList.add('hidden');
+    updateModalScrollLock();
 });
 
 criteriaInfoBtn.addEventListener('click', () => {
@@ -618,7 +658,7 @@ useGpsBtn.addEventListener('click', () => {
 function initApp() {
     initTheme();
     initCriteria();
-    initVehicleProfile();
+    initModalScrollLock();
 
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -881,10 +921,10 @@ function processData(weatherData) {
         const localDate = dateObj.toLocaleDateString(localeString, { month: 'short', day: 'numeric' });
         const dayName = i === 0 ? t('todayStr') : i === 1 ? t('tomorrowStr') : localWeekday;
 
-        const activePrecipLimit = washCriteriaThresholds.highPrecip + (vehicleCoating === 'wax' ? 5 : (vehicleCoating === 'ceramic' ? 15 : 0));
-        const activeRainLimit = washCriteriaThresholds.rainVolume + (vehicleCoating === 'wax' ? 0.3 : (vehicleCoating === 'ceramic' ? 0.8 : 0));
-        const activeWindLimit = washCriteriaThresholds.highWind + (vehicleCoating === 'ceramic' ? 10 : 0);
-        const activeUvLimit = Math.max(1, washCriteriaThresholds.highUV - (vehicleColor === 'dark' ? 2 : 0));
+        const activePrecipLimit = washCriteriaThresholds.highPrecip;
+        const activeRainLimit = washCriteriaThresholds.rainVolume;
+        const activeWindLimit = washCriteriaThresholds.highWind;
+        const activeUvLimit = washCriteriaThresholds.highUV;
 
         const metrics = extractDayMetrics(daily, hourly, i);
         let badForWash = weatherInfo.badForWash || metrics.badForWashHourly;
@@ -1390,157 +1430,6 @@ function drawTrendsChart(days) {
     }
 }
 
-function updateVehicleProfileUI(tempColor, tempCoating) {
-    const colorBtns = {
-        'light': document.getElementById('color-light-btn'),
-        'dark': document.getElementById('color-dark-btn')
-    };
-    const coatBtns = {
-        'regular': document.getElementById('coat-regular-btn'),
-        'wax': document.getElementById('coat-wax-btn'),
-        'ceramic': document.getElementById('coat-ceramic-btn')
-    };
-
-    for (let [c, btn] of Object.entries(colorBtns)) {
-        if (!btn) continue;
-        if (c === tempColor) {
-            btn.className = "flex-1 border border-brand-500 dark:border-brand-500 bg-brand-50/30 dark:bg-brand-950/20 rounded-xl py-2 px-3 text-xs font-bold text-brand-600 dark:text-brand-400 transition-all flex items-center justify-center gap-2 shadow-sm";
-        } else {
-            btn.className = "flex-1 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 rounded-xl py-2 px-3 text-xs font-bold text-slate-400 hover:border-slate-200 dark:hover:border-slate-700 transition-all flex items-center justify-center gap-2 shadow-sm";
-        }
-    }
-
-    for (let [c, btn] of Object.entries(coatBtns)) {
-        if (!btn) continue;
-        if (c === tempCoating) {
-            btn.className = "flex-1 border border-brand-500 dark:border-brand-500 bg-brand-50/30 dark:bg-brand-950/20 rounded-xl py-2 px-3 text-xs font-bold text-brand-600 dark:text-brand-400 transition-all shadow-sm";
-        } else {
-            btn.className = "flex-1 border border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 rounded-xl py-2 px-3 text-xs font-bold text-slate-400 hover:border-slate-200 dark:hover:border-slate-700 transition-all shadow-sm";
-        }
-    }
-
-    const explanationEl = document.getElementById('coating-explanation');
-    const bonusBadgeEl = document.getElementById('coating-bonus-badge');
-
-    const benefits = [];
-    if (tempColor === 'dark') {
-        benefits.push(t('benefitDark'));
-    }
-    if (tempCoating === 'wax') {
-        benefits.push(t('benefitWax'));
-    } else if (tempCoating === 'ceramic') {
-        benefits.push(t('benefitCeramic'));
-    }
-
-    if (benefits.length > 0) {
-        if (bonusBadgeEl) bonusBadgeEl.classList.remove('hidden');
-        if (explanationEl) {
-            explanationEl.innerText = t('coatingExplanationBonus', { benefits: benefits.join(' | ') });
-        }
-    } else {
-        if (bonusBadgeEl) bonusBadgeEl.classList.add('hidden');
-        if (explanationEl) {
-            explanationEl.innerText = t('coatingExplanationDefault');
-        }
-    }
-}
-
-function initVehicleProfile() {
-    const vehicleProfileBtn = document.getElementById('vehicle-profile-btn');
-    const vehicleProfileModal = document.getElementById('vehicle-profile-modal');
-    const closeVehicleModalBtn = document.getElementById('close-vehicle-modal-btn');
-    const saveVehicleBtn = document.getElementById('save-vehicle-btn');
-
-    let tempColor = vehicleColor;
-    let tempCoating = vehicleCoating;
-
-    if (vehicleProfileBtn) {
-        vehicleProfileBtn.addEventListener('click', () => {
-            tempColor = vehicleColor;
-            tempCoating = vehicleCoating;
-            updateVehicleProfileUI(tempColor, tempCoating);
-            if (vehicleProfileModal) {
-                vehicleProfileModal.classList.remove('hidden');
-            }
-            history.pushState({ modalOpen: true }, '', '');
-        });
-    }
-
-    if (closeVehicleModalBtn) {
-        closeVehicleModalBtn.addEventListener('click', () => {
-            if (vehicleProfileModal) {
-                vehicleProfileModal.classList.add('hidden');
-            }
-            if (history.state && history.state.modalOpen) history.back();
-        });
-    }
-
-    if (vehicleProfileModal) {
-        vehicleProfileModal.addEventListener('click', (e) => {
-            if (e.target === vehicleProfileModal) {
-                vehicleProfileModal.classList.add('hidden');
-                if (history.state && history.state.modalOpen) history.back();
-            }
-        });
-    }
-
-    const colorLightBtn = document.getElementById('color-light-btn');
-    const colorDarkBtn = document.getElementById('color-dark-btn');
-    if (colorLightBtn) {
-        colorLightBtn.addEventListener('click', () => {
-            tempColor = 'light';
-            updateVehicleProfileUI(tempColor, tempCoating);
-        });
-    }
-    if (colorDarkBtn) {
-        colorDarkBtn.addEventListener('click', () => {
-            tempColor = 'dark';
-            updateVehicleProfileUI(tempColor, tempCoating);
-        });
-    }
-
-    const coatRegularBtn = document.getElementById('coat-regular-btn');
-    const coatWaxBtn = document.getElementById('coat-wax-btn');
-    const coatCeramicBtn = document.getElementById('coat-ceramic-btn');
-
-    if (coatRegularBtn) {
-        coatRegularBtn.addEventListener('click', () => {
-            tempCoating = 'regular';
-            updateVehicleProfileUI(tempColor, tempCoating);
-        });
-    }
-    if (coatWaxBtn) {
-        coatWaxBtn.addEventListener('click', () => {
-            tempCoating = 'wax';
-            updateVehicleProfileUI(tempColor, tempCoating);
-        });
-    }
-    if (coatCeramicBtn) {
-        coatCeramicBtn.addEventListener('click', () => {
-            tempCoating = 'ceramic';
-            updateVehicleProfileUI(tempColor, tempCoating);
-        });
-    }
-
-    if (saveVehicleBtn) {
-        saveVehicleBtn.addEventListener('click', () => {
-            vehicleColor = tempColor;
-            vehicleCoating = tempCoating;
-            localStorage.setItem('vehicleColor', vehicleColor);
-            localStorage.setItem('vehicleCoating', vehicleCoating);
-
-            if (vehicleProfileModal) {
-                vehicleProfileModal.classList.add('hidden');
-            }
-            if (history.state && history.state.modalOpen) history.back();
-
-            saveCriteria();
-        });
-    }
-
-    updateVehicleProfileUI(vehicleColor, vehicleCoating);
-}
-
 lucide.createIcons();
 document.addEventListener('DOMContentLoaded', () => {
     initApp();
@@ -1570,13 +1459,13 @@ function updateOnlineStatus() {
     const isOnline = navigator.onLine;
     if (pwaConnectionText && pwaConnectionBadge) {
         if (isOnline) {
-            pwaConnectionText.innerText = "Online";
+            pwaConnectionText.innerText = t('onlineStatus');
             pwaConnectionBadge.className = "text-[9px] font-black text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 px-2.5 py-1 rounded uppercase tracking-wider flex items-center gap-1";
-            pwaConnectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-pulse"></span> Online`;
+            pwaConnectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-green-500 inline-block animate-pulse"></span> ${t('onlineStatus')}`;
         } else {
-            pwaConnectionText.innerText = "Offline";
+            pwaConnectionText.innerText = t('offlineStatus');
             pwaConnectionBadge.className = "text-[9px] font-black text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 px-2.5 py-1 rounded uppercase tracking-wider flex items-center gap-1";
-            pwaConnectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> Offline`;
+            pwaConnectionBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 inline-block"></span> ${t('offlineStatus')}`;
         }
     }
 }
@@ -1588,19 +1477,19 @@ updateOnlineStatus();
 function checkPwaApiSupport() {
     if (pwaBgSyncBadge) {
         if ('SyncManager' in window) {
-            pwaBgSyncBadge.innerText = "Supported";
+            pwaBgSyncBadge.innerText = t('supportedStatus');
             pwaBgSyncBadge.className = "font-bold text-green-600 dark:text-green-400";
         } else {
-            pwaBgSyncBadge.innerText = "Not Supported";
+            pwaBgSyncBadge.innerText = t('notSupportedStatus');
             pwaBgSyncBadge.className = "font-bold text-slate-400 dark:text-slate-500";
         }
     }
     if (pwaPeriodicSyncBadge) {
         if (swRegistration && 'periodicSync' in swRegistration) {
-            pwaPeriodicSyncBadge.innerText = "Supported";
+            pwaPeriodicSyncBadge.innerText = t('supportedStatus');
             pwaPeriodicSyncBadge.className = "font-bold text-green-600 dark:text-green-400";
         } else {
-            pwaPeriodicSyncBadge.innerText = "Not Supported";
+            pwaPeriodicSyncBadge.innerText = t('notSupportedStatus');
             pwaPeriodicSyncBadge.className = "font-bold text-slate-400 dark:text-slate-500";
         }
     }
@@ -1609,31 +1498,32 @@ function checkPwaApiSupport() {
 // Update Notification UI based on current permission status
 function updateNotificationUI() {
     if (!('Notification' in window)) {
-        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Not supported in this browser";
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = t('notSupportedBrowser');
         if (pwaGrantBtn) pwaGrantBtn.classList.add('hidden');
+        if (pwaTestBtn) pwaTestBtn.setAttribute('disabled', 'true');
         return;
     }
 
     if (Notification.permission === 'granted') {
-        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Notifications Enabled";
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = t('notificationsEnabled');
         if (pwaGrantBtn) pwaGrantBtn.classList.add('hidden');
         if (pwaTestBtn) pwaTestBtn.removeAttribute('disabled');
     } else if (Notification.permission === 'denied') {
-        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Notifications Blocked";
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = t('notificationsBlocked');
         if (pwaGrantBtn) {
             pwaGrantBtn.classList.remove('hidden');
-            pwaGrantBtn.innerText = "Blocked";
+            pwaGrantBtn.innerText = t('blockedBtn');
             pwaGrantBtn.disabled = true;
         }
         if (pwaTestBtn) pwaTestBtn.setAttribute('disabled', 'true');
     } else {
-        if (pwaNotificationStatus) pwaNotificationStatus.innerText = "Permission required";
+        if (pwaNotificationStatus) pwaNotificationStatus.innerText = t('permissionRequired');
         if (pwaGrantBtn) {
             pwaGrantBtn.classList.remove('hidden');
-            pwaGrantBtn.innerText = "Enable";
+            pwaGrantBtn.innerText = t('enableBtn');
             pwaGrantBtn.disabled = false;
         }
-        if (pwaTestBtn) pwaTestBtn.setAttribute('disabled', 'true');
+        if (pwaTestBtn) pwaTestBtn.removeAttribute('disabled');
     }
 }
 
@@ -1723,21 +1613,78 @@ if (pwaGrantBtn) {
 
 // Test Notification button
 if (pwaTestBtn) {
-    pwaTestBtn.addEventListener('click', () => {
-        if (swRegistration && Notification.permission === 'granted') {
-            swRegistration.showNotification('Car Wash Planner', {
-                body: 'This is a test notification from your app. Service Workers are working perfectly!',
-                icon: './icon_192.png',
-                badge: './icon.svg',
-                tag: 'test-notification'
-            });
+    pwaTestBtn.addEventListener('click', async () => {
+        if (!('Notification' in window)) {
+            alert(t('notSupportedBrowser'));
+            return;
+        }
+
+        if (Notification.permission !== 'granted') {
+            try {
+                const perm = await Notification.requestPermission();
+                updateNotificationUI();
+                if (perm !== 'granted') {
+                    return;
+                }
+            } catch (permErr) {
+                console.warn('requestPermission error:', permErr);
+                return;
+            }
+        }
+
+        const title = t('notificationTestTitle');
+        const options = {
+            body: t('notificationTestBody'),
+            icon: './icon_192.png',
+            badge: './icon.svg',
+            tag: 'test-notification',
+            renotify: true
+        };
+
+        let sent = false;
+
+        // Try service worker registration first
+        try {
+            let reg = swRegistration;
+            if (!reg && 'serviceWorker' in navigator) {
+                reg = await Promise.race([
+                    navigator.serviceWorker.ready,
+                    new Promise(resolve => setTimeout(() => resolve(null), 800))
+                ]);
+            }
+            if (reg && reg.showNotification) {
+                await reg.showNotification(title, options);
+                sent = true;
+            }
+        } catch (swErr) {
+            console.warn('SW showNotification failed, trying Window Notification fallback:', swErr);
+        }
+
+        // Window Notification API fallback (for desktop or when SW registration is unavailable)
+        if (!sent) {
+            try {
+                new Notification(title, options);
+                sent = true;
+            } catch (winErr) {
+                console.warn('Window Notification fallback failed:', winErr);
+            }
+        }
+
+        if (sent) {
+            const btnSpan = document.getElementById('pwa-test-text') || pwaTestBtn.querySelector('span');
+            if (btnSpan) {
+                btnSpan.innerText = t('notificationSent');
+                setTimeout(() => {
+                    btnSpan.innerText = t('sendTestNotification');
+                }, 3000);
+            }
         }
     });
 }
 
 // Register service worker for offline support / Progressive Web App capabilities
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js')
             .then(reg => {
                 console.log('Service Worker registered successfully on scope:', reg.scope);
@@ -1758,5 +1705,17 @@ if ('serviceWorker' in navigator) {
             .catch(err => {
                 console.error('Service Worker registration failed:', err);
             });
-    });
+
+        navigator.serviceWorker.ready.then(reg => {
+            swRegistration = reg;
+            checkPwaApiSupport();
+            updateNotificationUI();
+        }).catch(() => {});
+    }
+}
+
+if (document.readyState === 'complete') {
+    registerServiceWorker();
+} else {
+    window.addEventListener('load', registerServiceWorker);
 }

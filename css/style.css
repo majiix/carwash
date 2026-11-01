@@ -12,10 +12,29 @@
 @font-face { font-family: 'Vazirmatn'; src: url('../fonts/Vazirmatn-Black.woff2') format('woff2'); font-weight: 900; font-style: normal; font-display: swap; }
 
 /* General Styles */
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     font-family: 'Vazirmatn', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+body.modal-open {
+    overflow: hidden !important;
+    overscroll-behavior: none !important;
+}
+
+.fixed-modal-center {
+    overscroll-behavior: contain;
+    touch-action: none;
+}
+
+.fixed-modal-center > div {
+    overscroll-behavior: contain;
+    touch-action: pan-y;
 }
 
 .fade-in {

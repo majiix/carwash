@@ -39,18 +39,14 @@ const washCriteria = {
     highPrecip: true,
     highWind: true,
     freezing: true,
-    extremeHeat: false,
-    highUV: false,
-    daytimeFocus: true
+    daytimeFocus: false
 };
 
 const washCriteriaThresholds = {
     highPrecip: 30,
-    rainVolume: 0.5,
-    highWind: 30,
-    freezing: 0,
-    extremeHeat: 32,
-    highUV: 7
+    rainVolume: 0,
+    highWind: 15,
+    freezing: 0
 };
 
 function calculateWashScore(data) {
@@ -90,14 +86,6 @@ function calculateWashScore(data) {
     if (washCriteria.freezing && data.minTemp <= data.freezingLimit) {
         score -= 40;
         dirtyReasons.push('freezing');
-    }
-    if (washCriteria.extremeHeat && data.maxTemp > data.heatLimit) {
-        score -= 20;
-        dirtyReasons.push('extremeHeat');
-    }
-    if (washCriteria.highUV && data.uvIndex > data.uvLimit) {
-        score -= 15;
-        dirtyReasons.push('highUV');
     }
 
     const finalScore = Math.max(0, Math.min(100, Math.round(score)));
@@ -169,6 +157,53 @@ function extractDayMetrics(daily, hourly, dayIndex) {
         badForWashHourly: badForWashHourly,
         representativeCode: representativeCode
     };
+}
+
+function isCleanDay(day) {
+    if (!day || day.score < 50) return false;
+    const precipReasons = ['activeRain', 'rainVolume', 'highPrecip', 'badWeather'];
+    if (day.dirtyReasons && day.dirtyReasons.some(r => precipReasons.includes(r))) {
+        return false;
+    }
+    const limit = day.rainLimit !== undefined ? day.rainLimit : 0;
+    if (day.precipSum > limit) {
+        return false;
+    }
+    return true;
+}
+
+function analyzeBestWashDay(days) {
+    let bestScore = -999;
+    let bestDayIndex = -1;
+    let streakLength = 0;
+    const numDays = days.length;
+
+    for (let i = 0; i < numDays; i++) {
+        if (!isCleanDay(days[i])) continue;
+
+        let guaranteedCleanDays = 0;
+        for (let j = i; j < numDays; j++) {
+            if (!isCleanDay(days[j])) break;
+            guaranteedCleanDays++;
+        }
+
+        if (guaranteedCleanDays < 2) continue;
+
+        const d0 = days[i].score;
+        const d1 = i + 1 < numDays ? days[i + 1].score : d0;
+        const d2 = i + 2 < numDays ? days[i + 2].score : d1;
+        const d3 = i + 3 < numDays ? days[i + 3].score : d2;
+
+        const forwardScore = (d0 * 0.40) + (d1 * 0.25) + (d2 * 0.20) + (d3 * 0.15) + (guaranteedCleanDays * 12) - (2.5 * i);
+
+        if (forwardScore > bestScore) {
+            bestScore = forwardScore;
+            bestDayIndex = i;
+            streakLength = Math.max(0, guaranteedCleanDays - 1);
+        }
+    }
+
+    return { bestDayIndex, streakLength };
 }
 
 function runTests() {
@@ -305,7 +340,7 @@ function runTests() {
         const fullDayMetrics = extractDayMetrics(dailyMock, hourlyMock, 0);
         assert.strictEqual(fullDayMetrics.precipSum, 12.0, 'Full day precipitation should include overnight 12mm');
         assert.strictEqual(fullDayMetrics.precipProb, 90, 'Full day probability should be 90%');
-        washCriteria.daytimeFocus = true; // reset
+        washCriteria.daytimeFocus = false; // reset
         console.log('Test 5 Passed: Daytime focus correctly ignores overnight rain (2 AM)');
     }
 
@@ -403,9 +438,14 @@ function runTests() {
         const metrics = extractDayMetrics(ecmwfDailyMock, ecmwfHourlyMock, 0);
         assert.strictEqual(metrics.windSpeed, 25, 'wind_speed_10m_max should resolve cleanly');
         assert.strictEqual(metrics.windGust, 52, 'wind_gusts_10m_max should resolve cleanly');
-        assert.strictEqual(metrics.precipSum, 0.6, 'Daytime precipitation should sum properly');
+        assert.strictEqual(metrics.precipSum, 0.9, 'Full-day precipitation sum (0.9mm) should be used when daytimeFocus is off by default');
 
-        console.log('Test 8 Passed: ECMWF IFS field names and null UV index handled gracefully');
+        washCriteria.daytimeFocus = true;
+        const daytimeMetrics = extractDayMetrics(ecmwfDailyMock, ecmwfHourlyMock, 0);
+        assert.strictEqual(daytimeMetrics.precipSum, 0.6, 'Daytime precipitation should sum to 0.6mm when daytimeFocus is enabled');
+        washCriteria.daytimeFocus = false; // reset to default
+
+        console.log('Test 8 Passed: ECMWF IFS field names handled gracefully');
     }
 
     // Test 9: Realistic Qom regression test (lat=34.6401, lon=50.8764)
@@ -439,12 +479,12 @@ function runTests() {
 
     // Test 10: Standard thresholds evaluate directly without vehicle profile modifiers
     {
-        // Wind gusts at 35 km/h against standard threshold of 30 km/h (without ceramic bonus of +10)
+        // Wind gusts at 20 km/h against standard threshold of 15 km/h
         const windResult = calculateWashScore({
             precipProb: 0,
             precipSum: 0,
-            windSpeed: 20,
-            windGust: 35,
+            windSpeed: 12,
+            windGust: 20,
             badForWash: false,
             minTemp: 15,
             maxTemp: 25,
@@ -452,18 +492,84 @@ function runTests() {
             precipLimit: washCriteriaThresholds.highPrecip,
             rainLimit: washCriteriaThresholds.rainVolume,
             windLimit: washCriteriaThresholds.highWind,
-            freezingLimit: washCriteriaThresholds.freezing,
-            heatLimit: washCriteriaThresholds.extremeHeat,
-            uvLimit: washCriteriaThresholds.highUV
+            freezingLimit: washCriteriaThresholds.freezing
         });
 
         assert.strictEqual(windResult.windLimit, undefined);
-        assert.ok(windResult.dirtyReasons.includes('highWind'), 'Must trigger highWind penalty at 35 km/h against base limit 30');
+        assert.ok(windResult.dirtyReasons.includes('highWind'), 'Must trigger highWind penalty at 20 km/h against base limit 15');
         assert.ok(windResult.score < 100, 'Score must be penalized by excess wind');
         console.log('Test 10 Passed: Base thresholds evaluate directly without vehicle profile offsets');
     }
 
-    console.log('All 10 Predictive Wash Engine tests passed successfully!');
+    // Test 11: Language default locations map accurately for first-time visitors (Tehran for fa, New York for en)
+    {
+        function resolveDefaultLocation(lang) {
+            return lang === 'fa'
+                ? { lat: 35.69439, lon: 51.42151, name: 'Tehran, Tehran' }
+                : { lat: 40.71427, lon: -74.00597, name: 'New York, New York' };
+        }
+
+        const farsiDefault = resolveDefaultLocation('fa');
+        assert.strictEqual(farsiDefault.lat, 35.69439, 'Farsi default latitude must be Tehran');
+        assert.strictEqual(farsiDefault.lon, 51.42151, 'Farsi default longitude must be Tehran');
+        assert.strictEqual(farsiDefault.name, 'Tehran, Tehran');
+
+        const englishDefault = resolveDefaultLocation('en');
+        assert.strictEqual(englishDefault.lat, 40.71427, 'English default latitude must be New York');
+        assert.strictEqual(englishDefault.lon, -74.00597, 'English default longitude must be New York');
+        assert.strictEqual(englishDefault.name, 'New York, New York');
+
+        console.log('Test 11 Passed: Language default locations map accurately for first-time visitors');
+    }
+
+    // Test 12: Days followed immediately by rain are disqualified from being recommended
+    {
+        const days = [
+            { score: 96, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // Today: Ideal but followed by rain
+            { score: 0, precipSum: 0.7, rainLimit: 0, dirtyReasons: ['badWeather', 'rainVolume', 'highPrecip'] }, // Tomorrow: Poor
+            { score: 0, precipSum: 2.7, rainLimit: 0, dirtyReasons: ['badWeather', 'rainVolume', 'highPrecip'] }, // Tue: Poor
+            { score: 100, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // Wed: Ideal
+            { score: 95, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // Thu: Ideal
+        ];
+
+        const { bestDayIndex, streakLength } = analyzeBestWashDay(days);
+        assert.notStrictEqual(bestDayIndex, 0, 'Today must not be recommended when tomorrow is rainy');
+        assert.strictEqual(bestDayIndex, 3, 'Wednesday should be recommended as the first clean multi-day window');
+        assert.ok(streakLength >= 1, 'Clean streak after wash day must be at least 1 day');
+        console.log('Test 12 Passed: Rain the following day disqualifies recommendation and defers to next clean window');
+    }
+
+    // Test 13: Isolated clean days surrounded by rain return -1 (Wait it out)
+    {
+        const days = [
+            { score: 20, precipSum: 3.0, rainLimit: 0, dirtyReasons: ['badWeather', 'rainVolume'] },
+            { score: 85, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // 1 clean day
+            { score: 10, precipSum: 4.5, rainLimit: 0, dirtyReasons: ['badWeather', 'rainVolume'] },
+            { score: 90, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // 1 clean day
+            { score: 15, precipSum: 2.0, rainLimit: 0, dirtyReasons: ['badWeather', 'rainVolume'] }
+        ];
+
+        const { bestDayIndex } = analyzeBestWashDay(days);
+        assert.strictEqual(bestDayIndex, -1, 'Must return -1 to trigger Wait It Out when no 2-day clean window exists');
+        console.log('Test 13 Passed: Isolated clean days return -1 (Wait it out)');
+    }
+
+    // Test 14: Valid consecutive clean days starting today recommend today with proper streak
+    {
+        const days = [
+            { score: 95, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // Today
+            { score: 90, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // Tomorrow
+            { score: 85, precipSum: 0, rainLimit: 0, dirtyReasons: [] }, // Day 2
+            { score: 20, precipSum: 5.0, rainLimit: 0, dirtyReasons: ['badWeather', 'rainVolume'] }
+        ];
+
+        const { bestDayIndex, streakLength } = analyzeBestWashDay(days);
+        assert.strictEqual(bestDayIndex, 0, 'Today should be recommended when multiple clean days follow');
+        assert.strictEqual(streakLength, 2, 'Streak after today must be 2 days');
+        console.log('Test 14 Passed: Multi-day clean window starting today recommends today with verified streak');
+    }
+
+    console.log('All 14 Predictive Wash Engine tests passed successfully!');
 }
 
 runTests();

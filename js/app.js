@@ -34,22 +34,17 @@ let currentStreakLength = 0;
 // Threshold default settings
 let washCriteriaThresholds = {
     highPrecip: 30,
-    rainVolume: 0.5,
-    highWind: 30,
-    freezing: 0,
-    extremeHeat: 32,
-    highUV: 7
+    rainVolume: 0,
+    highWind: 15,
+    freezing: 0
 };
 
-// Extreme Heat and High UV disabled by default; Daytime Focus enabled
 let washCriteria = {
     badWeather: true,
     highPrecip: true,
     highWind: true,
     freezing: true,
-    extremeHeat: false,
-    highUV: false,
-    daytimeFocus: true
+    daytimeFocus: false
 };
 
 function t(key, params = {}) {
@@ -72,10 +67,6 @@ function updateStaticTexts() {
             params = { val: washCriteriaThresholds.highWind };
         } else if (key.includes('Freezing')) {
             params = { val: washCriteriaThresholds.freezing, val_f: Math.round(washCriteriaThresholds.freezing * 9/5 + 32) };
-        } else if (key.includes('ExtremeHeat') || key.includes('critExtremeHeat') || key.includes('descHeat')) {
-            params = { val: washCriteriaThresholds.extremeHeat, val_f: Math.round(washCriteriaThresholds.extremeHeat * 9/5 + 32) };
-        } else if (key.includes('HighUV')) {
-            params = { val: washCriteriaThresholds.highUV };
         }
         el.innerText = t(key, params);
     });
@@ -156,17 +147,11 @@ function updateSlidersUI() {
     const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
-    const inputHeat = document.getElementById('input-heat');
-    const inputUv = document.getElementById('input-uv');
-    const inputDaytimeFocus = document.getElementById('input-daytime-focus');
 
     if (inputPrecip) inputPrecip.value = washCriteriaThresholds.highPrecip;
     if (inputRainVolume) inputRainVolume.value = washCriteriaThresholds.rainVolume;
     if (inputWind) inputWind.value = washCriteriaThresholds.highWind;
     if (inputFreezing) inputFreezing.value = washCriteriaThresholds.freezing;
-    if (inputHeat) inputHeat.value = washCriteriaThresholds.extremeHeat;
-    if (inputUv) inputUv.value = washCriteriaThresholds.highUV;
-    if (inputDaytimeFocus) inputDaytimeFocus.checked = washCriteria.daytimeFocus !== false;
 
     updateSliderBubbles();
 }
@@ -176,22 +161,16 @@ function updateSliderBubbles() {
     const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
-    const inputHeat = document.getElementById('input-heat');
-    const inputUv = document.getElementById('input-uv');
 
     const sliderPrecipVal = document.getElementById('slider-precip-val');
     const sliderRainVal = document.getElementById('slider-rain-val');
     const sliderWindVal = document.getElementById('slider-wind-val');
     const sliderFreezingVal = document.getElementById('slider-freezing-val');
-    const sliderHeatVal = document.getElementById('slider-heat-val');
-    const sliderUvVal = document.getElementById('slider-uv-val');
 
     if (sliderPrecipVal) sliderPrecipVal.innerText = `${inputPrecip ? inputPrecip.value : washCriteriaThresholds.highPrecip}%`;
     if (sliderRainVal) sliderRainVal.innerText = `${inputRainVolume ? inputRainVolume.value : washCriteriaThresholds.rainVolume} mm`;
     if (sliderWindVal) sliderWindVal.innerText = `${inputWind ? inputWind.value : washCriteriaThresholds.highWind} km/h`;
     if (sliderFreezingVal) sliderFreezingVal.innerText = `${inputFreezing ? inputFreezing.value : washCriteriaThresholds.freezing}°C`;
-    if (sliderHeatVal) sliderHeatVal.innerText = `${inputHeat ? inputHeat.value : washCriteriaThresholds.extremeHeat}°C`;
-    if (sliderUvVal) sliderUvVal.innerText = inputUv ? inputUv.value : washCriteriaThresholds.highUV;
 }
 
 function initCriteria() {
@@ -213,17 +192,13 @@ function initCriteria() {
     const highPrecipToggle = document.getElementById('toggle-high-precip');
     const highWindToggle = document.getElementById('toggle-high-wind');
     const freezingToggle = document.getElementById('toggle-freezing');
-    const extremeHeatToggle = document.getElementById('toggle-extreme-heat');
-    const highUVToggle = document.getElementById('toggle-high-uv');
     const daytimeFocusToggle = document.getElementById('toggle-daytime-focus');
 
     if (badWeatherToggle) badWeatherToggle.checked = washCriteria.badWeather;
     if (highPrecipToggle) highPrecipToggle.checked = washCriteria.highPrecip;
     if (highWindToggle) highWindToggle.checked = washCriteria.highWind;
     if (freezingToggle) freezingToggle.checked = washCriteria.freezing;
-    if (extremeHeatToggle) extremeHeatToggle.checked = washCriteria.extremeHeat;
-    if (highUVToggle) highUVToggle.checked = washCriteria.highUV;
-    if (daytimeFocusToggle) daytimeFocusToggle.checked = washCriteria.daytimeFocus !== false;
+    if (daytimeFocusToggle) daytimeFocusToggle.checked = !!washCriteria.daytimeFocus;
 
     if (badWeatherToggle) badWeatherToggle.addEventListener('change', (e) => {
         washCriteria.badWeather = e.target.checked;
@@ -245,20 +220,8 @@ function initCriteria() {
         saveCriteria();
     });
 
-    if (extremeHeatToggle) extremeHeatToggle.addEventListener('change', (e) => {
-        washCriteria.extremeHeat = e.target.checked;
-        saveCriteria();
-    });
-
-    if (highUVToggle) highUVToggle.addEventListener('change', (e) => {
-        washCriteria.highUV = e.target.checked;
-        saveCriteria();
-    });
-
     if (daytimeFocusToggle) daytimeFocusToggle.addEventListener('change', (e) => {
         washCriteria.daytimeFocus = e.target.checked;
-        const inputDaytimeFocus = document.getElementById('input-daytime-focus');
-        if (inputDaytimeFocus) inputDaytimeFocus.checked = washCriteria.daytimeFocus;
         saveCriteria();
     });
 
@@ -273,9 +236,6 @@ function initCriteria() {
     const inputRainVolume = document.getElementById('input-rain-volume');
     const inputWind = document.getElementById('input-wind');
     const inputFreezing = document.getElementById('input-freezing');
-    const inputHeat = document.getElementById('input-heat');
-    const inputUv = document.getElementById('input-uv');
-    const inputDaytimeFocus = document.getElementById('input-daytime-focus');
 
     updateSlidersUI();
 
@@ -283,8 +243,6 @@ function initCriteria() {
     if (inputRainVolume) inputRainVolume.addEventListener('input', updateSliderBubbles);
     if (inputWind) inputWind.addEventListener('input', updateSliderBubbles);
     if (inputFreezing) inputFreezing.addEventListener('input', updateSliderBubbles);
-    if (inputHeat) inputHeat.addEventListener('input', updateSliderBubbles);
-    if (inputUv) inputUv.addEventListener('input', updateSliderBubbles);
 
     if (criteriaSettingsBtn) {
         criteriaSettingsBtn.addEventListener('click', () => {
@@ -318,15 +276,10 @@ function initCriteria() {
         resetSettingsBtn.addEventListener('click', () => {
             washCriteriaThresholds = {
                 highPrecip: 30,
-                rainVolume: 0.5,
-                highWind: 30,
-                freezing: 0,
-                extremeHeat: 32,
-                highUV: 7
+                rainVolume: 0,
+                highWind: 15,
+                freezing: 0
             };
-            washCriteria.daytimeFocus = true;
-            if (inputDaytimeFocus) inputDaytimeFocus.checked = true;
-            if (daytimeFocusToggle) daytimeFocusToggle.checked = true;
             updateSlidersUI();
         });
     }
@@ -334,16 +287,9 @@ function initCriteria() {
     if (saveSettingsBtn) {
         saveSettingsBtn.addEventListener('click', () => {
             washCriteriaThresholds.highPrecip = parseInt(inputPrecip ? inputPrecip.value : 30);
-            washCriteriaThresholds.rainVolume = parseFloat(inputRainVolume ? inputRainVolume.value : 0.5);
-            washCriteriaThresholds.highWind = parseInt(inputWind ? inputWind.value : 30);
+            washCriteriaThresholds.rainVolume = parseFloat(inputRainVolume ? inputRainVolume.value : 0);
+            washCriteriaThresholds.highWind = parseInt(inputWind ? inputWind.value : 15);
             washCriteriaThresholds.freezing = parseInt(inputFreezing ? inputFreezing.value : 0);
-            washCriteriaThresholds.extremeHeat = parseInt(inputHeat ? inputHeat.value : 32);
-            washCriteriaThresholds.highUV = parseInt(inputUv ? inputUv.value : 7);
-
-            if (inputDaytimeFocus) {
-                washCriteria.daytimeFocus = inputDaytimeFocus.checked;
-                if (daytimeFocusToggle) daytimeFocusToggle.checked = washCriteria.daytimeFocus;
-            }
 
             localStorage.setItem('washCriteriaThresholds', JSON.stringify(washCriteriaThresholds));
             if (criteriaSettingsModal) {
@@ -670,7 +616,8 @@ function initApp() {
     } else if (savedLang && validLangs.includes(savedLang)) {
         currentLang = savedLang;
     } else {
-        currentLang = 'en';
+        const browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        currentLang = browserLang.startsWith('fa') ? 'fa' : 'en';
     }
 
     showSkeleton();
@@ -683,7 +630,16 @@ function initApp() {
         const urlName = urlParams.get('locName');
 
         if (urlLat && urlLon && urlName) {
-            saveAndFetchLocation(parseFloat(urlLat), parseFloat(urlLon), decodeURIComponent(urlName));
+            let decodedName = urlName;
+            try {
+                decodedName = decodeURIComponent(urlName);
+                if (decodedName.includes('%')) {
+                    decodedName = decodeURIComponent(decodedName);
+                }
+            } catch (e) {
+                decodedName = urlName;
+            }
+            saveAndFetchLocation(parseFloat(urlLat), parseFloat(urlLon), decodedName);
             return;
         }
 
@@ -702,7 +658,12 @@ function initApp() {
             }
         }
 
-        getLocationViaGPS();
+        // First-time visitors: default based on language instead of asking for geolocation
+        const defaultLoc = currentLang === 'fa'
+            ? { lat: 35.69439, lon: 51.42151, name: 'Tehran, Tehran' }
+            : { lat: 40.71427, lon: -74.00597, name: 'New York, New York' };
+
+        saveAndFetchLocation(defaultLoc.lat, defaultLoc.lon, defaultLoc.name);
     });
 }
 
@@ -717,9 +678,13 @@ function showLocationModalWithError() {
     locationSearchStatus.classList.remove('hidden');
     locationInput.focus();
 
-    locationName.innerText = t('defaultLocation');
-    currentLat = 40.7128;
-    currentLon = -74.0060;
+    const defaultLoc = currentLang === 'fa'
+        ? { lat: 35.69439, lon: 51.42151, name: 'Tehran, Tehran' }
+        : { lat: 40.71427, lon: -74.00597, name: 'New York, New York' };
+
+    locationName.innerText = defaultLoc.name;
+    currentLat = defaultLoc.lat;
+    currentLon = defaultLoc.lon;
     fetchWeatherData(currentLat, currentLon);
 }
 
@@ -756,7 +721,7 @@ function saveAndFetchLocation(lat, lon, name) {
 
 async function fetchWeatherData(lat, lon) {
     try {
-        const dailyParams = 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max,uv_index_max';
+        const dailyParams = 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max,wind_gusts_10m_max';
         const hourlyParams = 'precipitation_probability,precipitation,wind_gusts_10m,weather_code';
         const currentParams = 'temperature_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m';
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&models=ecmwf_ifs025&daily=${dailyParams}&hourly=${hourlyParams}&current=${currentParams}&timezone=auto&forecast_days=10`;
@@ -878,14 +843,6 @@ function calculateWashScore(data) {
         score -= 40;
         dirtyReasons.push('freezing');
     }
-    if (washCriteria.extremeHeat && data.maxTemp > data.heatLimit) {
-        score -= 20;
-        dirtyReasons.push('extremeHeat');
-    }
-    if (washCriteria.highUV && data.uvIndex > data.uvLimit) {
-        score -= 15;
-        dirtyReasons.push('highUV');
-    }
 
     const finalScore = Math.max(0, Math.min(100, Math.round(score)));
     const tier = finalScore >= 80 ? 'ideal' : finalScore >= 60 ? 'good' : finalScore >= 40 ? 'fair' : 'poor';
@@ -912,7 +869,6 @@ function processData(weatherData) {
     for (let i = 0; i < numDays; i++) {
         let code = dailyCodes[i];
         let weatherInfo = weatherCodes[code] || { icon: 'help-circle', badForWash: false };
-        const uvIndexRaw = daily.uv_index_max && daily.uv_index_max[i] !== null ? daily.uv_index_max[i] : 0;
 
         const dateObj = new Date(today);
         dateObj.setDate(today.getDate() + i);
@@ -924,7 +880,6 @@ function processData(weatherData) {
         const activePrecipLimit = washCriteriaThresholds.highPrecip;
         const activeRainLimit = washCriteriaThresholds.rainVolume;
         const activeWindLimit = washCriteriaThresholds.highWind;
-        const activeUvLimit = washCriteriaThresholds.highUV;
 
         const metrics = extractDayMetrics(daily, hourly, i);
         let badForWash = weatherInfo.badForWash || metrics.badForWashHourly;
@@ -961,13 +916,10 @@ function processData(weatherData) {
             activeRain: isActiveRainToday,
             minTemp: daily.temperature_2m_min[i],
             maxTemp: daily.temperature_2m_max[i],
-            uvIndex: uvIndexRaw,
             precipLimit: activePrecipLimit,
             rainLimit: activeRainLimit,
             windLimit: activeWindLimit,
-            freezingLimit: washCriteriaThresholds.freezing,
-            heatLimit: washCriteriaThresholds.extremeHeat,
-            uvLimit: activeUvLimit
+            freezingLimit: washCriteriaThresholds.freezing
         });
 
         daysData.push({
@@ -980,7 +932,6 @@ function processData(weatherData) {
             precipSum: metrics.precipSum,
             windSpeed: metrics.windSpeed,
             windGust: metrics.windGust,
-            uvIndex: Math.round(uvIndexRaw),
             desc: descriptionStr,
             icon: weatherInfo.icon,
             score: scored.score,
@@ -990,13 +941,25 @@ function processData(weatherData) {
             dateObj: dateObj,
             precipLimit: activePrecipLimit,
             rainLimit: activeRainLimit,
-            windLimit: activeWindLimit,
-            uvLimit: activeUvLimit
+            windLimit: activeWindLimit
         });
     }
 
     analyzeBestWashDay(daysData);
     drawTrendsChart(daysData);
+}
+
+function isCleanDay(day) {
+    if (!day || day.score < 50) return false;
+    const precipReasons = ['activeRain', 'rainVolume', 'highPrecip', 'badWeather'];
+    if (day.dirtyReasons && day.dirtyReasons.some(r => precipReasons.includes(r))) {
+        return false;
+    }
+    const limit = day.rainLimit !== undefined ? day.rainLimit : 0;
+    if (day.precipSum > limit) {
+        return false;
+    }
+    return true;
 }
 
 function analyzeBestWashDay(days) {
@@ -1006,13 +969,15 @@ function analyzeBestWashDay(days) {
     const numDays = days.length;
 
     for (let i = 0; i < numDays; i++) {
-        if (days[i].score < 50) continue;
+        if (!isCleanDay(days[i])) continue;
 
         let guaranteedCleanDays = 0;
         for (let j = i; j < numDays; j++) {
-            if (days[j].score < 50) break;
+            if (!isCleanDay(days[j])) break;
             guaranteedCleanDays++;
         }
+
+        if (guaranteedCleanDays < 2) continue;
 
         const d0 = days[i].score;
         const d1 = i + 1 < numDays ? days[i + 1].score : d0;
@@ -1185,9 +1150,6 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                     <div class="flex items-center justify-end gap-2 text-[11px] font-bold w-full">
                         <span class="${(washCriteria.highPrecip && day.precipProb > day.precipLimit) ? 'text-accent-500 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Precipitation">
                             <i data-lucide="droplets" class="w-3 h-3"></i> ${day.precipProb}%
-                        </span>
-                        <span class="${(washCriteria.highUV && day.uvIndex > day.uvLimit) ? 'text-purple-500 dark:text-purple-400 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="UV Index">
-                            <i data-lucide="sun-dim" class="w-3 h-3"></i> ${day.uvIndex}
                         </span>
                         <span class="${(washCriteria.highWind && day.windGust > day.windLimit) ? 'text-slate-600 dark:text-slate-300 font-bold' : 'text-slate-400'} flex items-center gap-0.5" dir="ltr" title="Wind Gusts">
                             <i data-lucide="wind" class="w-3 h-3"></i> ${day.windGust}<span class="text-[9px] font-medium uppercase opacity-80">km/h</span>

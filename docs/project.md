@@ -44,11 +44,11 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - 24-Hour Weather Code Scan: Evaluates all 24 hours of each day to detect drizzle, rain, or thunderstorms (codes 51-99) and reflects the rainy icon on the daily agenda.
 - Real-Time Rain Safeguard: Ingests `current` weather conditions to immediately flag today as dirty if precipitation is actively occurring.
 - Quality Tiers & Badges: Classifies each day into Ideal (80-100), Good (60-79), Fair (40-59), or Poor (0-39) with color-coded UI badges.
-- Daytime-Aware Filtering: Optional toggle (default active) that filters weather volume and probability metrics specifically between 7:00 AM and 8:00 PM local time.
+- Daytime-Aware Filtering: Optional toggle (default disabled) that filters weather volume and probability metrics specifically between 7:00 AM and 8:00 PM local time.
 - Forward Window Recommendation: Selects optimal wash day by weighing current suitability against multi-day forward streak quality.
 - Dual Language Support: English (`en`) and Farsi (`fa`) with full RTL alignment and Persian number/date formatting.
 - Dynamic Language Loading: Loads translation modules on demand with automatic fallback to English.
-- Custom Criteria and Thresholds: Allows users to customize thresholds for precipitation probability, rain volume (mm), wind speed, freezing point, extreme heat, and UV index.
+- Custom Criteria and Thresholds: Allows users to customize thresholds for precipitation probability, rain volume (mm), wind speed, and freezing point.
 - Calendar Export: Generates downloadable `.ics` files for the recommended wash day.
 - Modal Scroll Containment: Prevents background document scroll and chaining when modals or bottom sheets are open, isolating scroll exclusively to modal content.
 - Offline Capability: Pre-caches application assets via Service Worker for reliable offline access.
@@ -57,10 +57,12 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - Primary Weather Model: The application exclusively uses Open-Meteo's `ecmwf_ifs025` model to provide accurate global precipitation and wind forecasts.
 - Real-Time Rain Safeguard: If `current.precipitation > 0` or current weather indicates active precipitation, today's score is immediately penalized by 50 points and flagged with `activeRain`.
 - Weather Code Priority: If any hour during a 24-hour period contains a bad weather code (51-99), `badForWash` is set to true and the representative rain code replaces milder daily codes like overcast.
-- UV Index Handling: Because ECMWF IFS standard outputs do not compute UV index directly (returning null), the application safely defaults missing UV values to 0.
 - Language Scope: Only English (`en`) and Farsi (`fa`) are retained. Unused language files (`ar.js`, `es.js`, `fr.js`, `hi.js`, `zh.js`) were permanently removed from the repository.
 - Preference Fallback: Stored language preferences in `localStorage` or URL query parameters that do not match `en` or `fa` automatically reset to English (`en`).
 - Daytime Hours: Set to 7:00 AM through 8:00 PM local time when daytime-focus is enabled.
+- Default Thresholds and Flags: Daytime focus toggle is off by default. Rain volume tolerance defaults to 0 mm, and wind speed limit defaults to 15 km/h.
+- Clean Window Recommendation Requirement: A wash day candidate is only eligible if the car is guaranteed to keep clean for at least one full day after washing (guaranteedCleanDays >= 2, requiring streakLength >= 1). Days followed immediately by precipitation (active rain, rain accumulation, or bad weather codes) or score < 50 are disqualified. If no multi-day clean window exists in the forecast, the engine defaults to "Wait it out" rather than suggesting an isolated clean day before rain.
+- First-Time Visitor Default Locations: Instead of prompting for browser geolocation on initial visit, default coordinates and location names are automatically set according to the selected language: Tehran (lat: 35.69439, lon: 51.42151, locName: 'Tehran, Tehran') for Farsi (`fa`), and New York (lat: 40.71427, lon: -74.00597, locName: 'New York, New York') for English (`en`).
 
 ## Verification Commands
 To inspect and verify repository changes and state:

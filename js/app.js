@@ -215,6 +215,10 @@ function initCriteria() {
     if (criteriaSettingsBtn) {
         criteriaSettingsBtn.addEventListener('click', openSettingsModal);
     }
+    const mobileNavCriteriaBtn = document.getElementById('mobile-nav-criteria-btn');
+    if (mobileNavCriteriaBtn) {
+        mobileNavCriteriaBtn.addEventListener('click', openSettingsModal);
+    }
 
     if (closeSettingsModalBtn) {
         closeSettingsModalBtn.addEventListener('click', () => {
@@ -372,10 +376,13 @@ window.addEventListener('popstate', () => {
     updateModalScrollLock();
 });
 
-criteriaInfoBtn.addEventListener('click', () => {
+const openCriteriaInfoModal = () => {
     criteriaInfoModal.classList.remove('hidden');
     history.pushState({ modalOpen: true }, '', '');
-});
+};
+if (criteriaInfoBtn) criteriaInfoBtn.addEventListener('click', openCriteriaInfoModal);
+const mobileNavInfoBtn = document.getElementById('mobile-nav-info-btn');
+if (mobileNavInfoBtn) mobileNavInfoBtn.addEventListener('click', openCriteriaInfoModal);
 
 closeCriteriaModalBtn.addEventListener('click', () => {
     criteriaInfoModal.classList.add('hidden');
@@ -434,14 +441,17 @@ document.querySelectorAll('.theme-toggle').forEach(btn => {
     btn.addEventListener('click', toggleTheme);
 });
 
-changeLocationBtn.addEventListener('click', () => {
+const openLocationModal = () => {
     locationModal.classList.remove('hidden');
     locationInput.focus();
     searchResultsContainer.classList.add('hidden');
     searchResultsContainer.innerHTML = '';
     locationInput.value = '';
     history.pushState({ modalOpen: true }, '', '');
-});
+};
+if (changeLocationBtn) changeLocationBtn.addEventListener('click', openLocationModal);
+const mobileNavSearchBtn = document.getElementById('mobile-nav-search-btn');
+if (mobileNavSearchBtn) mobileNavSearchBtn.addEventListener('click', openLocationModal);
 
 closeModalBtn.addEventListener('click', () => {
     locationModal.classList.add('hidden');
@@ -1564,17 +1574,18 @@ async function registerBackgroundSync() {
 }
 
 // Listeners for PWA settings modal
-if (pwaBtn) {
-    pwaBtn.addEventListener('click', () => {
-        if (pwaModal) {
-            pwaModal.classList.remove('hidden');
-        }
-        updateOnlineStatus();
-        updateNotificationUI();
-        checkPwaApiSupport();
-        history.pushState({ modalOpen: true }, '', '');
-    });
-}
+const openPwaModal = () => {
+    if (pwaModal) {
+        pwaModal.classList.remove('hidden');
+    }
+    updateOnlineStatus();
+    updateNotificationUI();
+    checkPwaApiSupport();
+    history.pushState({ modalOpen: true }, '', '');
+};
+if (pwaBtn) pwaBtn.addEventListener('click', openPwaModal);
+const mobileNavAlertsBtn = document.getElementById('mobile-nav-alerts-btn');
+if (mobileNavAlertsBtn) mobileNavAlertsBtn.addEventListener('click', openPwaModal);
 
 function closePwaModal() {
     if (pwaModal) {

@@ -51,6 +51,7 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - Dual Language Support: English (`en`) and Farsi (`fa`) with full RTL alignment and Persian number/date formatting.
 - Dynamic Language Loading: Loads translation modules on demand with automatic fallback to English.
 - Custom Criteria and Thresholds: Allows users to customize thresholds for wind speed and freezing point, alongside an optional Daytime Focus toggle.
+- Mobile Bottom Navigation: Docked 4-action bottom bar on mobile viewports (< 768px) housing quick triggers for Search, Criteria customizer, Details info, and Notification alerts with safe-area padding and glassmorphism.
 - Calendar Export: Generates downloadable `.ics` files for the recommended wash day.
 - Modal Scroll Containment: Prevents background document scroll and chaining when modals or bottom sheets are open, isolating scroll exclusively to modal content.
 - Offline Capability: Pre-caches application assets via Service Worker for reliable offline access.

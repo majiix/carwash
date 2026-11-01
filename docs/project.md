@@ -41,6 +41,7 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 ## Current Features
 - Continuous 0-100 Wash Score: Evaluates precipitation chance, rain volume (mm), wind gusts (km/h), freezing temperature, extreme heat, and UV index.
 - Zero-Tolerance Rain & Snow Protection: Automated protection that strictly rejects any forecasted rain or snow accumulation (precipSum > 0 mm) or bad weather codes (drizzle, rain, snow, thunderstorms), alongside a 30% PoP cutoff and mild score deduction for trace probabilities below 30%.
+- Rainfall Volume Badge: Displays a prominent, dedicated badge (e.g. `12mm`) next to the day title for days with forecasted precipitation, preventing truncation in RTL/Farsi and providing instant visual clarity.
 - ECMWF IFS Global Model: Powered by the ECMWF 0.25° model, preventing false clean recommendations in regions where default models miss precipitation events.
 - 24-Hour Weather Code Scan: Evaluates all 24 hours of each day to detect drizzle, rain, or thunderstorms (codes 51-99) and reflects the rainy icon on the daily agenda.
 - Real-Time Rain Safeguard: Ingests `current` weather conditions to immediately flag today as dirty if precipitation is actively occurring.
@@ -66,6 +67,7 @@ Car Wash Planner is a client-side web application and Progressive Web App (PWA) 
 - Consolidated Criteria Modal: Dashboard criteria boxes are replaced by a single prominent entry card ("Customize Wash Criteria & Thresholds"). Direct numerical threshold sliders in the modal allow customization of wind speed and freezing point, while Daytime Focus is housed in an Additional Settings section.
 - Clean Window Recommendation Requirement: A wash day candidate is only eligible if the car is guaranteed to keep clean for at least one full day after washing (guaranteedCleanDays >= 2, requiring streakLength >= 1). Days followed immediately by precipitation (active rain, rain accumulation, bad weather codes, or PoP >= 30%) or score < 50 are disqualified. If no multi-day clean window exists in the forecast, the engine defaults to "Wait it out" rather than suggesting an isolated clean day before rain.
 - First-Time Visitor Default Locations: Instead of prompting for browser geolocation on initial visit, default coordinates and location names are automatically set according to the selected language: Tehran (lat: 35.69439, lon: 51.42151, locName: 'Tehran, Tehran') for Farsi (`fa`), and New York (lat: 40.71427, lon: -74.00597, locName: 'New York, New York') for English (`en`).
+- Weather Reason Consolidation: Verdict wait reasons deduplicate overlapping criteria (e.g. rain codes suppress redundant rain accumulation and PoP mentions; wind gusts suppress duplicate wind speed mentions). Reasons format dynamically using language-specific punctuation (Persian comma `،` and `و` conjunction for Farsi; Oxford comma and `and` for English).
 
 ## Verification Commands
 To inspect and verify repository changes and state:

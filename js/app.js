@@ -1008,6 +1008,52 @@ function getTierBadgeClasses(tier) {
     }
 }
 
+function formatConsolidatedReasons(foundReasons, lang = currentLang) {
+    const list = [];
+
+    // Precipitation criteria: activeRain > badWeather / rainVolume > highPrecip
+    if (foundReasons.has('activeRain')) {
+        list.push(t('reason_activeRain'));
+    } else if (foundReasons.has('badWeather') || foundReasons.has('rainVolume')) {
+        list.push(t('reason_badWeather'));
+    } else if (foundReasons.has('highPrecip')) {
+        list.push(t('reason_highPrecip'));
+    }
+
+    // Wind criteria: highGusts takes precedence over highWind
+    if (foundReasons.has('highGusts')) {
+        list.push(t('reason_highGusts'));
+    } else if (foundReasons.has('highWind')) {
+        list.push(t('reason_highWind'));
+    }
+
+    // Temperature criteria: freezing
+    if (foundReasons.has('freezing')) {
+        list.push(t('reason_freezing'));
+    }
+
+    // Any remaining custom reasons
+    foundReasons.forEach(r => {
+        if (!['activeRain', 'badWeather', 'rainVolume', 'highPrecip', 'highGusts', 'highWind', 'freezing'].includes(r)) {
+            list.push(t('reason_' + r));
+        }
+    });
+
+    if (list.length === 0) return '';
+
+    if (lang === 'fa') {
+        if (list.length === 1) return list[0];
+        if (list.length === 2) return `${list[0]} و ${list[1]}`;
+        const head = list.slice(0, -1).join('، ');
+        return `${head} و ${list[list.length - 1]}`;
+    } else {
+        if (list.length === 1) return list[0];
+        if (list.length === 2) return `${list[0]} and ${list[1]}`;
+        const head = list.slice(0, -1).join(', ');
+        return `${head}, and ${list[list.length - 1]}`;
+    }
+}
+
 function renderDashboard(days, bestDayIndex, streakLength) {
     hideSkeleton();
     streakBadge.classList.add('hidden');
@@ -1052,8 +1098,7 @@ function renderDashboard(days, bestDayIndex, streakLength) {
         }
 
         if (foundReasons.size > 0) {
-            let translatedReasons = Array.from(foundReasons).map(r => t('reason_' + r));
-            let reasonsString = translatedReasons.join(', ');
+            let reasonsString = formatConsolidatedReasons(foundReasons, currentLang);
             verdictReason.innerText = t('dynamicWaitReason', { reasons: reasonsString });
         } else {
             verdictReason.innerText = t('waitReason');
@@ -1128,8 +1173,16 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                         </span>
                     </div>
                     <div class="flex flex-col min-w-0">
-                        <span class="${titleColor} leading-tight">${day.dayName}</span>
-                        <span class="text-[11px] font-medium opacity-80 truncate">${day.dateFormatted} &middot; ${day.desc}${day.precipSum > 0 ? ` &middot; <span class="text-blue-600 dark:text-blue-400 font-semibold">${day.precipSum}mm</span>` : ''}</span>
+                        <div class="flex items-center gap-1.5 leading-tight">
+                            <span class="${titleColor} truncate">${day.dayName}</span>
+                            ${day.precipSum > 0 ? `
+                                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 shrink-0" dir="ltr" title="Rainfall: ${day.precipSum}mm">
+                                    <i data-lucide="cloud-rain" class="w-3 h-3"></i>
+                                    <span>${day.precipSum}mm</span>
+                                </span>
+                            ` : ''}
+                        </div>
+                        <span class="text-[11px] font-medium opacity-80 truncate">${day.dateFormatted} &middot; ${day.desc}</span>
                     </div>
                 </div>
 

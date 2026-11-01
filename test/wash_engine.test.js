@@ -45,6 +45,49 @@ const washCriteriaThresholds = {
     freezing: 0
 };
 
+function formatConsolidatedReasons(foundReasons, lang, translations) {
+    const list = [];
+    const t = (k) => translations[k] || k;
+
+    if (foundReasons.has('activeRain')) {
+        list.push(t('reason_activeRain'));
+    } else if (foundReasons.has('badWeather') || foundReasons.has('rainVolume')) {
+        list.push(t('reason_badWeather'));
+    } else if (foundReasons.has('highPrecip')) {
+        list.push(t('reason_highPrecip'));
+    }
+
+    if (foundReasons.has('highGusts')) {
+        list.push(t('reason_highGusts'));
+    } else if (foundReasons.has('highWind')) {
+        list.push(t('reason_highWind'));
+    }
+
+    if (foundReasons.has('freezing')) {
+        list.push(t('reason_freezing'));
+    }
+
+    foundReasons.forEach(r => {
+        if (!['activeRain', 'badWeather', 'rainVolume', 'highPrecip', 'highGusts', 'highWind', 'freezing'].includes(r)) {
+            list.push(t('reason_' + r));
+        }
+    });
+
+    if (list.length === 0) return '';
+
+    if (lang === 'fa') {
+        if (list.length === 1) return list[0];
+        if (list.length === 2) return `${list[0]} و ${list[1]}`;
+        const head = list.slice(0, -1).join('، ');
+        return `${head} و ${list[list.length - 1]}`;
+    } else {
+        if (list.length === 1) return list[0];
+        if (list.length === 2) return `${list[0]} and ${list[1]}`;
+        const head = list.slice(0, -1).join(', ');
+        return `${head}, and ${list[list.length - 1]}`;
+    }
+}
+
 function calculateWashScore(data) {
     let score = 100;
     const dirtyReasons = [];
@@ -603,7 +646,39 @@ function runTests() {
         console.log('Test 16 Passed: PoP >= 30% cutoff with 0.0 mm rain flags highPrecip and marks day dirty');
     }
 
-    console.log('All 16 Predictive Wash Engine tests passed successfully!');
+    // Test 17: Reason consolidation and Farsi formatting with Persian comma and conjunction
+    {
+        const faTranslations = {
+            reason_badWeather: "بارش باران یا برف",
+            reason_highPrecip: "احتمال بالای بارش",
+            reason_rainVolume: "میزان بارندگی",
+            reason_highWind: "وزش باد شدید",
+            reason_highGusts: "تندبادهای شدید",
+            reason_freezing: "دمای یخبندان",
+            reason_activeRain: "بارش باران در حال حاضر"
+        };
+
+        // All 5 dirty reasons present (wind + rain duplication scenario)
+        const messyReasons = new Set(['highGusts', 'badWeather', 'rainVolume', 'highPrecip', 'highWind']);
+        const consolidatedFa = formatConsolidatedReasons(messyReasons, 'fa', faTranslations);
+
+        assert.strictEqual(consolidatedFa, 'بارش باران یا برف و تندبادهای شدید');
+        assert.ok(!consolidatedFa.includes('تجمع باران'), 'Must deduplicate rain volume');
+        assert.ok(!consolidatedFa.includes('احتمال بالای بارش'), 'Must deduplicate high precip when rain is already present');
+        assert.ok(!consolidatedFa.includes('وزش باد شدید'), 'Must deduplicate wind when gusts are present');
+        assert.ok(!consolidatedFa.includes(','), 'Must never use English comma in Farsi output');
+
+        // 3 reasons scenario testing Persian comma (،)
+        const threeReasons = new Set(['badWeather', 'highGusts', 'freezing']);
+        const threeFa = formatConsolidatedReasons(threeReasons, 'fa', faTranslations);
+        assert.strictEqual(threeFa, 'بارش باران یا برف، تندبادهای شدید و دمای یخبندان');
+        assert.ok(threeFa.includes('، '), 'Must use Persian comma between items');
+        assert.ok(threeFa.includes(' و '), 'Must use Persian conjunction before last item');
+
+        console.log('Test 17 Passed: Clean reason consolidation with proper Farsi comma and conjunction');
+    }
+
+    console.log('All 17 Predictive Wash Engine tests passed successfully!');
 }
 
 runTests();

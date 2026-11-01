@@ -573,10 +573,25 @@ useGpsBtn.addEventListener('click', () => {
     getLocationViaGPS();
 });
 
+function fetchGitHubStars() {
+    const starsBadge = document.getElementById('github-stars-badge');
+    if (!starsBadge) return;
+    fetch('https://api.github.com/repos/majiix/carwash')
+        .then(res => res.ok ? res.json() : null)
+        .then(data => {
+            if (data && typeof data.stargazers_count === 'number' && data.stargazers_count > 0) {
+                starsBadge.innerText = data.stargazers_count;
+                starsBadge.classList.remove('hidden');
+            }
+        })
+        .catch(() => {});
+}
+
 function initApp() {
     initTheme();
     initCriteria();
     initModalScrollLock();
+    fetchGitHubStars();
 
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -1091,19 +1106,19 @@ function renderDashboard(days, bestDayIndex, streakLength) {
         const tierName = t('score' + day.tier.charAt(0).toUpperCase() + day.tier.slice(1));
 
         const cardClasses = isRecommended
-            ? "bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border-l-4 border-brand-500 relative flex items-center justify-between gap-3 transform hover:scale-[1.01] transition-transform"
+            ? "bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-sm border-s-4 border-brand-500 relative flex items-center justify-between gap-3 transform hover:scale-[1.01] transition-transform"
             : "p-3 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800 flex items-center justify-between gap-3 transition-colors text-slate-500 dark:text-slate-400";
 
         const titleColor = isRecommended ? "text-slate-900 dark:text-white font-bold" : "font-medium text-slate-700 dark:text-slate-300";
 
         const badgeHtml = isRecommended
-            ? `<div class="absolute -top-2.5 right-4 bg-brand-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">${t('bestDayBadge')}</div>`
+            ? `<div class="absolute -top-2.5 end-4 bg-brand-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">${t('bestDayBadge')}</div>`
             : '';
 
         const cardHtml = `
             <div class="${cardClasses}">
                 ${badgeHtml}
-                <div class="flex items-center gap-3.5">
+                <div class="flex items-center gap-3.5 min-w-0 flex-1">
                     <div class="relative shrink-0" title="${tierName}">
                         <div class="w-10 h-10 rounded-full flex items-center justify-center ${styles.icon}">
                             <i data-lucide="${day.icon}" class="w-5 h-5"></i>
@@ -1112,9 +1127,9 @@ function renderDashboard(days, bestDayIndex, streakLength) {
                             ${day.score}%
                         </span>
                     </div>
-                    <div class="flex flex-col">
+                    <div class="flex flex-col min-w-0">
                         <span class="${titleColor} leading-tight">${day.dayName}</span>
-                        <span class="text-[11px] font-medium opacity-80">${day.dateFormatted} &middot; ${day.desc}${day.precipSum > 0 ? ` &middot; <span class="text-blue-600 dark:text-blue-400 font-semibold">${day.precipSum}mm</span>` : ''}</span>
+                        <span class="text-[11px] font-medium opacity-80 truncate">${day.dateFormatted} &middot; ${day.desc}${day.precipSum > 0 ? ` &middot; <span class="text-blue-600 dark:text-blue-400 font-semibold">${day.precipSum}mm</span>` : ''}</span>
                     </div>
                 </div>
 

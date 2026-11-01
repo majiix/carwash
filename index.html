@@ -3,7 +3,7 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Car Wash Planner</title>
     
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#0d9488">
@@ -133,27 +133,27 @@
 
                         <div class="relative z-10 flex flex-col h-full justify-between">
                             <div class="flex items-center justify-between gap-2 mb-2">
-                                <span class="text-xs font-bold uppercase tracking-widest opacity-80" data-i18n="recommendationTitle">The Verdict</span>
+                                <span class="text-xs font-bold uppercase tracking-widest opacity-80" data-i18n="recommendationTitle">Recommendation</span>
                                 <span id="verdict-score-badge" class="hidden px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider bg-white/20 backdrop-blur-sm border border-white/30 text-white"></span>
                             </div>
                             <div id="verdict-title" class="text-3xl lg:text-4xl font-bold font-display leading-tight mb-4">
-                                Go for it today!
+                                Today is a great day to wash!
                             </div>
                             <p id="verdict-reason" class="text-sm opacity-90 leading-relaxed font-medium">
-                                Weather's gorgeous today! Wash it now and enjoy spotless days.
+                                Great weather today! Wash your car now and enjoy clear conditions ahead.
                             </p>
                         </div>
                     </div>
 
                     <div class="flex flex-col gap-6">
                         <div class="bg-white dark:bg-slate-800 rounded-[2rem] p-6 shadow-[0_4px_20px_rgba(0,0,0,0.04)] dark:shadow-none border border-slate-50 dark:border-slate-700 flex flex-col justify-center items-center text-center h-full min-h-[120px]">
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2" data-i18n="targetDateLabel">Target</span>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2" data-i18n="targetDateLabel">Best Wash Day</span>
                             <i data-lucide="calendar-check" class="w-6 h-6 text-brand-600 dark:text-brand-400 mb-2"></i>
                             <span id="target-date-text" class="font-bold text-slate-800 dark:text-slate-100">Pending</span>
                         </div>
 
                         <div id="streak-badge" class="hidden bg-accent-400 rounded-[2rem] p-6 shadow-lg flex flex-col justify-center items-center text-center h-full min-h-[120px] text-slate-900">
-                            <span class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1" data-i18n="cleanDuration">Clean For</span>
+                            <span class="text-[10px] font-bold uppercase tracking-widest opacity-80 mb-1" data-i18n="cleanDuration">Stays Clean For</span>
                             <div class="text-2xl font-black mb-1" id="streak-number">0</div>
                             <span id="streak-days-label" class="text-xs font-bold opacity-90" data-i18n="days">Days</span>
                         </div>
@@ -175,8 +175,8 @@
                                     <i data-lucide="sliders" class="w-5 h-5"></i>
                                 </div>
                                 <div>
-                                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" data-i18n="customizeCriteriaCardTitle">Customize Wash Criteria & Thresholds</h4>
-                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="customizeCriteriaCardDesc">Adjust rain limits, wind speed, freezing point, and daytime focus.</p>
+                                    <h4 class="font-bold text-sm text-slate-800 dark:text-slate-100 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors" data-i18n="customizeCriteriaCardTitle">Customize Wash Criteria</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" data-i18n="customizeCriteriaCardDesc">Set limits for wind speed, freezing temperature, and daytime hours.</p>
                                 </div>
                             </div>
                             <div class="text-slate-400 group-hover:text-brand-600 dark:group-hover:text-brand-400 group-hover:translate-x-1 rtl:group-hover:-translate-x-1 transition-all p-1">
@@ -219,27 +219,29 @@
                         </div>
                         
                         <!-- SVG Element -->
-                        <div class="relative w-full h-48 sm:h-56 mt-2">
-                            <svg id="trends-svg" class="w-full h-full" viewBox="0 0 700 220" preserveAspectRatio="none">
-                                <defs>
-                                    <linearGradient id="precip-gradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25"/>
-                                        <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
-                                    </linearGradient>
-                                </defs>
-                                
-                                <!-- Grid Lines -->
-                                <g id="chart-grids"></g>
-                                <!-- Paths -->
-                                <path id="chart-fill-precip" class="chart-fill-precip" d=""/>
-                                <path id="chart-path-precip" class="chart-path-precip" d=""/>
-                                <path id="chart-path-wind" class="chart-path-wind" d=""/>
-                                <!-- Interaction Overlay Points -->
-                                <g id="chart-points-precip"></g>
-                                <g id="chart-points-wind"></g>
-                                <!-- Day Names Label Row -->
-                                <g id="chart-labels-x"></g>
-                            </svg>
+                        <div class="relative w-full h-48 sm:h-56 mt-2 overflow-x-auto no-scrollbar -mx-2 px-2">
+                            <div class="min-w-[580px] sm:min-w-full h-full">
+                                <svg id="trends-svg" class="w-full h-full" viewBox="0 0 700 220" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="precip-gradient" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.25"/>
+                                            <stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/>
+                                        </linearGradient>
+                                    </defs>
+                                    
+                                    <!-- Grid Lines -->
+                                    <g id="chart-grids"></g>
+                                    <!-- Paths -->
+                                    <path id="chart-fill-precip" class="chart-fill-precip" d=""/>
+                                    <path id="chart-path-precip" class="chart-path-precip" d=""/>
+                                    <path id="chart-path-wind" class="chart-path-wind" d=""/>
+                                    <!-- Interaction Overlay Points -->
+                                    <g id="chart-points-precip"></g>
+                                    <g id="chart-points-wind"></g>
+                                    <!-- Day Names Label Row -->
+                                    <g id="chart-labels-x"></g>
+                                </svg>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -249,7 +251,7 @@
             </div>
         </div>
 
-        <div class="w-full lg:w-5/12 xl:w-1/3 bg-slate-50 dark:bg-slate-900 lg:border-s border-slate-200 dark:border-slate-800 p-6 md:p-10 flex flex-col" style="padding-top: 3rem;">
+        <div class="w-full lg:w-5/12 xl:w-1/3 bg-slate-50 dark:bg-slate-900 border-t lg:border-t-0 lg:border-s border-slate-200 dark:border-slate-800 p-6 md:p-10 lg:pt-12 flex flex-col">
 
             <div class="hidden lg:flex items-center justify-between mb-10 gap-2">
 
@@ -272,7 +274,7 @@
             </div>
 
             <div class="mb-8">
-                <h2 class="text-xl font-bold text-slate-900 dark:text-white font-display" data-i18n="forecastAnalysis">10-Day Agenda</h2>
+                <h2 class="text-xl font-bold text-slate-900 dark:text-white font-display" data-i18n="forecastAnalysis">10-Day Forecast</h2>
                 <p class="text-sm text-slate-500 mt-1" id="agenda-date">Today</p>
             </div>
 
@@ -293,15 +295,19 @@
     </main>
 
     <footer class="mt-8 flex flex-col items-center gap-3 text-center fade-in pb-8 relative z-0" style="animation-delay: 0.6s;">
+        <div class="flex items-center gap-2">
+            <a href="https://github.com/majiix/carwash" target="_blank" rel="noopener noreferrer" class="group inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/70 dark:bg-slate-800/70 border border-slate-200/80 dark:border-slate-700/80 hover:border-amber-400 dark:hover:border-amber-400 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 shadow-sm transition-all hover:scale-105 backdrop-blur-sm">
+                <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-400/30 group-hover:fill-amber-400 transition-colors"></i>
+                <span data-i18n="starOnGithub">Star on GitHub</span>
+                <span id="github-stars-badge" class="hidden text-[10px] font-black bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-1.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-600"></span>
+            </a>
+        </div>
         <div class="text-[10px] font-bold opacity-50 tracking-[0.2em] uppercase text-slate-600 dark:text-slate-400" data-i18n="dataProvided">DATA BY OPEN-METEO</div>
-        <a href="https://github.com/majiix/carwash" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-slate-500 hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400 flex items-center gap-1.5 transition-colors">
-            <i data-lucide="github" class="w-4 h-4"></i> GitHub
-        </a>
     </footer>
 
     <!-- Location Modal -->
     <div id="location-modal" class="hidden fixed-modal-center fixed inset-0 bg-slate-900/60 dark:bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 fade-in">
-        <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 md:p-10 w-full max-w-md shadow-2xl transform transition-all border border-slate-100 dark:border-slate-800">
+        <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 md:p-10 w-full max-w-md shadow-2xl transform transition-all border border-slate-100 dark:border-slate-800 max-h-[85dvh] overflow-y-auto no-scrollbar">
             <span class="bottom-sheet-handle"></span>
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-bold text-slate-900 dark:text-white tracking-tight" data-i18n="findLocation">Find City</h3>
@@ -316,6 +322,10 @@
                     <input type="text" id="location-input" required
                            class="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl ps-12 pe-5 py-4 text-slate-800 dark:text-white placeholder-slate-400 focus:outline-none focus:border-brand-500 font-medium transition-colors">
                 </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 -mt-2 px-1 flex items-center gap-1.5 leading-relaxed">
+                    <i data-lucide="info" class="w-3.5 h-3.5 shrink-0 text-brand-600 dark:text-brand-400"></i>
+                    <span data-i18n="searchEnglishHint">Type city name in English for best results.</span>
+                </p>
                 <button type="submit" class="w-full bg-brand-700 hover:bg-brand-800 text-white px-5 py-4 rounded-2xl transition-colors font-bold shadow-md" data-i18n="searchBtn">Search</button>
                 <div id="location-search-status" class="text-sm font-medium text-slate-500 hidden text-center mt-2" data-i18n="searching">Searching...</div>
             </form>
@@ -452,8 +462,8 @@
             </div>
 
             <div class="flex gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" id="reset-settings-btn" class="flex-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm" data-i18n="resetDefaults">Defaults</button>
-                <button type="button" id="save-settings-btn" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm shadow-md" data-i18n="saveBtn">Save</button>
+                <button type="button" id="reset-settings-btn" class="flex-1 bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm" data-i18n="resetDefaults">Reset to Defaults</button>
+                <button type="button" id="save-settings-btn" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm shadow-md" data-i18n="saveBtn">Save Changes</button>
             </div>
         </div>
     </div>
@@ -515,7 +525,7 @@
             </div>
             
             <div class="flex gap-4 mt-8 pt-6 border-t border-slate-100 dark:border-slate-800">
-                <button type="button" id="pwa-close-btn" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm shadow-md" data-i18n="doneBtn">Done</button>
+                <button type="button" id="pwa-close-btn" class="flex-1 bg-brand-700 hover:bg-brand-800 text-white px-5 py-3.5 rounded-2xl transition-colors font-bold text-sm shadow-md" data-i18n="doneBtn">Close</button>
             </div>
         </div>
     </div>
